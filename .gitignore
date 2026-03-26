@@ -1,0 +1,7 @@
+node_modules
+dist
+.env
+uploads/
+tidb-ca.pem
+*.log
+.DS_Store
