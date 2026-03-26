@@ -46,7 +46,7 @@ export async function getUserByEmail(email: string) {
 export async function createUser(data: Omit<NewUser, "id" | "createdAt" | "updatedAt" | "lastSignedIn">): Promise<number> {
   const db = getDb();
   const result = await db.insert(users).values(data);
-  return Number(result.insertId);
+  return Number((result as any).insertId);
 }
 
 export async function updateLastSignedIn(userId: number) {
@@ -93,7 +93,7 @@ export async function getFeaturedProducts() {
 export async function createProduct(data: Omit<NewProduct, "id" | "createdAt" | "updatedAt">): Promise<number> {
   const db = getDb();
   const result = await db.insert(products).values(data);
-  return Number(result.insertId);
+  return Number((result as any).insertId);
 }
 
 export async function updateProduct(id: number, data: Partial<NewProduct>) {
@@ -121,7 +121,7 @@ export async function getVariantById(id: number) {
 export async function createVariant(data: Omit<NewProductVariant, "id" | "createdAt" | "updatedAt">): Promise<number> {
   const db = getDb();
   const result = await db.insert(productVariants).values(data);
-  return Number(result.insertId);
+  return Number((result as any).insertId);
 }
 
 export async function updateVariant(id: number, data: Partial<NewProductVariant>) {
@@ -139,7 +139,7 @@ export async function getInventoryByVariantId(variantId: number) {
 export async function upsertInventory(data: Omit<NewInventory, "id" | "updatedAt">): Promise<number> {
   const db = getDb();
   const result = await db.insert(inventory).values(data);
-  return Number(result.insertId);
+  return Number((result as any).insertId);
 }
 
 export async function reduceInventory(variantId: number, quantity: number) {
@@ -162,7 +162,7 @@ export async function getLowStockItems() {
 export async function createOrder(data: Omit<NewOrder, "id" | "createdAt" | "updatedAt">): Promise<number> {
   const db = getDb();
   const result = await db.insert(orders).values(data);
-  return Number(result.insertId);
+  return Number((result as any).insertId);
 }
 
 export async function getOrderById(id: number) {
@@ -202,7 +202,7 @@ export async function updateOrder(id: number, data: Partial<NewOrder>) {
 export async function createOrderItem(data: Omit<NewOrderItem, "id" | "createdAt">): Promise<number> {
   const db = getDb();
   const result = await db.insert(orderItems).values(data);
-  return Number(result.insertId);
+  return Number((result as any).insertId);
 }
 
 export async function getOrderItemsByOrderId(orderId: number) {
@@ -214,7 +214,7 @@ export async function getOrderItemsByOrderId(orderId: number) {
 export async function createWholesaleRequest(data: Omit<NewWholesaleRequest, "id" | "createdAt" | "updatedAt">): Promise<number> {
   const db = getDb();
   const result = await db.insert(wholesaleRequests).values(data);
-  return Number(result.insertId);
+  return Number((result as any).insertId);
 }
 
 export async function getAllWholesaleRequests() {
@@ -231,7 +231,7 @@ export async function updateWholesaleRequest(id: number, data: Partial<NewWholes
 export async function createContactMessage(data: Omit<NewContactMessage, "id" | "createdAt">): Promise<number> {
   const db = getDb();
   const result = await db.insert(contactMessages).values(data);
-  return Number(result.insertId);
+  return Number((result as any).insertId);
 }
 
 export async function getAllContactMessages() {

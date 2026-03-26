@@ -3,9 +3,11 @@
   "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
     "incremental": true,
+    "skipLibCheck": true,
     "noEmit": true,
     "module": "ESNext",
     "strict": true,
+    "target": "ESNext",
     "lib": ["esnext", "dom", "dom.iterable"],
     "jsx": "preserve",
     "moduleResolution": "bundler",

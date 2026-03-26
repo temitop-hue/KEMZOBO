@@ -9,9 +9,7 @@ let stripeInstance: Stripe | null = null;
 
 export function getStripe(): Stripe {
   if (!stripeInstance) {
-    stripeInstance = new Stripe(ENV.stripeSecretKey, {
-      apiVersion: "2025-03-31.basil",
-    });
+    stripeInstance = new Stripe(ENV.stripeSecretKey);
   }
   return stripeInstance;
 }
