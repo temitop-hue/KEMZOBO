@@ -5,14 +5,14 @@ export default function About() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-hibiscus/10 to-gold/5 py-16 lg:py-24">
+      <section className="bg-gradient-to-br from-hibiscus/5 to-gold-light/30 py-16 lg:py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Our <span className="text-hibiscus">Story</span>
+            Our <span className="italic text-hibiscus">Story</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            From West African tradition to your neighborhood — Kem Original Zobo brings the
-            authentic taste of hibiscus to the US market.
+            Infusing heritage, culture, and themes that reflect everyday living —
+            <span className="italic"> Kem</span> Original Zobo brings authentic hibiscus refreshment to your doorstep.
           </p>
         </div>
       </section>
@@ -64,10 +64,10 @@ export default function About() {
             Our Mission
           </h2>
           <p className="text-muted-foreground leading-relaxed">
-            At Kem Original Zobo, we're on a mission to share this cultural treasure with
-            everyone. Each can is crafted with care, using premium hibiscus flowers and
-            natural ingredients — no artificial flavors, no preservatives. Just pure,
-            refreshing heritage in every sip.
+            Making <span className="italic">Kem</span> Zobo the leading brand in its niche and the go-to
+            choice for healthy nutrition and hydration. Each 16 oz can is crafted with care,
+            using premium hibiscus flowers and natural ingredients — no artificial flavors,
+            no preservatives. Just 473 ml of pure, refreshing heritage.
           </p>
         </div>
       </section>

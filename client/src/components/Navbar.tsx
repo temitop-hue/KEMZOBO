@@ -23,8 +23,9 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <span className="font-display text-xl font-bold text-hibiscus">
-              Kem Zobo
+            <span className="font-display text-xl font-bold text-hibiscus tracking-wide">
+              <span className="italic">Kem</span>{" "}
+              <span className="text-foreground">Original Zobo</span>
             </span>
           </Link>
 

@@ -8,11 +8,11 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <h3 className="font-display text-xl font-bold text-gold mb-3">
-              Kem Original Zobo
+              <span className="italic">Kem</span> Original Zobo
             </h3>
             <p className="text-cream/70 text-sm max-w-md">
-              Premium canned hibiscus drinks. Healthy, cultural, refreshing.
-              Bringing the authentic taste of Zobo to your doorstep.
+              Made with a blend of nature's finest hibiscus. 16 FL. OZ of healthy,
+              cultural refreshment — heritage you can taste in every sip.
             </p>
           </div>
 

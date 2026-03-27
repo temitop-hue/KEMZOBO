@@ -11,17 +11,19 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-hibiscus/10 via-background to-gold/10 py-20 lg:py-32">
+      <section className="relative bg-gradient-to-br from-hibiscus/5 via-background to-gold-light/40 py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl">
+            <p className="text-sm font-medium text-hibiscus uppercase tracking-widest mb-4">
+              Made with a blend of nature's finest hibiscus
+            </p>
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
-              The Taste of{" "}
-              <span className="text-hibiscus">Heritage</span>,{" "}
-              <span className="text-earth-green">Refreshed</span>
+              <span className="italic text-hibiscus">Kem</span> Original{" "}
+              <span className="text-hibiscus">Zobo</span> Drink
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-lg">
-              Premium canned Zobo — crafted from natural hibiscus flowers.
-              Healthy, cultural, and endlessly refreshing.
+              16 FL. OZ of heritage in every can. Infused with culture, crafted for
+              healthy hydration — the go-to choice for refreshment.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
@@ -42,10 +44,10 @@ export default function Home() {
       </section>
 
       {/* Why Zobo */}
-      <section className="py-16 bg-card">
+      <section className="py-16 bg-gold-light/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-3xl font-bold text-center text-foreground mb-12">
-            Why <span className="text-hibiscus">Zobo</span>?
+            Why <span className="italic text-hibiscus">Kem</span> Zobo?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
@@ -70,9 +72,9 @@ export default function Home() {
               <div className="w-14 h-14 rounded-full bg-gold/10 text-gold flex items-center justify-center mx-auto mb-4">
                 <Zap className="h-7 w-7" />
               </div>
-              <h3 className="font-display font-semibold text-lg mb-2">Cultural Heritage</h3>
+              <h3 className="font-display font-semibold text-lg mb-2">Heritage & Culture</h3>
               <p className="text-sm text-muted-foreground">
-                A beloved West African tradition now in a convenient can — heritage you can taste.
+                A beloved West African tradition — infusing heritage, culture, and everyday living into every can.
               </p>
             </div>
           </div>
@@ -120,10 +122,10 @@ export default function Home() {
       <section className="py-16 bg-hibiscus text-white">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <h2 className="font-display text-3xl font-bold mb-4">
-            Ready to Try the Taste?
+            The Go-To Choice for Healthy Hydration
           </h2>
           <p className="text-white/80 mb-8">
-            Order online or find us at a store near you. Bulk orders welcome.
+            Order online for delivery, or connect with us for wholesale and event orders.
           </p>
           <Link
             href="/products"

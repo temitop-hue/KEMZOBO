@@ -1,18 +1,21 @@
 /*
  * Kem Original Zobo — Design System
+ * Aligned with JEHOFILMS brand campaign deck
  *
- * Brand: Warm, vibrant, culturally rich hibiscus beverage
+ * Brand: Lifestyle hibiscus beverage — heritage, culture, healthy hydration
  *
- * Color Palette:
- * - Hibiscus Red: #7C2D12 (deep burgundy)
- * - Warm Gold: #D97706
- * - Cream: #FFFBEB
- * - Earthy Green: #166534
- * - Ink: #1C1917
+ * Color Palette (from campaign):
+ * - Kem Red: #C41E1E (vivid, warm red — headlines & CTAs)
+ * - Cream: #FAF0E6 (warm linen background)
+ * - Soft Gold: #FDE68A (accent highlight panels)
+ * - Ink: #1C1917 (body text)
+ * - Earthy Green: #166534 (health/nature accents)
  *
  * Typography:
- * - Headlines: Poppins (600, 700)
- * - Body: DM Sans (400, 500)
+ * - Headlines: Playfair Display (elegant serif — matches campaign deck)
+ * - Body: DM Sans (clean, modern)
+ *
+ * Product: 16 FL. OZ (473 ML) cans
  */
 
 @import "tailwindcss";
@@ -32,7 +35,7 @@
 
 @theme inline {
   --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-display: 'Poppins', system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -67,39 +70,40 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Brand colors */
-  --color-hibiscus: oklch(0.45 0.15 25);
-  --color-hibiscus-light: oklch(0.55 0.15 25);
-  --color-gold: oklch(0.7 0.15 75);
-  --color-gold-light: oklch(0.85 0.1 75);
-  --color-cream: oklch(0.98 0.02 90);
+  /* Brand colors — matched to campaign deck */
+  --color-hibiscus: oklch(0.52 0.2 25);       /* #C41E1E vivid warm red */
+  --color-hibiscus-light: oklch(0.58 0.18 25);
+  --color-hibiscus-dark: oklch(0.42 0.18 25);
+  --color-gold: oklch(0.82 0.12 85);          /* Soft gold accent */
+  --color-gold-light: oklch(0.92 0.08 90);    /* Light gold panel bg */
+  --color-cream: oklch(0.96 0.02 80);         /* #FAF0E6 warm linen */
   --color-earth-green: oklch(0.45 0.12 155);
-  --color-ink: oklch(0.2 0.02 50);
+  --color-ink: oklch(0.15 0.02 50);
 }
 
 :root {
   --radius: 0.625rem;
 
-  /* Warm hibiscus theme */
-  --background: oklch(0.98 0.02 90);       /* Cream */
-  --foreground: oklch(0.2 0.02 50);        /* Ink */
-  --card: oklch(0.99 0.01 90);
-  --card-foreground: oklch(0.2 0.02 50);
-  --popover: oklch(0.99 0.01 90);
-  --popover-foreground: oklch(0.2 0.02 50);
-  --primary: oklch(0.45 0.15 25);          /* Hibiscus Red */
-  --primary-foreground: oklch(0.98 0.01 90);
-  --secondary: oklch(0.93 0.03 75);
-  --secondary-foreground: oklch(0.3 0.05 50);
-  --muted: oklch(0.93 0.02 75);
-  --muted-foreground: oklch(0.5 0.03 50);
-  --accent: oklch(0.7 0.15 75);            /* Warm Gold */
-  --accent-foreground: oklch(0.2 0.02 50);
-  --destructive: oklch(0.55 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 90);
-  --border: oklch(0.88 0.03 75);
-  --input: oklch(0.88 0.03 75);
-  --ring: oklch(0.45 0.15 25);
+  /* Warm linen + red theme — campaign deck aligned */
+  --background: oklch(0.96 0.02 80);       /* Warm linen cream #FAF0E6 */
+  --foreground: oklch(0.15 0.02 50);       /* Near-black ink */
+  --card: oklch(0.98 0.015 80);            /* Slightly lighter cream */
+  --card-foreground: oklch(0.15 0.02 50);
+  --popover: oklch(0.98 0.015 80);
+  --popover-foreground: oklch(0.15 0.02 50);
+  --primary: oklch(0.52 0.2 25);           /* Kem Red #C41E1E */
+  --primary-foreground: oklch(0.98 0.01 80);
+  --secondary: oklch(0.92 0.03 80);
+  --secondary-foreground: oklch(0.25 0.04 50);
+  --muted: oklch(0.92 0.02 80);
+  --muted-foreground: oklch(0.48 0.03 50);
+  --accent: oklch(0.92 0.08 90);           /* Soft gold panel */
+  --accent-foreground: oklch(0.15 0.02 50);
+  --destructive: oklch(0.52 0.2 25);
+  --destructive-foreground: oklch(0.98 0.01 80);
+  --border: oklch(0.88 0.03 80);
+  --input: oklch(0.88 0.03 80);
+  --ring: oklch(0.52 0.2 25);
 
   --sidebar-background: oklch(0.96 0.02 90);
   --sidebar-foreground: oklch(0.3 0.03 50);
