@@ -4,7 +4,69 @@ import { trpc } from "@/lib/trpc";
 import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@shared/const";
 import { toast } from "sonner";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
+
+// ─── Payment Form (inside Elements provider) ─────────────
+function PaymentForm({
+  orderNumber,
+  total,
+  onSuccess,
+}: {
+  orderNumber: string;
+  total: number;
+  onSuccess: () => void;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [processing, setProcessing] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
+    setProcessing(true);
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/order-confirmation/${orderNumber}`,
+      },
+      redirect: "if_required",
+    });
+
+    if (error) {
+      toast.error(error.message || "Payment failed");
+      setProcessing(false);
+    } else {
+      onSuccess();
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="rounded-xl border border-border bg-card p-4 mb-4">
+        <PaymentElement />
+      </div>
+      <button
+        type="submit"
+        disabled={processing || !stripe}
+        className="w-full rounded-lg bg-hibiscus text-white py-3 font-semibold hover:bg-hibiscus-light transition-colors disabled:opacity-50"
+      >
+        {processing ? "Processing..." : `Pay $${formatPrice(total)}`}
+      </button>
+    </form>
+  );
+}
+
+// ─── Main Checkout Page ──────────────────────────────────
 export default function Checkout() {
   const { items, subtotal, clearCart } = useCart();
   const [, setLocation] = useLocation();
@@ -17,17 +79,30 @@ export default function Checkout() {
     phone: "",
   });
   const [email, setEmail] = useState("");
+  const [orderData, setOrderData] = useState<{
+    clientSecret: string;
+    orderNumber: string;
+    total: number;
+  } | null>(null);
 
   const createOrderMutation = trpc.orders.create.useMutation({
     onSuccess: (data) => {
-      // For now, redirect to confirmation (Stripe Elements integration will be added in Phase 4)
-      clearCart();
-      setLocation(`/order-confirmation/${data.orderNumber}`);
+      if (data.clientSecret) {
+        setOrderData({
+          clientSecret: data.clientSecret,
+          orderNumber: data.orderNumber,
+          total: data.total,
+        });
+      } else {
+        // No Stripe key configured — direct redirect
+        clearCart();
+        setLocation(`/order-confirmation/${data.orderNumber}`);
+      }
     },
     onError: (err) => toast.error(err.message),
   });
 
-  if (items.length === 0) {
+  if (items.length === 0 && !orderData) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <p className="text-muted-foreground">Your cart is empty.</p>
@@ -39,7 +114,7 @@ export default function Checkout() {
   const tax = Math.round(subtotal * 0.06);
   const total = subtotal + deliveryFee + tax;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCreateOrder = (e: React.FormEvent) => {
     e.preventDefault();
     createOrderMutation.mutate({
       customerEmail: email,
@@ -52,11 +127,65 @@ export default function Checkout() {
     });
   };
 
+  // ─── Step 2: Payment (after order created) ──────────────
+  if (orderData) {
+    if (stripePromise && orderData.clientSecret) {
+      return (
+        <div className="max-w-lg mx-auto px-4 sm:px-6 py-12">
+          <h1 className="font-display text-2xl font-bold text-foreground mb-6">
+            Complete Payment
+          </h1>
+          <div className="rounded-xl border border-border bg-card p-4 mb-6">
+            <div className="flex justify-between text-sm mb-1">
+              <span className="text-muted-foreground">Order</span>
+              <span className="font-medium">{orderData.orderNumber}</span>
+            </div>
+            <div className="flex justify-between font-display font-bold text-lg">
+              <span>Total</span>
+              <span>${formatPrice(orderData.total)}</span>
+            </div>
+          </div>
+          <Elements
+            stripe={stripePromise}
+            options={{
+              clientSecret: orderData.clientSecret,
+              appearance: {
+                theme: "stripe",
+                variables: {
+                  colorPrimary: "#7C2D12",
+                  borderRadius: "8px",
+                },
+              },
+            }}
+          >
+            <PaymentForm
+              orderNumber={orderData.orderNumber}
+              total={orderData.total}
+              onSuccess={() => {
+                clearCart();
+                setLocation(`/order-confirmation/${orderData.orderNumber}`);
+              }}
+            />
+          </Elements>
+          <p className="mt-4 text-xs text-muted-foreground text-center">
+            Also accepting Zelle &amp; Venmo — contact us for details.
+          </p>
+        </div>
+      );
+    }
+
+    // Stripe not configured — fallback
+    clearCart();
+    setLocation(`/order-confirmation/${orderData.orderNumber}`);
+    return null;
+  }
+
+  // ─── Step 1: Shipping & Order Summary ───────────────────
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <h1 className="font-display text-3xl font-bold text-foreground mb-8">Checkout</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleCreateOrder}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Shipping Info */}
           <div className="space-y-4">
@@ -146,17 +275,12 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* Stripe Elements placeholder */}
-            <div className="mt-6 rounded-xl border border-dashed border-border bg-muted/50 p-6 text-center text-sm text-muted-foreground">
-              Stripe Payment Element will render here
-            </div>
-
             <button
               type="submit"
               disabled={createOrderMutation.isPending}
-              className="mt-4 w-full rounded-lg bg-hibiscus text-white py-3 font-semibold hover:bg-hibiscus-light transition-colors disabled:opacity-50"
+              className="mt-6 w-full rounded-lg bg-hibiscus text-white py-3 font-semibold hover:bg-hibiscus-light transition-colors disabled:opacity-50"
             >
-              {createOrderMutation.isPending ? "Processing..." : `Pay $${formatPrice(total)}`}
+              {createOrderMutation.isPending ? "Creating Order..." : "Continue to Payment"}
             </button>
 
             <p className="mt-4 text-xs text-muted-foreground text-center">
