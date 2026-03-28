@@ -23,32 +23,38 @@ export default function Home() {
       {/* ════════════════════════════════════════════════════
           ACT 1: THE OPENING — Full-screen hero
           ════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[92vh] flex items-center bg-gradient-to-br from-background via-background to-gold-light/30">
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C41E1E' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+      {/* Full-bleed hero image */}
+      <section className="relative min-h-screen">
+        <img
+          src="/images/hero-can.png"
+          alt="Kem Original Zobo — can and glass with hibiscus flowers"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+        {/* Dark overlay gradient — heavier on left for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+        <div className="relative z-10 min-h-screen flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <motion.div
               initial="hidden" animate="visible" variants={stagger}
+              className="max-w-2xl"
             >
-              <motion.p variants={fadeUp} className="text-sm font-medium text-hibiscus uppercase tracking-[0.25em] mb-6">
+              <motion.p variants={fadeUp} className="text-sm font-medium text-gold uppercase tracking-[0.3em] mb-6">
                 A West African Legacy
               </motion.p>
 
-              <motion.h1 variants={fadeUp} className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-[1.1]">
+              <motion.h1 variants={fadeUp} className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.05]">
                 Every Sip{" "}
-                <br className="hidden sm:block" />
+                <br />
                 Tells a{" "}
-                <span className="italic text-hibiscus">Story</span>
+                <span className="italic text-gold">Story</span>
               </motion.h1>
 
               <motion.div variants={fadeUp} className="mt-8 max-w-lg">
-                <p className="text-xl text-muted-foreground leading-relaxed">
+                <p className="text-xl text-white/80 leading-relaxed">
                   For generations, Zobo has brought families together across West Africa.
-                  Now, <span className="italic font-medium text-foreground">Kem</span> brings
+                  Now, <span className="italic font-semibold text-white">Kem</span> brings
                   that same warmth to you — in a can.
                 </p>
               </motion.div>
@@ -56,31 +62,18 @@ export default function Home() {
               <motion.div variants={fadeUp} className="mt-10 flex flex-wrap gap-4">
                 <Link
                   href="/products"
-                  className="group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-semibold text-lg hover:bg-hibiscus-light transition-all duration-300 hover:shadow-xl hover:shadow-hibiscus/20"
+                  className="group inline-flex items-center gap-3 rounded-full bg-white text-hibiscus px-8 py-4 font-semibold text-lg hover:bg-cream transition-all duration-300 hover:shadow-xl"
                 >
                   Discover Our Drinks
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   href="/about"
-                  className="inline-flex items-center gap-2 rounded-full border-2 border-foreground/20 text-foreground px-8 py-4 font-medium text-lg hover:border-hibiscus hover:text-hibiscus transition-colors"
+                  className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 text-white px-8 py-4 font-medium text-lg hover:border-white transition-colors"
                 >
                   Our Story
                 </Link>
               </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
-              className="flex justify-center lg:justify-end"
-            >
-              <img
-                src="/images/hero-can.png"
-                alt="Kem Original Zobo — can and glass with hibiscus flowers"
-                className="max-h-[550px] w-auto object-contain drop-shadow-2xl"
-              />
             </motion.div>
           </div>
         </div>
@@ -90,14 +83,14 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
         >
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
-            className="w-6 h-10 rounded-full border-2 border-foreground/20 flex items-start justify-center pt-2"
+            className="w-6 h-10 rounded-full border-2 border-white/30 flex items-start justify-center pt-2"
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-hibiscus" />
+            <div className="w-1.5 h-1.5 rounded-full bg-gold" />
           </motion.div>
         </motion.div>
       </section>
