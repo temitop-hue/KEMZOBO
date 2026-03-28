@@ -1,9 +1,10 @@
 import { Link } from "wouter";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/contexts/CartContext";
-import { motion, type Variants } from "framer-motion";
+import { motion, type Variants, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 40 },
@@ -16,316 +17,126 @@ const stagger: Variants = {
 export default function Home() {
   const { data: featured } = trpc.products.featured.useQuery();
   const { addItem } = useCart();
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
     <div className="overflow-hidden">
 
       {/* ════════════════════════════════════════════════════
-          ACT 1: THE OPENING — Full-screen hero
+          HERO — Poppi-style: product center stage, bold type, vibrant
           ════════════════════════════════════════════════════ */}
-      {/* Full-bleed hero image */}
-      <section className="relative min-h-screen">
-        <img
-          src="/images/hero-can.png"
-          alt="Kem Original Zobo — can and glass with hibiscus flowers"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-        {/* Dark overlay gradient — heavier on left for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+      <section ref={heroRef} className="relative h-screen overflow-hidden bg-[#1a0a08]">
+        {/* Parallax background image — can hero fills viewport */}
+        <motion.div style={{ scale: heroScale }} className="absolute inset-0">
+          <img
+            src="/images/hero-can.png"
+            alt="Kem Original Zobo"
+            className="w-full h-full object-cover"
+          />
+        </motion.div>
 
-        <div className="relative z-10 min-h-screen flex items-center">
+        {/* Gradient overlays for text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1a0a08] via-[#1a0a08]/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1a0a08]/60 via-transparent to-transparent" />
+
+        {/* Content pinned to bottom — Poppi style */}
+        <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-end pb-16 lg:pb-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <motion.div
-              initial="hidden" animate="visible" variants={stagger}
-              className="max-w-2xl"
-            >
-              <motion.p variants={fadeUp} className="text-sm font-medium text-gold uppercase tracking-[0.3em] mb-6">
-                A West African Legacy
-              </motion.p>
-
-              <motion.h1 variants={fadeUp} className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.05]">
-                Every Sip{" "}
+            <motion.div initial="hidden" animate="visible" variants={stagger}>
+              {/* Bold tagline — massive, punchy, overlapping the product */}
+              <motion.h1
+                variants={fadeUp}
+                className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-[0.95] tracking-tight"
+              >
+                one sip
                 <br />
-                Tells a{" "}
-                <span className="italic text-gold">Story</span>
+                <span className="italic text-gold">& you're</span>
+                <br />
+                <span className="text-hibiscus">home.</span>
               </motion.h1>
 
-              <motion.div variants={fadeUp} className="mt-8 max-w-lg">
-                <p className="text-xl text-white/80 leading-relaxed">
-                  For generations, Zobo has brought families together across West Africa.
-                  Now, <span className="italic font-semibold text-white">Kem</span> brings
-                  that same warmth to you — in a can.
-                </p>
-              </motion.div>
-
-              <motion.div variants={fadeUp} className="mt-10 flex flex-wrap gap-4">
+              <motion.div variants={fadeUp} className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
                 <Link
                   href="/products"
-                  className="group inline-flex items-center gap-3 rounded-full bg-white text-hibiscus px-8 py-4 font-semibold text-lg hover:bg-cream transition-all duration-300 hover:shadow-xl"
+                  className="group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all hover:shadow-2xl hover:shadow-hibiscus/30"
                 >
-                  Discover Our Drinks
+                  Shop Now
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <Link
-                  href="/about"
-                  className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 text-white px-8 py-4 font-medium text-lg hover:border-white transition-colors"
-                >
-                  Our Story
-                </Link>
+                <span className="text-white/50 text-sm uppercase tracking-[0.2em]">
+                  16 FL. OZ &nbsp;•&nbsp; Made with Nature's Finest Hibiscus
+                </span>
               </motion.div>
             </motion.div>
           </div>
-        </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-        >
+          {/* Scroll prompt */}
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="w-6 h-10 rounded-full border-2 border-white/30 flex items-start justify-center pt-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2 }}
+            className="absolute bottom-4 left-1/2 -translate-x-1/2"
           >
-            <div className="w-1.5 h-1.5 rounded-full bg-gold" />
+            <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+              <ChevronDown className="h-6 w-6 text-white/30" />
+            </motion.div>
           </motion.div>
         </motion.div>
       </section>
 
       {/* ════════════════════════════════════════════════════
-          ACT 2: THE ORIGIN — Where it all began
+          FLAVOR STRIP — Bold color block like Poppi's product row
           ════════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-ink text-white relative overflow-hidden">
-        {/* Full-bleed heritage image on right */}
-        <div className="absolute right-0 top-0 bottom-0 w-1/2 hidden lg:block">
-          <img
-            src="/images/heritage-glass.jpg"
-            alt="Zobo in traditional setting"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/80 to-transparent" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <section className="bg-hibiscus py-5">
+        <div className="max-w-7xl mx-auto px-4 overflow-hidden">
           <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}
-            variants={stagger}
-            className="max-w-xl"
+            animate={{ x: [0, -1200] }}
+            transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
+            className="flex items-center gap-8 whitespace-nowrap"
           >
-            <motion.p variants={fadeUp} className="text-gold uppercase tracking-[0.3em] text-sm font-medium mb-6">
-              Chapter One
-            </motion.p>
-
-            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold leading-tight mb-8">
-              Born from a{" "}
-              <span className="italic text-gold">Flower</span>,{" "}
-              raised by a{" "}
-              <span className="italic text-gold">Culture</span>
-            </motion.h2>
-
-            <motion.p variants={fadeUp} className="text-white/70 text-lg leading-relaxed mb-6">
-              In the heart of West Africa, hibiscus flowers are more than just petals.
-              They are rituals. Celebrations. Family recipes passed down through
-              whispered instructions and knowing smiles.
-            </motion.p>
-
-            <motion.p variants={fadeUp} className="text-white/70 text-lg leading-relaxed mb-10">
-              Zobo — the deep crimson drink made from dried hibiscus — has been the
-              centerpiece of gatherings for centuries. At weddings, naming ceremonies,
-              and quiet evenings alike, Zobo is always there. Always shared.
-              Always <span className="text-gold italic">home</span>.
-            </motion.p>
-
-            <motion.div variants={fadeUp}>
-              <Link
-                href="/about"
-                className="inline-flex items-center gap-2 text-gold font-semibold hover:underline text-lg"
-              >
-                Read the full story <ArrowRight className="h-4 w-4" />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Mobile heritage image */}
-        <div className="lg:hidden mt-12 px-4">
-          <img
-            src="/images/heritage-glass.jpg"
-            alt="Zobo in traditional setting"
-            className="w-full h-[350px] object-cover rounded-2xl"
-          />
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════
-          ACT 3: THE CRAFT — What makes it different
-          ════════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}
-            variants={stagger}
-            className="text-center mb-16"
-          >
-            <motion.p variants={fadeUp} className="text-hibiscus uppercase tracking-[0.3em] text-sm font-medium mb-4">
-              Chapter Two
-            </motion.p>
-            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold text-foreground">
-              Nature's Recipe.{" "}
-              <span className="italic text-hibiscus">Nothing Added.</span>
-            </motion.h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-            {[
-              {
-                num: "01",
-                title: "Hand-Selected Hibiscus",
-                text: "We source the finest Hibiscus sabdariffa flowers — rich in color, bold in flavor, bursting with natural antioxidants and Vitamin C.",
-                accent: "bg-hibiscus/5 border-hibiscus/20",
-              },
-              {
-                num: "02",
-                title: "No Shortcuts",
-                text: "Zero artificial flavors. Zero preservatives. Zero added sugars. Just hibiscus, natural spices, and pure water — the way it's been made for generations.",
-                accent: "bg-earth-green/5 border-earth-green/20",
-              },
-              {
-                num: "03",
-                title: "16 oz of Heritage",
-                text: "Every can is 473 ml of carefully crafted refreshment. Tall, cold, and ready — whether you're at a cookout, on a lunch break, or winding down at home.",
-                accent: "bg-gold/5 border-gold/20",
-              },
-            ].map((item) => (
-              <motion.div
-                key={item.num}
-                initial="hidden" whileInView="visible" viewport={{ once: true }}
-                variants={fadeUp}
-                className={`rounded-2xl border p-8 lg:p-10 ${item.accent} transition-shadow hover:shadow-lg`}
-              >
-                <span className="font-display text-5xl font-bold text-foreground/10">{item.num}</span>
-                <h3 className="font-display text-xl font-bold text-foreground mt-4 mb-3">{item.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{item.text}</p>
-              </motion.div>
+            {[...Array(3)].map((_, i) => (
+              <span key={i} className="flex items-center gap-8 text-white/90 font-display text-lg font-bold uppercase tracking-[0.2em]">
+                <span>Classic</span>
+                <span className="text-gold">✦</span>
+                <span>Ginger</span>
+                <span className="text-gold">✦</span>
+                <span>Pineapple</span>
+                <span className="text-gold">✦</span>
+                <span>Mango</span>
+                <span className="text-gold">✦</span>
+                <span>Cinnamon Spice</span>
+                <span className="text-gold">✦</span>
+                <span>Hibiscus Lemonade</span>
+                <span className="text-gold">✦</span>
+              </span>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════
-          INTERLUDE: Full-bleed tropical image
-          ════════════════════════════════════════════════════ */}
-      <section className="relative h-[70vh] min-h-[500px]">
-        <img
-          src="/images/tropical-glass.jpg"
-          alt="Zobo drink in a tropical, natural setting"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end">
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true }}
-            variants={fadeUp}
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16"
-          >
-            <p className="text-white/60 uppercase tracking-[0.3em] text-sm mb-4">The Feeling</p>
-            <h2 className="font-display text-4xl lg:text-5xl font-bold text-white max-w-2xl leading-tight">
-              Refreshment that{" "}
-              <span className="italic">reconnects</span> you
-            </h2>
           </motion.div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════════════
-          ACT 4: THE PEOPLE — Community & lifestyle
-          ════════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <motion.div
-              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}
-              variants={fadeUp}
-              className="rounded-2xl overflow-hidden shadow-2xl"
-            >
-              <img
-                src="/images/lifestyle-friends.jpg"
-                alt="Friends laughing and sharing Kem Zobo"
-                className="w-full h-[500px] object-cover"
-              />
-            </motion.div>
-
-            <motion.div
-              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}
-              variants={stagger}
-            >
-              <motion.p variants={fadeUp} className="text-hibiscus uppercase tracking-[0.3em] text-sm font-medium mb-6">
-                Chapter Three
-              </motion.p>
-
-              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold text-foreground leading-tight mb-8">
-                Made for the{" "}
-                <span className="italic text-hibiscus">Moments</span>{" "}
-                that matter
-              </motion.h2>
-
-              <motion.p variants={fadeUp} className="text-muted-foreground text-lg leading-relaxed mb-6">
-                The best conversations happen over something real.
-                Not something from a machine — something that carries meaning.
-                Something that sparks the question: <span className="italic font-medium text-foreground">"What is this? It's amazing."</span>
-              </motion.p>
-
-              <motion.p variants={fadeUp} className="text-muted-foreground text-lg leading-relaxed mb-10">
-                That's the <span className="italic">Kem</span> moment.
-                At cookouts, game nights, brunches, or a quiet Tuesday evening.
-                When you share a Zobo, you're sharing a piece of culture.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
-                <Link
-                  href="/products"
-                  className="group inline-flex items-center gap-2 rounded-full bg-hibiscus text-white px-7 py-3.5 font-semibold hover:bg-hibiscus-light transition-all"
-                >
-                  Shop Now <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link
-                  href="/wholesale"
-                  className="inline-flex items-center gap-2 rounded-full border-2 border-hibiscus text-hibiscus px-7 py-3.5 font-semibold hover:bg-hibiscus/5 transition-colors"
-                >
-                  Wholesale Partners
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════
-          ACT 5: THE DRINKS — Featured products
+          PRODUCT CAROUSEL — Poppi-style big product cards
           ════════════════════════════════════════════════════ */}
       {featured && featured.length > 0 && (
-        <section className="py-24 bg-gold-light/20">
+        <section className="py-20 lg:py-28 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={stagger}
               className="text-center mb-14"
             >
-              <motion.p variants={fadeUp} className="text-hibiscus uppercase tracking-[0.3em] text-sm font-medium mb-4">
-                The Collection
-              </motion.p>
-              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold text-foreground">
-                Six Flavors.{" "}
-                <span className="italic text-hibiscus">One Heritage.</span>
+              <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-6xl font-bold text-foreground">
+                find your <span className="italic text-hibiscus">flavor</span>
               </motion.h2>
-              <motion.p variants={fadeUp} className="mt-4 text-muted-foreground text-lg max-w-xl mx-auto">
-                From the bold original to tropical twists — there's a Kem Zobo for every palate.
+              <motion.p variants={fadeUp} className="mt-4 text-muted-foreground text-lg">
+                Six unique blends. One heritage.
               </motion.p>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               {featured.map((product) => (
                 <motion.div
                   key={product.id}
@@ -352,13 +163,14 @@ export default function Home() {
             <motion.div
               initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={fadeUp}
-              className="text-center mt-10"
+              className="text-center mt-12"
             >
               <Link
                 href="/products"
-                className="inline-flex items-center gap-2 text-hibiscus font-semibold text-lg hover:underline"
+                className="group inline-flex items-center gap-2 rounded-full bg-foreground text-background px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus hover:text-white transition-colors"
               >
-                View All Flavors <ArrowRight className="h-4 w-4" />
+                View All Flavors
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
           </div>
@@ -366,71 +178,248 @@ export default function Home() {
       )}
 
       {/* ════════════════════════════════════════════════════
-          INTERLUDE: Bar glass atmosphere
+          LIFESTYLE — Full-bleed friends photo, bold overlaid text
           ════════════════════════════════════════════════════ */}
-      <section className="relative h-[50vh] min-h-[350px]">
+      <section className="relative h-[80vh] min-h-[600px]">
         <img
-          src="/images/bar-glass.jpg"
-          alt="Zobo beautifully presented at a bar"
+          src="/images/lifestyle-friends.jpg"
+          alt="Friends sharing Kem Zobo"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/20 flex items-center justify-center">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="absolute inset-0 z-10 flex flex-col justify-end">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-20">
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true }}
+              variants={stagger}
+            >
+              <motion.h2 variants={fadeUp} className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[0.95]">
+                flavor is
+                <br />
+                <span className="italic text-gold">forever.</span>
+              </motion.h2>
+              <motion.p variants={fadeUp} className="mt-6 text-white/70 text-lg max-w-md">
+                More than a drink. It's a moment. A memory. A culture shared
+                between friends, old and new.
+              </motion.p>
+              <motion.div variants={fadeUp} className="mt-8">
+                <Link
+                  href="/about"
+                  className="inline-flex items-center gap-2 text-gold font-bold uppercase tracking-wider hover:text-white transition-colors"
+                >
+                  Our Story <ArrowRight className="h-4 w-4" />
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════
+          HERITAGE — Split color block, Poppi-style
+          ════════════════════════════════════════════════════ */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
+        {/* Left: Image */}
+        <div className="relative h-[400px] lg:h-auto">
+          <img
+            src="/images/heritage-glass.jpg"
+            alt="Zobo with traditional Nigerian cap and fabric"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        {/* Right: Content on dark bg */}
+        <div className="bg-ink flex items-center p-10 lg:p-16">
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}
+            variants={stagger}
+          >
+            <motion.p variants={fadeUp} className="text-gold uppercase tracking-[0.3em] text-sm font-bold mb-6">
+              Rooted in Tradition
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
+              born from a{" "}
+              <span className="italic text-gold">flower</span>,
+              <br />
+              raised by a{" "}
+              <span className="italic text-gold">culture</span>
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-white/60 text-lg leading-relaxed mb-8">
+              Zobo has been the centerpiece of West African celebrations for centuries.
+              At weddings, naming ceremonies, and quiet evenings alike — always shared,
+              always home.
+            </motion.p>
+            <motion.div variants={fadeUp}>
+              <Link
+                href="/about"
+                className="group inline-flex items-center gap-2 rounded-full bg-gold text-ink px-7 py-3.5 font-bold uppercase tracking-wider hover:bg-gold-light transition-colors"
+              >
+                Read Our Story
+                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════
+          BENEFITS — Bold numbered cards on vibrant bg
+          ════════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-gold-light/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true }}
+            variants={stagger}
+            className="text-center mb-16"
+          >
+            <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-6xl font-bold text-foreground lowercase">
+              good for <span className="italic text-hibiscus">you</span>, good for <span className="italic text-earth-green">real</span>
+            </motion.h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { num: "01", title: "100% Natural", desc: "Hand-selected hibiscus flowers. No artificial anything.", bg: "bg-hibiscus", text: "text-white" },
+              { num: "02", title: "Packed with Vitamin C", desc: "Antioxidants that support your health — naturally.", bg: "bg-earth-green", text: "text-white" },
+              { num: "03", title: "Zero Added Sugar", desc: "Just hibiscus, natural spices, and pure water.", bg: "bg-foreground", text: "text-background" },
+            ].map((card) => (
+              <motion.div
+                key={card.num}
+                initial="hidden" whileInView="visible" viewport={{ once: true }}
+                variants={fadeUp}
+                className={`${card.bg} ${card.text} rounded-2xl p-10 lg:p-12`}
+              >
+                <span className="font-display text-6xl font-bold opacity-20">{card.num}</span>
+                <h3 className="font-display text-2xl font-bold mt-4 mb-3">{card.title}</h3>
+                <p className="opacity-80 text-lg leading-relaxed">{card.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════
+          PULL QUOTE — Bar glass atmosphere
+          ════════════════════════════════════════════════════ */}
+      <section className="relative h-[60vh] min-h-[400px]">
+        <img
+          src="/images/bar-glass.jpg"
+          alt="Zobo at a bar"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={fadeUp}
             className="text-center px-4"
           >
-            <p className="font-display text-3xl lg:text-4xl font-bold text-white italic max-w-2xl leading-relaxed">
-              "It tastes like home — even if you've never been."
+            <p className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white italic leading-tight max-w-3xl">
+              "it tastes like home —
+              <br />
+              even if you've never been."
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════════════
-          ACT 6: THE INVITATION — Final CTA
+          TROPICAL — Full-bleed with overlaid text
           ════════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-hibiscus text-white relative overflow-hidden">
-        {/* Decorative circles */}
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-white/5" />
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-white/5" />
+      <section className="relative h-[70vh] min-h-[500px]">
+        <img
+          src="/images/tropical-glass.jpg"
+          alt="Zobo in a tropical setting"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true }}
+              variants={stagger}
+            >
+              <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-7xl font-bold text-white leading-[0.95]">
+                naturally
+                <br />
+                <span className="italic text-gold">refreshing.</span>
+              </motion.h2>
+              <motion.p variants={fadeUp} className="mt-6 text-white/70 text-lg max-w-md">
+                Clean, vibrant, and crafted from nature's finest hibiscus flowers.
+                16 FL. OZ of pure refreshment.
+              </motion.p>
+              <motion.div variants={fadeUp} className="mt-8">
+                <Link
+                  href="/products"
+                  className="group inline-flex items-center gap-3 rounded-full bg-white text-hibiscus px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-cream transition-colors"
+                >
+                  Order Now
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════
+          WHOLESALE — Color block CTA
+          ════════════════════════════════════════════════════ */}
+      <section className="bg-ink text-white py-20 lg:py-24">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true }}
+            variants={stagger}
+          >
+            <motion.p variants={fadeUp} className="text-gold uppercase tracking-[0.3em] text-sm font-bold mb-4">
+              For Business
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold leading-tight mb-6">
+              carry <span className="italic text-gold">Kem Zobo</span>
+              <br />at your store or event
+            </motion.h2>
+            <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-xl mx-auto mb-10">
+              Bulk pricing available. Stores, restaurants, events, distributors welcome.
+            </motion.p>
+            <motion.div variants={fadeUp}>
+              <Link
+                href="/wholesale"
+                className="group inline-flex items-center gap-3 rounded-full bg-gold text-ink px-10 py-4 font-bold text-lg uppercase tracking-wider hover:bg-gold-light transition-colors"
+              >
+                Wholesale Inquiry
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════
+          FINAL CTA — Hibiscus red block
+          ════════════════════════════════════════════════════ */}
+      <section className="bg-hibiscus text-white py-20 lg:py-28 relative overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-white/5" />
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-white/5" />
 
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={stagger}
           >
-            <motion.p variants={fadeUp} className="text-white/60 uppercase tracking-[0.3em] text-sm mb-6">
-              Your Turn
-            </motion.p>
-
-            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-6xl font-bold leading-tight mb-8">
-              Ready to taste the{" "}
-              <span className="italic">heritage</span>?
+            <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-7xl font-bold leading-[0.95] mb-8">
+              ready to taste
+              <br />
+              the <span className="italic">heritage</span>?
             </motion.h2>
-
-            <motion.p variants={fadeUp} className="text-white/70 text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-              Join thousands discovering the vibrant, healthy refreshment of hibiscus.
-              Order for your home, your business, or your next event.
-            </motion.p>
 
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/products"
-                className="group inline-flex items-center gap-3 rounded-full bg-white text-hibiscus px-10 py-4 font-bold text-lg hover:bg-cream transition-colors hover:shadow-xl"
+                className="group inline-flex items-center gap-3 rounded-full bg-white text-hibiscus px-10 py-4 font-bold text-lg uppercase tracking-wider hover:bg-cream transition-colors hover:shadow-xl"
               >
                 Order Now
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link
-                href="/wholesale"
-                className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 text-white px-10 py-4 font-semibold text-lg hover:border-white transition-colors"
-              >
-                Wholesale Inquiry
-              </Link>
             </motion.div>
 
-            <motion.p variants={fadeUp} className="mt-8 text-white/40 text-sm">
+            <motion.p variants={fadeUp} className="mt-8 text-white/40 text-sm uppercase tracking-wider">
               Free delivery on orders over $50 &nbsp;•&nbsp; Bulk pricing available
             </motion.p>
           </motion.div>
