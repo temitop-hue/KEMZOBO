@@ -29,18 +29,37 @@ export default function Home() {
           HERO — Poppi-style: product center stage, bold type, vibrant
           ════════════════════════════════════════════════════ */}
       <section ref={heroRef} className="relative h-screen overflow-hidden bg-[#1a0a08]">
-        {/* Parallax background image — can hero fills viewport */}
+        {/* Background video — dancing/lifestyle, falls back to hero image */}
         <motion.div style={{ scale: heroScale }} className="absolute inset-0">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/images/hero-can.png"
+            className="w-full h-full object-cover"
+          >
+            <source src="/videos/hero.mp4" type="video/mp4" />
+            <source src="/videos/hero.webm" type="video/webm" />
+          </video>
+          {/* Fallback image if no video loads */}
           <img
             src="/images/hero-can.png"
             alt="Kem Original Zobo"
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
+            onLoad={(e) => {
+              // Hide image if video is playing
+              const video = (e.target as HTMLElement).parentElement?.querySelector("video");
+              if (video && video.readyState >= 2) {
+                (e.target as HTMLElement).style.display = "none";
+              }
+            }}
           />
         </motion.div>
 
-        {/* Gradient overlays for text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1a0a08] via-[#1a0a08]/30 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1a0a08]/60 via-transparent to-transparent" />
+        {/* Gradient overlays for text contrast over video */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1a0a08] via-[#1a0a08]/40 to-[#1a0a08]/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1a0a08]/70 via-transparent to-transparent" />
 
         {/* Content pinned to bottom — Poppi style */}
         <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-end pb-16 lg:pb-20">
