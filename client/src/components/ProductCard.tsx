@@ -14,7 +14,7 @@ export default function ProductCard({ product, variant, onAddToCart }: ProductCa
   const compareAtPrice = variant?.compareAtPrice;
 
   return (
-    <div className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="group card-hover rounded-xl border border-border bg-card overflow-hidden">
       <Link href={`/products/${product.slug}`}>
         <div className="aspect-square bg-muted overflow-hidden">
           {product.imageUrl ? (
