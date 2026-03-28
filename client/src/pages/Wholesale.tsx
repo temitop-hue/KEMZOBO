@@ -32,7 +32,7 @@ export default function Wholesale() {
         Wholesale Inquiry
       </h1>
       <p className="text-muted-foreground mb-4">
-        Carry Kem Original Zobo at your store, restaurant, or event.
+        Carry KEMZOBO at your store, restaurant, or event.
       </p>
 
       {/* Pricing tiers */}

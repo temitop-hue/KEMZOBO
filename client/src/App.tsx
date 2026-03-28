@@ -28,6 +28,9 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminWholesale from "./pages/AdminWholesale";
 import AdminCustomers from "./pages/AdminCustomers";
 import AdminMessages from "./pages/AdminMessages";
+import FAQ from "./pages/FAQ";
+import Gallery from "./pages/Gallery";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 function Router() {
@@ -39,6 +42,9 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       <Route path="/wholesale" component={Wholesale} />
+      <Route path="/faq" component={FAQ} />
+      <Route path="/gallery" component={Gallery} />
+      <Route path="/privacy" component={Privacy} />
       <Route path="/cart" component={Cart} />
       <Route path="/checkout" component={Checkout} />
       <Route path="/order-confirmation/:orderNumber" component={OrderConfirmation} />

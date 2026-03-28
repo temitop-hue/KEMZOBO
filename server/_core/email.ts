@@ -21,7 +21,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
         "api-key": ENV.brevoApiKey,
       },
       body: JSON.stringify({
-        sender: { name: "Kem Original Zobo", email: ENV.senderEmail },
+        sender: { name: "KEMZOBO", email: ENV.senderEmail },
         to: [{ email: options.to }],
         subject: options.subject,
         ...(options.html

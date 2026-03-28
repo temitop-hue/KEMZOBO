@@ -2,63 +2,61 @@ import { Link } from "wouter";
 
 export default function Footer() {
   return (
-    <footer className="bg-ink text-cream">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="border-t border-border bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="font-display text-xl font-bold text-gold mb-3">
-              <span className="italic">Kem</span> Original Zobo
+            <h3 className="font-display text-xl font-bold text-foreground mb-2">
+              KEMZOBO
             </h3>
-            <p className="text-cream/70 text-sm max-w-md">
-              Made with a blend of nature's finest hibiscus. 16 FL. OZ of healthy,
-              cultural refreshment — heritage you can taste in every sip.
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
+              THE ORIGINAL ZOBO DRINK. Bold hibiscus. Timeless tradition. Ready to drink.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Links */}
           <div>
-            <h4 className="font-display font-semibold text-gold-light mb-3 text-sm uppercase tracking-wider">
-              Quick Links
+            <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-4">
+              Explore
             </h4>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/products" className="text-cream/70 hover:text-gold transition-colors">
-                  Products
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-cream/70 hover:text-gold transition-colors">
-                  Our Story
-                </Link>
-              </li>
-              <li>
-                <Link href="/wholesale" className="text-cream/70 hover:text-gold transition-colors">
-                  Wholesale
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-cream/70 hover:text-gold transition-colors">
-                  Contact
-                </Link>
-              </li>
+              {[
+                { href: "/products", label: "Shop" },
+                { href: "/about", label: "Our Story" },
+                { href: "/gallery", label: "Gallery" },
+                { href: "/faq", label: "FAQ" },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="text-muted-foreground hover:text-hibiscus transition-colors">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-display font-semibold text-gold-light mb-3 text-sm uppercase tracking-wider">
-              Contact
+            <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-4">
+              Connect
             </h4>
-            <ul className="space-y-2 text-sm text-cream/70">
-              <li>hello@kemzobo.com</li>
-              <li>(240) 409-2814</li>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>
+                <Link href="/contact" className="hover:text-hibiscus transition-colors">Contact Us</Link>
+              </li>
+              <li>
+                <Link href="/wholesale" className="hover:text-hibiscus transition-colors">Wholesale</Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-hibiscus transition-colors">Privacy Policy</Link>
+              </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-cream/10 mt-10 pt-6 text-center text-xs text-cream/50">
-          &copy; {new Date().getFullYear()} Kem Original Zobo. All rights reserved.
+        <div className="border-t border-border mt-12 pt-8 text-center text-xs text-muted-foreground">
+          &copy; {new Date().getFullYear()} KEMZOBO. All rights reserved.
         </div>
       </div>
     </footer>

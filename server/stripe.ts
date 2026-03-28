@@ -71,7 +71,7 @@ export async function handleStripeWebhook(req: Request, res: Response) {
               <p>Thank you for your order. Your order <strong>${order.orderNumber}</strong> has been confirmed.</p>
               <p><strong>Total:</strong> $${formatPrice(order.total)}</p>
               <p>We'll notify you when your order ships.</p>
-              <p style="margin-top: 24px; color: #666; font-size: 14px;">— Kem Original Zobo</p>
+              <p style="margin-top: 24px; color: #666; font-size: 14px;">— KEMZOBO</p>
             </div>
           `,
         });

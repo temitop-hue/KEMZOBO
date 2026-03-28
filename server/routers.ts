@@ -188,6 +188,16 @@ export const appRouter = router({
       }),
   }),
 
+  // ─── Email Subscribe ─────────────────────────────────────
+  subscribe: router({
+    submit: publicProcedure
+      .input(z.object({ email: z.string().email() }))
+      .mutation(async ({ input }) => {
+        await db.subscribeEmail(input.email);
+        return { success: true };
+      }),
+  }),
+
   // ─── Contact ────────────────────────────────────────────
   contact: router({
     submit: publicProcedure

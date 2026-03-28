@@ -4,14 +4,15 @@ import { trpc } from "@/lib/trpc";
 import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/contexts/CartContext";
 import { motion, type Variants, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 const stagger: Variants = {
-  visible: { transition: { staggerChildren: 0.15 } },
+  visible: { transition: { staggerChildren: 0.12 } },
 };
 
 export default function Home() {
@@ -19,84 +20,87 @@ export default function Home() {
   const { addItem } = useCart();
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
-  return (
-    <div className="overflow-hidden">
+  const [email, setEmail] = useState("");
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const subscribeMutation = trpc.subscribe.submit.useMutation({
+    onSuccess: () => {
+      setEmailSubmitted(true);
+      toast.success("You're in! We'll keep you updated.");
+      setEmail("");
+    },
+    onError: () => toast.error("Something went wrong. Please try again."),
+  });
 
-      {/* ════════════════════════════════════════════════════
-          HERO — Poppi-style: product center stage, bold type, vibrant
-          ════════════════════════════════════════════════════ */}
+  const handleEmailCapture = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    subscribeMutation.mutate({ email });
+  };
+
+  return (
+    <div>
+
+      {/* ═══════════════════════════════════════════════════
+          HERO
+          ═══════════════════════════════════════════════════ */}
       <section ref={heroRef} className="relative h-screen overflow-hidden bg-[#1a0a08]">
-        {/* Background video — dancing/lifestyle, falls back to hero image */}
         <motion.div style={{ scale: heroScale }} className="absolute inset-0">
           <video
-            autoPlay
-            loop
-            muted
-            playsInline
+            autoPlay loop muted playsInline
             poster="/images/hero-can.png"
             className="w-full h-full object-cover"
           >
             <source src="/videos/hero.mp4" type="video/mp4" />
             <source src="/videos/hero.webm" type="video/webm" />
           </video>
-          {/* Fallback image if no video loads */}
           <img
             src="/images/hero-can.png"
-            alt="Kem Original Zobo"
+            alt="KEMZOBO"
             className="absolute inset-0 w-full h-full object-cover"
-            onLoad={(e) => {
-              // Hide image if video is playing
-              const video = (e.target as HTMLElement).parentElement?.querySelector("video");
-              if (video && video.readyState >= 2) {
-                (e.target as HTMLElement).style.display = "none";
-              }
-            }}
           />
         </motion.div>
 
-        {/* Gradient overlays for text contrast over video */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1a0a08] via-[#1a0a08]/40 to-[#1a0a08]/20" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1a0a08]/70 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
 
-        {/* Content pinned to bottom — Poppi style */}
-        <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-end pb-16 lg:pb-20">
+        <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-end pb-16 lg:pb-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <motion.div initial="hidden" animate="visible" variants={stagger}>
-              {/* Bold tagline — massive, punchy, overlapping the product */}
-              <motion.h1
-                variants={fadeUp}
-                className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-[0.95] tracking-tight"
-              >
-                one sip
+              <motion.p variants={fadeUp} className="text-white/60 text-sm uppercase tracking-[0.3em] mb-4">
+                KEMZOBO, The Original Zobo Drink
+              </motion.p>
+
+              <motion.h1 variants={fadeUp} className="font-display text-5xl sm:text-6xl lg:text-8xl font-bold text-white leading-[1]">
+                Original Zobo.
                 <br />
-                <span className="italic text-gold">& you're</span>
-                <br />
-                <span className="text-hibiscus">home.</span>
+                <span className="text-hibiscus">Boldly Refreshing.</span>
               </motion.h1>
 
-              <motion.div variants={fadeUp} className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <motion.p variants={fadeUp} className="mt-6 text-white/70 text-lg max-w-lg">
+                Inspired by traditional zobo, KEMZOBO is a refreshing ready-to-drink
+                hibiscus beverage crafted for modern sipping.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="mt-8">
                 <Link
                   href="/products"
-                  className="group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all hover:shadow-2xl hover:shadow-hibiscus/30"
+                  className="group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all"
                 >
                   Shop Now
                   <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <span className="text-white/50 text-sm uppercase tracking-[0.2em]">
-                  16 FL. OZ &nbsp;•&nbsp; Made with Nature's Finest Hibiscus
-                </span>
               </motion.div>
+
+              <motion.p variants={fadeUp} className="mt-6 text-white/40 text-sm tracking-wider">
+                BOLD hibiscus. Timeless tradition. Ready to drink.
+              </motion.p>
             </motion.div>
           </div>
 
-          {/* Scroll prompt */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}
             className="absolute bottom-4 left-1/2 -translate-x-1/2"
           >
             <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
@@ -106,52 +110,111 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          FLAVOR STRIP — Bold color block like Poppi's product row
-          ════════════════════════════════════════════════════ */}
-      <section className="bg-hibiscus py-5">
-        <div className="max-w-7xl mx-auto px-4 overflow-hidden">
+      {/* ═══════════════════════════════════════════════════
+          WHY KEMZOBO
+          ═══════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            animate={{ x: [0, -1200] }}
-            transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-            className="flex items-center gap-8 whitespace-nowrap"
+            initial="hidden" whileInView="visible" viewport={{ once: true }}
+            variants={stagger}
+            className="text-center mb-16"
           >
-            {[...Array(3)].map((_, i) => (
-              <span key={i} className="flex items-center gap-8 text-white/90 font-display text-lg font-bold uppercase tracking-[0.2em]">
-                <span>Classic</span>
-                <span className="text-gold">✦</span>
-                <span>Ginger</span>
-                <span className="text-gold">✦</span>
-                <span>Pineapple</span>
-                <span className="text-gold">✦</span>
-                <span>Mango</span>
-                <span className="text-gold">✦</span>
-                <span>Cinnamon Spice</span>
-                <span className="text-gold">✦</span>
-                <span>Hibiscus Lemonade</span>
-                <span className="text-gold">✦</span>
-              </span>
-            ))}
+            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold">
+              Why KEMZOBO
+            </motion.h2>
           </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16">
+            {[
+              {
+                title: "Bold Hibiscus Flavor",
+                text: "Bright, tangy, and deeply refreshing with every sip.",
+              },
+              {
+                title: "Made to Enjoy Cold",
+                text: "Best served chilled, over ice, or straight from the can.",
+              },
+              {
+                title: "Simple & Satisfying",
+                text: "Crafted with carefully selected ingredients for great taste and everyday enjoyment.",
+              },
+            ].map((item) => (
+              <motion.div
+                key={item.title}
+                initial="hidden" whileInView="visible" viewport={{ once: true }}
+                variants={fadeUp}
+                className="text-center"
+              >
+                <div className="w-12 h-[2px] bg-hibiscus mx-auto mb-6" />
+                <h3 className="font-display text-xl font-bold text-foreground mb-3">{item.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{item.text}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          PRODUCT CAROUSEL — Poppi-style big product cards
-          ════════════════════════════════════════════════════ */}
+      {/* ═══════════════════════════════════════════════════
+          MORE THAN A DRINK — Brand section
+          ═══════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-[#F7F7F7]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true }}
+              variants={fadeUp}
+              className="rounded-xl overflow-hidden"
+            >
+              <img
+                src="/images/heritage-glass.jpg"
+                alt="KEMZOBO with traditional setting"
+                className="w-full h-[450px] object-cover"
+              />
+            </motion.div>
+
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}
+              variants={stagger}
+            >
+              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold mb-6">
+                More Than a Drink
+              </motion.h2>
+              <motion.p variants={fadeUp} className="text-muted-foreground text-lg leading-relaxed mb-6">
+                KEMZOBO brings a globally loved traditional drink into a modern, ready-to-drink
+                format. It is rooted in culture, designed for convenience, and made to be shared
+                in the moments that matter most — from casual hangouts to family gatherings
+                and celebrations.
+              </motion.p>
+              <motion.div variants={fadeUp}>
+                <Link
+                  href="/about"
+                  className="inline-flex items-center gap-2 text-hibiscus font-semibold hover:underline"
+                >
+                  Read Our Story <ArrowRight className="h-4 w-4" />
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          FEATURED PRODUCTS
+          ═══════════════════════════════════════════════════ */}
       {featured && featured.length > 0 && (
-        <section className="py-20 lg:py-28 bg-background">
+        <section className="py-20 lg:py-28">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={stagger}
               className="text-center mb-14"
             >
-              <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-6xl font-bold text-foreground">
-                find your <span className="italic text-hibiscus">flavor</span>
+              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold">
+                Find Your Flavor
               </motion.h2>
               <motion.p variants={fadeUp} className="mt-4 text-muted-foreground text-lg">
-                Six unique blends. One heritage.
+                A bold and refreshing ready-to-drink hibiscus beverage. Best served cold.
               </motion.p>
             </motion.div>
 
@@ -186,261 +249,152 @@ export default function Home() {
             >
               <Link
                 href="/products"
-                className="group inline-flex items-center gap-2 rounded-full bg-foreground text-background px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus hover:text-white transition-colors"
+                className="group inline-flex items-center gap-2 rounded-full border-2 border-foreground text-foreground px-8 py-3.5 font-semibold hover:bg-foreground hover:text-white transition-colors"
               >
-                View All Flavors
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                View All Products
+                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
           </div>
         </section>
       )}
 
-      {/* ════════════════════════════════════════════════════
-          LIFESTYLE — Full-bleed friends photo, bold overlaid text
-          ════════════════════════════════════════════════════ */}
-      <section className="relative h-[80vh] min-h-[600px]">
+      {/* ═══════════════════════════════════════════════════
+          LIFESTYLE — Made for Real-Life Moments
+          ═══════════════════════════════════════════════════ */}
+      <section className="relative h-[75vh] min-h-[550px]">
         <img
           src="/images/lifestyle-friends.jpg"
-          alt="Friends sharing Kem Zobo"
+          alt="Friends sharing KEMZOBO"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        <div className="absolute inset-0 z-10 flex flex-col justify-end">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-20">
             <motion.div
               initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={stagger}
             >
-              <motion.h2 variants={fadeUp} className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[0.95]">
-                flavor is
-                <br />
-                <span className="italic text-gold">forever.</span>
+              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold text-white mb-4">
+                Made for Real-Life Moments
               </motion.h2>
-              <motion.p variants={fadeUp} className="mt-6 text-white/70 text-lg max-w-md">
-                More than a drink. It's a moment. A memory. A culture shared
-                between friends, old and new.
+              <motion.p variants={fadeUp} className="text-white/70 text-lg max-w-xl">
+                Whether it's brunch with friends, a picnic in the park, a cookout, or a family
+                celebration, KEMZOBO belongs at the table. It's the drink you bring when you
+                want something bold, different, and memorable.
               </motion.p>
-              <motion.div variants={fadeUp} className="mt-8">
-                <Link
-                  href="/about"
-                  className="inline-flex items-center gap-2 text-gold font-bold uppercase tracking-wider hover:text-white transition-colors"
-                >
-                  Our Story <ArrowRight className="h-4 w-4" />
-                </Link>
-              </motion.div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          HERITAGE — Split color block, Poppi-style
-          ════════════════════════════════════════════════════ */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
-        {/* Left: Image */}
-        <div className="relative h-[400px] lg:h-auto">
-          <img
-            src="/images/heritage-glass.jpg"
-            alt="Zobo with traditional Nigerian cap and fabric"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        {/* Right: Content on dark bg */}
-        <div className="bg-ink flex items-center p-10 lg:p-16">
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}
-            variants={stagger}
-          >
-            <motion.p variants={fadeUp} className="text-gold uppercase tracking-[0.3em] text-sm font-bold mb-6">
-              Rooted in Tradition
-            </motion.p>
-            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
-              born from a{" "}
-              <span className="italic text-gold">flower</span>,
-              <br />
-              raised by a{" "}
-              <span className="italic text-gold">culture</span>
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-white/60 text-lg leading-relaxed mb-8">
-              Zobo has been the centerpiece of West African celebrations for centuries.
-              At weddings, naming ceremonies, and quiet evenings alike — always shared,
-              always home.
-            </motion.p>
-            <motion.div variants={fadeUp}>
-              <Link
-                href="/about"
-                className="group inline-flex items-center gap-2 rounded-full bg-gold text-ink px-7 py-3.5 font-bold uppercase tracking-wider hover:bg-gold-light transition-colors"
-              >
-                Read Our Story
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════
-          BENEFITS — Bold numbered cards on vibrant bg
-          ════════════════════════════════════════════════════ */}
-      <section className="py-20 lg:py-28 bg-gold-light/30">
+      {/* ═══════════════════════════════════════════════════
+          HOW TO ENJOY
+          ═══════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true }}
-            variants={stagger}
-            className="text-center mb-16"
-          >
-            <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-6xl font-bold text-foreground lowercase">
-              good for <span className="italic text-hibiscus">you</span>, good for <span className="italic text-earth-green">real</span>
-            </motion.h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { num: "01", title: "100% Natural", desc: "Hand-selected hibiscus flowers. No artificial anything.", bg: "bg-hibiscus", text: "text-white" },
-              { num: "02", title: "Packed with Vitamin C", desc: "Antioxidants that support your health — naturally.", bg: "bg-earth-green", text: "text-white" },
-              { num: "03", title: "Zero Added Sugar", desc: "Just hibiscus, natural spices, and pure water.", bg: "bg-foreground", text: "text-background" },
-            ].map((card) => (
-              <motion.div
-                key={card.num}
-                initial="hidden" whileInView="visible" viewport={{ once: true }}
-                variants={fadeUp}
-                className={`${card.bg} ${card.text} rounded-2xl p-10 lg:p-12`}
-              >
-                <span className="font-display text-6xl font-bold opacity-20">{card.num}</span>
-                <h3 className="font-display text-2xl font-bold mt-4 mb-3">{card.title}</h3>
-                <p className="opacity-80 text-lg leading-relaxed">{card.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════
-          PULL QUOTE — Bar glass atmosphere
-          ════════════════════════════════════════════════════ */}
-      <section className="relative h-[60vh] min-h-[400px]">
-        <img
-          src="/images/bar-glass.jpg"
-          alt="Zobo at a bar"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true }}
-            variants={fadeUp}
-            className="text-center px-4"
-          >
-            <p className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white italic leading-tight max-w-3xl">
-              "it tastes like home —
-              <br />
-              even if you've never been."
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════
-          TROPICAL — Full-bleed with overlaid text
-          ════════════════════════════════════════════════════ */}
-      <section className="relative h-[70vh] min-h-[500px]">
-        <img
-          src="/images/tropical-glass.jpg"
-          alt="Zobo in a tropical setting"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <motion.div
-              initial="hidden" whileInView="visible" viewport={{ once: true }}
+              initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }}
               variants={stagger}
             >
-              <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-7xl font-bold text-white leading-[0.95]">
-                naturally
-                <br />
-                <span className="italic text-gold">refreshing.</span>
+              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold mb-8">
+                How to Enjoy
               </motion.h2>
-              <motion.p variants={fadeUp} className="mt-6 text-white/70 text-lg max-w-md">
-                Clean, vibrant, and crafted from nature's finest hibiscus flowers.
-                16 FL. OZ of pure refreshment.
-              </motion.p>
-              <motion.div variants={fadeUp} className="mt-8">
-                <Link
-                  href="/products"
-                  className="group inline-flex items-center gap-3 rounded-full bg-white text-hibiscus px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-cream transition-colors"
-                >
-                  Order Now
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </motion.div>
+
+              {[
+                "Straight from the can",
+                "Poured over ice",
+                "Shared at gatherings",
+                "Enjoyed anytime you want something refreshing and different",
+              ].map((item, i) => (
+                <motion.div key={i} variants={fadeUp} className="flex items-center gap-4 mb-5">
+                  <span className="w-8 h-8 rounded-full bg-hibiscus/10 text-hibiscus font-bold text-sm flex items-center justify-center flex-shrink-0">
+                    {i + 1}
+                  </span>
+                  <p className="text-muted-foreground text-lg">{item}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true }}
+              variants={fadeUp}
+              className="rounded-xl overflow-hidden"
+            >
+              <img
+                src="/images/tropical-glass.jpg"
+                alt="KEMZOBO poured over ice"
+                className="w-full h-[450px] object-cover"
+              />
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          WHOLESALE — Color block CTA
-          ════════════════════════════════════════════════════ */}
-      <section className="bg-ink text-white py-20 lg:py-24">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      {/* ═══════════════════════════════════════════════════
+          EMAIL CAPTURE
+          ═══════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-24 bg-[#F7F7F7]">
+        <div className="max-w-2xl mx-auto px-4 text-center">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={stagger}
           >
-            <motion.p variants={fadeUp} className="text-gold uppercase tracking-[0.3em] text-sm font-bold mb-4">
-              For Business
-            </motion.p>
-            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold leading-tight mb-6">
-              carry <span className="italic text-gold">Kem Zobo</span>
-              <br />at your store or event
+            <motion.h2 variants={fadeUp} className="font-display text-3xl lg:text-4xl font-bold mb-4">
+              Stay Connected With KEMZOBO
             </motion.h2>
-            <motion.p variants={fadeUp} className="text-white/50 text-lg max-w-xl mx-auto mb-10">
-              Bulk pricing available. Stores, restaurants, events, distributors welcome.
+            <motion.p variants={fadeUp} className="text-muted-foreground text-lg mb-8">
+              Be the first to know about new drops, special offers, and where KEMZOBO
+              is showing up next.
             </motion.p>
-            <motion.div variants={fadeUp}>
-              <Link
-                href="/wholesale"
-                className="group inline-flex items-center gap-3 rounded-full bg-gold text-ink px-10 py-4 font-bold text-lg uppercase tracking-wider hover:bg-gold-light transition-colors"
-              >
-                Wholesale Inquiry
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </motion.div>
+
+            {emailSubmitted ? (
+              <motion.p variants={fadeUp} className="text-hibiscus font-semibold text-lg">
+                You're in! We'll keep you updated.
+              </motion.p>
+            ) : (
+              <motion.form variants={fadeUp} onSubmit={handleEmailCapture} className="flex gap-3 max-w-md mx-auto">
+                <input
+                  type="email"
+                  required
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1 rounded-full border border-border bg-white px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus"
+                />
+                <button
+                  type="submit"
+                  className="rounded-full bg-hibiscus text-white px-6 py-3 font-semibold text-sm hover:bg-hibiscus-light transition-colors"
+                >
+                  Sign Up
+                </button>
+              </motion.form>
+            )}
           </motion.div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════════════════
-          FINAL CTA — Hibiscus red block
-          ════════════════════════════════════════════════════ */}
-      <section className="bg-hibiscus text-white py-20 lg:py-28 relative overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-white/5" />
-        <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-white/5" />
-
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+      {/* ═══════════════════════════════════════════════════
+          FINAL CTA
+          ═══════════════════════════════════════════════════ */}
+      <section className="py-20 lg:py-28 bg-hibiscus text-white">
+        <div className="max-w-3xl mx-auto px-4 text-center">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}
             variants={stagger}
           >
-            <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-7xl font-bold leading-[0.95] mb-8">
-              ready to taste
-              <br />
-              the <span className="italic">heritage</span>?
+            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold mb-6">
+              Ready to Experience KEMZOBO?
             </motion.h2>
-
-            <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
+            <motion.div variants={fadeUp}>
               <Link
                 href="/products"
-                className="group inline-flex items-center gap-3 rounded-full bg-white text-hibiscus px-10 py-4 font-bold text-lg uppercase tracking-wider hover:bg-cream transition-colors hover:shadow-xl"
+                className="group inline-flex items-center gap-3 rounded-full bg-white text-hibiscus px-10 py-4 font-bold text-lg uppercase tracking-wider hover:bg-gray-100 transition-colors"
               >
-                Order Now
+                Shop Now
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
-
-            <motion.p variants={fadeUp} className="mt-8 text-white/40 text-sm uppercase tracking-wider">
-              Free delivery on orders over $50 &nbsp;•&nbsp; Bulk pricing available
-            </motion.p>
           </motion.div>
         </div>
       </section>

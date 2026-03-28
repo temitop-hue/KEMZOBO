@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/products", label: "Products" },
-  { href: "/about", label: "About" },
-  { href: "/wholesale", label: "Wholesale" },
+  { href: "/products", label: "Shop" },
+  { href: "/about", label: "Our Story" },
+  { href: "/gallery", label: "Gallery" },
+  { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -18,14 +18,14 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-border">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <img
               src="/images/logo.png"
-              alt="Kem Original Zobo"
+              alt="KEMZOBO"
               className="h-10 w-auto"
             />
           </Link>
@@ -37,10 +37,10 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-hibiscus",
+                  "text-sm font-medium tracking-wide transition-colors hover:text-hibiscus",
                   location === link.href
                     ? "text-hibiscus"
-                    : "text-muted-foreground"
+                    : "text-foreground/70"
                 )}
               >
                 {link.label}
@@ -51,11 +51,11 @@ export default function Navbar() {
           {/* Right side */}
           <div className="flex items-center gap-4">
             <Link href="/login" className="hidden md:block">
-              <User className="h-5 w-5 text-muted-foreground hover:text-hibiscus transition-colors" />
+              <User className="h-5 w-5 text-foreground/50 hover:text-hibiscus transition-colors" />
             </Link>
 
             <Link href="/cart" className="relative">
-              <ShoppingCart className="h-5 w-5 text-muted-foreground hover:text-hibiscus transition-colors" />
+              <ShoppingCart className="h-5 w-5 text-foreground/50 hover:text-hibiscus transition-colors" />
               {itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-hibiscus text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {itemCount}
@@ -63,16 +63,11 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Mobile toggle */}
             <button
               className="md:hidden"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
-              {mobileOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
@@ -86,9 +81,7 @@ export default function Navbar() {
                 href={link.href}
                 className={cn(
                   "block py-2 text-sm font-medium transition-colors",
-                  location === link.href
-                    ? "text-hibiscus"
-                    : "text-muted-foreground"
+                  location === link.href ? "text-hibiscus" : "text-foreground/70"
                 )}
                 onClick={() => setMobileOpen(false)}
               >
@@ -97,7 +90,7 @@ export default function Navbar() {
             ))}
             <Link
               href="/login"
-              className="block py-2 text-sm font-medium text-muted-foreground"
+              className="block py-2 text-sm font-medium text-foreground/70"
               onClick={() => setMobileOpen(false)}
             >
               Account

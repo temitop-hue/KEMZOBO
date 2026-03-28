@@ -10,6 +10,7 @@ import {
   orderItems,
   wholesaleRequests,
   contactMessages,
+  emailSubscribers,
   type NewUser,
   type NewProduct,
   type NewProductVariant,
@@ -18,6 +19,7 @@ import {
   type NewOrderItem,
   type NewWholesaleRequest,
   type NewContactMessage,
+  type NewEmailSubscriber,
 } from "../drizzle/schema";
 
 let dbInstance: ReturnType<typeof drizzle> | null = null;
@@ -242,4 +244,18 @@ export async function getAllContactMessages() {
 export async function updateContactMessage(id: number, data: Partial<NewContactMessage>) {
   const db = getDb();
   await db.update(contactMessages).set(data).where(eq(contactMessages.id, id));
+}
+
+// ─── Email Subscribers ───────────────────────────────────
+export async function subscribeEmail(email: string): Promise<number> {
+  const db = getDb();
+  const [existing] = await db.select().from(emailSubscribers).where(eq(emailSubscribers.email, email));
+  if (existing) return existing.id;
+  const result = await db.insert(emailSubscribers).values({ email });
+  return Number((result as any).insertId);
+}
+
+export async function getAllSubscribers() {
+  const db = getDb();
+  return db.select().from(emailSubscribers);
 }

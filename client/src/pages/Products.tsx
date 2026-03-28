@@ -13,11 +13,12 @@ export default function Products() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-        Our Drinks
+      <h1 className="font-display text-4xl font-bold text-foreground mb-3">
+        Shop KEMZOBO
       </h1>
-      <p className="text-muted-foreground mb-8">
-        Premium hibiscus drinks in a variety of flavors.
+      <p className="text-muted-foreground text-lg mb-8">
+        Explore KEMZOBO, THE ORIGINAL ZOBO DRINK — a bold, refreshing ready-to-drink
+        hibiscus beverage inspired by tradition and made for modern moments.
       </p>
 
       {/* Category Filter */}

@@ -160,3 +160,13 @@ export const contactMessages = mysqlTable("contact_messages", {
 
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type NewContactMessage = typeof contactMessages.$inferInsert;
+
+// ─── Email Subscribers ───────────────────────────────────
+export const emailSubscribers = mysqlTable("email_subscribers", {
+  id: int().autoincrement().primaryKey(),
+  email: varchar({ length: 320 }).unique().notNull(),
+  createdAt: timestamp().defaultNow(),
+});
+
+export type EmailSubscriber = typeof emailSubscribers.$inferSelect;
+export type NewEmailSubscriber = typeof emailSubscribers.$inferInsert;

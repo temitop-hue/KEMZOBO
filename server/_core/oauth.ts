@@ -127,12 +127,12 @@ export function registerOAuthRoutes(app: Express) {
 
       await sendEmail({
         to: email,
-        subject: "Reset Your Password - Kem Original Zobo",
+        subject: "Reset Your Password - KEMZOBO",
         content: `You requested a password reset. Click this link to reset your password: ${resetLink}\n\nThis link expires in 1 hour.`,
         html: `
           <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
             <h2 style="color: #7C2D12;">Reset Your Password</h2>
-            <p>You requested a password reset for your Kem Original Zobo account.</p>
+            <p>You requested a password reset for your KEMZOBO account.</p>
             <a href="${resetLink}" style="display: inline-block; background: #7C2D12; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500;">Reset Password</a>
             <p style="margin-top: 24px; color: #666; font-size: 14px;">This link expires in 1 hour. If you didn't request this, you can safely ignore this email.</p>
           </div>

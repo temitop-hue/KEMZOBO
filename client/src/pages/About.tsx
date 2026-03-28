@@ -1,141 +1,124 @@
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+};
 
 export default function About() {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-hibiscus/5 to-gold-light/30 py-16 lg:py-24">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            Our <span className="italic text-hibiscus">Story</span>
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Infusing heritage, culture, and themes that reflect everyday living —
-            <span className="italic"> Kem</span> Original Zobo brings authentic hibiscus refreshment to your doorstep.
-          </p>
-        </div>
-      </section>
-
-      {/* Heritage story with image */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="font-display text-3xl font-bold text-foreground mb-4">
-              The Hibiscus Heritage
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-4">
-              Zobo is a beloved hibiscus drink that has been a staple in West African culture for
-              generations. Made from dried hibiscus flowers (Hibiscus sabdariffa), it's known for
-              its vibrant deep red color, tangy-sweet flavor, and incredible health benefits.
+      <section className="py-20 lg:py-28">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+            <p className="text-hibiscus text-sm uppercase tracking-[0.3em] font-medium mb-4">
+              Our Story
             </p>
-            <p className="text-muted-foreground leading-relaxed">
-              From family gatherings to celebrations, Zobo brings people together. At
-              <span className="italic"> Kem</span> Original Zobo, we've brought this cherished
-              tradition to a convenient 16 oz can — so you can enjoy it anywhere, anytime.
+            <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-8">
+              Bold Flavor. Cultural Roots. Modern Life.
+            </h1>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              KEMZOBO was born from a desire to bring something rooted in culture into a format
+              that feels natural for modern life. Inspired by traditional zobo — a hibiscus drink
+              enjoyed across generations and known in different places by names like sorrel and
+              bissap — KEMZOBO transforms a familiar, globally loved experience into a convenient
+              ready-to-drink beverage.
             </p>
-          </div>
-          <div className="rounded-2xl overflow-hidden shadow-xl">
-            <img
-              src="/images/heritage-glass.jpg"
-              alt="Zobo drink with traditional Nigerian cap and fabric"
-              className="w-full h-[380px] object-cover"
-            />
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Health benefits */}
-      <section className="bg-gold-light/30 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="rounded-2xl overflow-hidden shadow-xl order-2 lg:order-1">
-              <img
-                src="/images/tropical-glass.jpg"
-                alt="Zobo drink in natural tropical setting"
-                className="w-full h-[380px] object-cover"
-              />
-            </div>
-            <div className="order-1 lg:order-2">
-              <h2 className="font-display text-3xl font-bold text-foreground mb-6">
-                Health Benefits of Hibiscus
-              </h2>
-              <ul className="space-y-4 text-muted-foreground">
-                <li className="flex items-start gap-3">
-                  <span className="text-earth-green font-bold text-lg">+</span>
-                  <span>Rich in Vitamin C and powerful antioxidants</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-earth-green font-bold text-lg">+</span>
-                  <span>Supports healthy blood pressure levels</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-earth-green font-bold text-lg">+</span>
-                  <span>Aids digestion and metabolism</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-earth-green font-bold text-lg">+</span>
-                  <span>Naturally caffeine-free</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-earth-green font-bold text-lg">+</span>
-                  <span>Low in calories, no added sugars</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+      {/* Image break */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <motion.div
+          initial="hidden" whileInView="visible" viewport={{ once: true }}
+          variants={fadeUp}
+          className="rounded-xl overflow-hidden"
+        >
+          <img
+            src="/images/heritage-glass.jpg"
+            alt="KEMZOBO heritage"
+            className="w-full h-[400px] lg:h-[500px] object-cover"
+          />
+        </motion.div>
       </section>
 
-      {/* Lifestyle / community */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="font-display text-3xl font-bold text-foreground mb-4">
+      {/* Mission */}
+      <section className="py-20 lg:py-28 bg-[#F7F7F7]">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true }}
+            variants={fadeUp}
+          >
+            <h2 className="font-display text-3xl lg:text-4xl font-bold mb-6">
               Our Mission
             </h2>
-            <p className="text-muted-foreground leading-relaxed mb-4">
-              Making <span className="italic">Kem</span> Zobo the leading brand in its niche and the go-to
-              choice for healthy nutrition and hydration. Each 16 oz can is crafted with care,
-              using premium hibiscus flowers and natural ingredients.
+            <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+              Our mission is to bring the bold, refreshing taste of zobo into everyday moments —
+              offering a flavorful, ready-to-drink beverage that fits effortlessly wherever people
+              gather, celebrate, and connect.
             </p>
-            <p className="text-muted-foreground leading-relaxed">
-              No artificial flavors. No preservatives. Just 473 ml of pure, refreshing
-              heritage — connecting communities through the taste of tradition.
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              Today, the brand stands for bold flavor, cultural authenticity, and the simple joy of
+              sharing something different at the moments that bring people together.
             </p>
-          </div>
-          <div className="rounded-2xl overflow-hidden shadow-xl">
-            <img
-              src="/images/lifestyle-friends.jpg"
-              alt="Friends enjoying Kem Zobo drinks together"
-              className="w-full h-[380px] object-cover"
-            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Lifestyle positioning */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true }}
+              variants={fadeUp}
+            >
+              <h2 className="font-display text-3xl lg:text-4xl font-bold mb-6">
+                It Belongs at the Table
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                KEMZOBO isn't trying to replace the moment — it's here to expand it. At cookouts,
+                parties, family gatherings, brunches, and celebrations, people reach for familiar
+                drinks. KEMZOBO belongs right there — chilled, poured, and enjoyed alongside
+                everything else on the table.
+              </p>
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                With its bold hibiscus flavor and refreshing finish, KEMZOBO brings something
+                different to the mix without asking anyone to change how they celebrate.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial="hidden" whileInView="visible" viewport={{ once: true }}
+              variants={fadeUp}
+              className="rounded-xl overflow-hidden"
+            >
+              <img
+                src="/images/lifestyle-friends.jpg"
+                alt="Friends sharing KEMZOBO"
+                className="w-full h-[400px] object-cover"
+              />
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Bar glass — full width */}
-      <section className="relative h-[350px] overflow-hidden">
-        <img
-          src="/images/bar-glass.jpg"
-          alt="Zobo drink beautifully presented"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <h2 className="font-display text-3xl font-bold text-white mb-3">
-              Taste the Tradition
-            </h2>
-            <p className="text-white/80 mb-6 max-w-md">
-              Fostering storytelling and connection with every sip.
-            </p>
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-2 rounded-lg bg-white text-hibiscus px-6 py-3 font-bold hover:bg-cream transition-colors"
-            >
-              Shop Our Drinks <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+      {/* CTA */}
+      <section className="py-16 bg-hibiscus text-white text-center">
+        <div className="max-w-3xl mx-auto px-4">
+          <h2 className="font-display text-3xl font-bold mb-6">
+            Ready to Experience KEMZOBO?
+          </h2>
+          <Link
+            href="/products"
+            className="group inline-flex items-center gap-2 rounded-full bg-white text-hibiscus px-8 py-4 font-bold hover:bg-gray-100 transition-colors"
+          >
+            Shop Now <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
       </section>
     </div>

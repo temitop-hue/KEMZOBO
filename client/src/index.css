@@ -1,21 +1,20 @@
 /*
- * Kem Original Zobo — Design System
- * Aligned with JEHOFILMS brand campaign deck
+ * KEMZOBO — Design System
+ * Clean, modern, premium lifestyle beverage
  *
- * Brand: Lifestyle hibiscus beverage — heritage, culture, healthy hydration
- *
- * Color Palette (from campaign):
- * - Kem Red: #C41E1E (vivid, warm red — headlines & CTAs)
- * - Cream: #FAF0E6 (warm linen background)
- * - Soft Gold: #FDE68A (accent highlight panels)
- * - Ink: #1C1917 (body text)
- * - Earthy Green: #166534 (health/nature accents)
+ * Color Palette:
+ * - Background: #FFFFFF (white)
+ * - Hibiscus Red: #B91C1C (primary accent)
+ * - Ink: #111111 (headings)
+ * - Body: #555555 (body text)
+ * - Light Gray: #F7F7F7 (section backgrounds)
+ * - Border: #E5E5E5
  *
  * Typography:
- * - Headlines: Playfair Display (elegant serif — matches campaign deck)
+ * - Headlines: Playfair Display (serif)
  * - Body: DM Sans (clean, modern)
  *
- * Product: 16 FL. OZ (473 ML) cans
+ * Inspiration: Poppi, Olipop, Coca-Cola
  */
 
 @import "tailwindcss";
@@ -70,87 +69,56 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Brand colors — matched to campaign deck */
-  --color-hibiscus: oklch(0.52 0.2 25);       /* #C41E1E vivid warm red */
-  --color-hibiscus-light: oklch(0.58 0.18 25);
-  --color-hibiscus-dark: oklch(0.42 0.18 25);
-  --color-gold: oklch(0.82 0.12 85);          /* Soft gold accent */
-  --color-gold-light: oklch(0.92 0.08 90);    /* Light gold panel bg */
-  --color-cream: oklch(0.96 0.02 80);         /* #FAF0E6 warm linen */
-  --color-earth-green: oklch(0.45 0.12 155);
-  --color-ink: oklch(0.15 0.02 50);
+  /* Brand colors */
+  --color-hibiscus: #B91C1C;
+  --color-hibiscus-light: #DC2626;
+  --color-hibiscus-dark: #991B1B;
+  --color-gold: #D4A843;
+  --color-gold-light: #F5E6C8;
+  --color-cream: #FAFAF8;
+  --color-earth-green: #166534;
+  --color-ink: #111111;
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.5rem;
 
-  /* Warm linen + red theme — campaign deck aligned */
-  --background: oklch(0.96 0.02 80);       /* Warm linen cream #FAF0E6 */
-  --foreground: oklch(0.15 0.02 50);       /* Near-black ink */
-  --card: oklch(0.98 0.015 80);            /* Slightly lighter cream */
-  --card-foreground: oklch(0.15 0.02 50);
-  --popover: oklch(0.98 0.015 80);
-  --popover-foreground: oklch(0.15 0.02 50);
-  --primary: oklch(0.52 0.2 25);           /* Kem Red #C41E1E */
-  --primary-foreground: oklch(0.98 0.01 80);
-  --secondary: oklch(0.92 0.03 80);
-  --secondary-foreground: oklch(0.25 0.04 50);
-  --muted: oklch(0.92 0.02 80);
-  --muted-foreground: oklch(0.48 0.03 50);
-  --accent: oklch(0.92 0.08 90);           /* Soft gold panel */
-  --accent-foreground: oklch(0.15 0.02 50);
-  --destructive: oklch(0.52 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 80);
-  --border: oklch(0.88 0.03 80);
-  --input: oklch(0.88 0.03 80);
-  --ring: oklch(0.52 0.2 25);
+  /* White-first premium theme */
+  --background: #FFFFFF;
+  --foreground: #111111;
+  --card: #FFFFFF;
+  --card-foreground: #111111;
+  --popover: #FFFFFF;
+  --popover-foreground: #111111;
+  --primary: #B91C1C;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F7F7F7;
+  --secondary-foreground: #333333;
+  --muted: #F7F7F7;
+  --muted-foreground: #777777;
+  --accent: #F7F7F7;
+  --accent-foreground: #111111;
+  --destructive: #B91C1C;
+  --destructive-foreground: #FFFFFF;
+  --border: #E5E5E5;
+  --input: #E5E5E5;
+  --ring: #B91C1C;
 
-  --sidebar-background: oklch(0.96 0.02 90);
-  --sidebar-foreground: oklch(0.3 0.03 50);
-  --sidebar-primary: oklch(0.45 0.15 25);
-  --sidebar-primary-foreground: oklch(0.98 0.01 90);
-  --sidebar-accent: oklch(0.92 0.04 75);
-  --sidebar-accent-foreground: oklch(0.3 0.03 50);
-  --sidebar-border: oklch(0.88 0.03 75);
-  --sidebar-ring: oklch(0.45 0.15 25);
-}
-
-.dark {
-  --background: oklch(0.15 0.02 50);
-  --foreground: oklch(0.95 0.02 90);
-  --card: oklch(0.18 0.02 50);
-  --card-foreground: oklch(0.95 0.02 90);
-  --popover: oklch(0.18 0.02 50);
-  --popover-foreground: oklch(0.95 0.02 90);
-  --primary: oklch(0.6 0.15 25);
-  --primary-foreground: oklch(0.1 0.01 50);
-  --secondary: oklch(0.25 0.03 50);
-  --secondary-foreground: oklch(0.9 0.02 90);
-  --muted: oklch(0.25 0.02 50);
-  --muted-foreground: oklch(0.65 0.03 50);
-  --accent: oklch(0.7 0.12 75);
-  --accent-foreground: oklch(0.1 0.01 50);
-  --destructive: oklch(0.55 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 90);
-  --border: oklch(0.3 0.02 50);
-  --input: oklch(0.3 0.02 50);
-  --ring: oklch(0.6 0.15 25);
-
-  --sidebar-background: oklch(0.15 0.02 50);
-  --sidebar-foreground: oklch(0.9 0.02 90);
-  --sidebar-primary: oklch(0.6 0.15 25);
-  --sidebar-primary-foreground: oklch(0.1 0.01 50);
-  --sidebar-accent: oklch(0.22 0.03 50);
-  --sidebar-accent-foreground: oklch(0.9 0.02 90);
-  --sidebar-border: oklch(0.3 0.02 50);
-  --sidebar-ring: oklch(0.6 0.15 25);
+  --sidebar-background: #FAFAFA;
+  --sidebar-foreground: #333333;
+  --sidebar-primary: #B91C1C;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F5F5F5;
+  --sidebar-accent-foreground: #333333;
+  --sidebar-border: #E5E5E5;
+  --sidebar-ring: #B91C1C;
 }
 
 /* ─── Base Styles ──────────────────────────────────────── */
 body {
   font-family: var(--font-sans);
   background-color: var(--background);
-  color: var(--foreground);
+  color: #555555;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -158,11 +126,12 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 700;
+  color: var(--foreground);
 }
 
 /* ─── Scrollbar ────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -170,10 +139,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.7 0.05 75);
-  border-radius: 4px;
+  background: #D4D4D4;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.6 0.05 75);
+  background: #AAAAAA;
 }
