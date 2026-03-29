@@ -4,7 +4,7 @@ import { trpc } from "@/lib/trpc";
 import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/contexts/CartContext";
 import { motion, type Variants, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 
 const fadeUp: Variants = {
@@ -14,6 +14,142 @@ const fadeUp: Variants = {
 const stagger: Variants = {
   visible: { transition: { staggerChildren: 0.15 } },
 };
+
+// ─── Hero Slideshow ───────────────────────────────────────
+const heroSlides = [
+  { src: "/images/hero-can.png", alt: "KEMZOBO can and glass", kenBurns: "scale-105" },
+  { src: "/images/lifestyle-friends.jpg", alt: "Friends sharing KEMZOBO", kenBurns: "scale-110 translate-x-2" },
+  { src: "/images/hero-can-alt.png", alt: "KEMZOBO product", kenBurns: "scale-105 -translate-x-1" },
+  { src: "/images/tropical-glass.jpg", alt: "KEMZOBO refreshment", kenBurns: "scale-110 translate-y-2" },
+  { src: "/images/heritage-glass.jpg", alt: "KEMZOBO heritage", kenBurns: "scale-105 translate-x-1" },
+  { src: "/images/bar-glass.jpg", alt: "KEMZOBO at a gathering", kenBurns: "scale-110 -translate-y-1" },
+];
+
+function HeroSlideshow({
+  heroRef,
+  heroScale,
+  heroOpacity,
+}: {
+  heroRef: React.RefObject<HTMLElement | null>;
+  heroScale: any;
+  heroOpacity: any;
+}) {
+  const [current, setCurrent] = useState(0);
+  const [loaded, setLoaded] = useState<Set<number>>(new Set([0]));
+
+  const advance = useCallback(() => {
+    setCurrent((prev) => {
+      const next = (prev + 1) % heroSlides.length;
+      setLoaded((s) => new Set(s).add(next));
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(advance, 5000);
+    return () => clearInterval(timer);
+  }, [advance]);
+
+  // Preload next image
+  useEffect(() => {
+    const next = (current + 1) % heroSlides.length;
+    if (!loaded.has(next)) {
+      const img = new Image();
+      img.src = heroSlides[next].src;
+      setLoaded((s) => new Set(s).add(next));
+    }
+  }, [current, loaded]);
+
+  return (
+    <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0f0806]">
+      {/* Crossfade image layers */}
+      <motion.div style={{ scale: heroScale }} className="absolute inset-0">
+        {heroSlides.map((slide, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 transition-opacity duration-[1500ms] ease-in-out"
+            style={{ opacity: i === current ? 1 : 0 }}
+          >
+            <img
+              src={slide.src}
+              alt={slide.alt}
+              className={`w-full h-full object-cover transition-transform duration-[6000ms] ease-out ${
+                i === current ? slide.kenBurns : "scale-100"
+              }`}
+            />
+          </div>
+        ))}
+      </motion.div>
+
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806] via-[#0f0806]/40 to-[#0f0806]/15 z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0f0806]/70 via-[#0f0806]/25 to-transparent z-[1]" />
+
+      {/* Content */}
+      <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-between">
+        {/* Top: Logo */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 lg:pt-28">
+          <motion.img
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            src="/images/logo-dark.png"
+            alt="KEMZOBO"
+            className="h-14 lg:h-16 w-auto"
+          />
+        </div>
+
+        {/* Bottom: Headline + CTAs */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-20 lg:pb-28">
+          <motion.div initial="hidden" animate="visible" variants={stagger}>
+            <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.05] max-w-3xl">
+              Original Zobo.
+              <br />
+              <span className="text-hibiscus">Boldly</span> Refreshing.
+            </motion.h1>
+
+            <motion.p variants={fadeUp} className="mt-6 text-white/60 text-lg lg:text-xl max-w-xl leading-relaxed">
+              Made for the moments that bring people together.
+              Bold hibiscus. Timeless tradition. Ready to drink.
+            </motion.p>
+
+            {/* Dual CTAs */}
+            <motion.div variants={fadeUp} className="mt-10 flex flex-wrap gap-4">
+              <Link
+                href="/products"
+                className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all"
+              >
+                Shop Now
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+              </Link>
+              <Link
+                href="/wholesale"
+                className="btn-primary inline-flex items-center gap-3 rounded-full border-2 border-white/30 text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:border-white hover:bg-white/10 transition-all"
+              >
+                Order in Bulk
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Slide indicators */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={`transition-all duration-500 rounded-full ${
+                i === current
+                  ? "w-8 h-2 bg-hibiscus"
+                  : "w-2 h-2 bg-white/30 hover:bg-white/50"
+              }`}
+            />
+          ))}
+        </div>
+      </motion.div>
+    </section>
+  );
+}
 
 export default function Home() {
   const { data: featured } = trpc.products.featured.useQuery();
@@ -44,112 +180,10 @@ export default function Home() {
     <div>
 
       {/* ═══════════════════════════════════════════════════
-          HERO — Lifestyle-driven, warm social gathering
-          Video: gathering → pouring → laughter → product shot
-          Static fallback: lifestyle friends image
+          HERO — Crossfade slideshow: can & glass as hero,
+          lifestyle images transitioning behind
           ═══════════════════════════════════════════════════ */}
-      <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0f0806]">
-        {/* Layer 1: Lifestyle video/image — the gathering */}
-        <motion.div style={{ scale: heroScale }} className="absolute inset-0">
-          <video
-            autoPlay loop muted playsInline
-            poster="/images/lifestyle-friends.jpg"
-            className="w-full h-full object-cover"
-          >
-            <source src="/videos/hero.mp4" type="video/mp4" />
-            <source src="/videos/hero.webm" type="video/webm" />
-          </video>
-          {/* Static fallback: the lifestyle friends gathering */}
-          <img
-            src="/images/lifestyle-friends.jpg"
-            alt="Friends sharing KEMZOBO at a gathering"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </motion.div>
-
-        {/* Layer 2: Warm gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806] via-[#0f0806]/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0f0806]/70 via-[#0f0806]/30 to-transparent" />
-        {/* Warm color wash */}
-        <div className="absolute inset-0 bg-[#1a0500]/20 mix-blend-multiply" />
-
-        {/* Layer 3: Content */}
-        <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-between">
-          {/* Top: Logo */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 lg:pt-28">
-            <motion.img
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              src="/images/logo-dark.png"
-              alt="KEMZOBO"
-              className="h-14 lg:h-16 w-auto"
-            />
-          </div>
-
-          {/* Bottom: Headline + CTAs */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-20 lg:pb-28">
-            <motion.div initial="hidden" animate="visible" variants={stagger}>
-              <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.05] max-w-3xl">
-                Original Zobo.
-                <br />
-                <span className="text-hibiscus">Boldly</span> Refreshing.
-              </motion.h1>
-
-              <motion.p variants={fadeUp} className="mt-6 text-white/60 text-lg lg:text-xl max-w-xl leading-relaxed">
-                Made for the moments that bring people together.
-                Bold hibiscus. Timeless tradition. Ready to drink.
-              </motion.p>
-
-              {/* Dual CTAs */}
-              <motion.div variants={fadeUp} className="mt-10 flex flex-wrap gap-4">
-                <Link
-                  href="/products"
-                  className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all"
-                >
-                  Shop Now
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
-                </Link>
-                <Link
-                  href="/wholesale"
-                  className="btn-primary inline-flex items-center gap-3 rounded-full border-2 border-white/30 text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:border-white hover:bg-white/10 transition-all"
-                >
-                  Order in Bulk
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* Floating product badge — bottom right */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="absolute bottom-24 right-8 lg:bottom-28 lg:right-16 hidden md:block"
-          >
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-              <img
-                src="/images/hero-can.png"
-                alt="KEMZOBO can"
-                className="h-28 lg:h-36 w-auto object-contain drop-shadow-2xl"
-              />
-              <p className="text-white/70 text-xs text-center mt-2 uppercase tracking-wider">16 FL. OZ</p>
-            </div>
-          </motion.div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2.5 }}
-            className="absolute bottom-6 left-1/2 -translate-x-1/2"
-          >
-            <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-              <ChevronDown className="h-6 w-6 text-white/20" />
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      </section>
+      <HeroSlideshow heroRef={heroRef} heroScale={heroScale} heroOpacity={heroOpacity} />
 
       {/* ═══════════════════════════════════════════════════
           WHY KEMZOBO
