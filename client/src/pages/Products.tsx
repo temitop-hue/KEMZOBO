@@ -3,6 +3,7 @@ import { trpc } from "@/lib/trpc";
 import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/contexts/CartContext";
 import { PRODUCT_CATEGORIES } from "@shared/const";
+import { Truck } from "lucide-react";
 
 export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
@@ -12,23 +13,36 @@ export default function Products() {
   const { addItem } = useCart();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="font-display text-4xl font-bold text-foreground mb-3">
-        Shop KEMZOBO
-      </h1>
-      <p className="text-muted-foreground text-lg mb-8">
-        Explore KEMZOBO, THE ORIGINAL ZOBO DRINK — a bold, refreshing ready-to-drink
-        hibiscus beverage inspired by tradition and made for modern moments.
-      </p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+      {/* Intro */}
+      <div className="max-w-2xl mb-12">
+        <p className="text-hibiscus text-sm uppercase tracking-[0.3em] font-medium mb-4">Shop</p>
+        <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-4">
+          KEMZOBO, THE ORIGINAL ZOBO DRINK
+        </h1>
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          Explore KEMZOBO, THE ORIGINAL ZOBO DRINK — a bold, refreshing ready-to-drink
+          hibiscus beverage inspired by tradition and made for modern moments. Shop online
+          and have KEMZOBO delivered nationwide.
+        </p>
+      </div>
+
+      {/* Delivery banner */}
+      <div className="flex items-center gap-3 bg-[#F7F7F7] rounded-xl px-5 py-3 mb-8 text-sm">
+        <Truck className="h-5 w-5 text-hibiscus flex-shrink-0" />
+        <span className="text-muted-foreground">
+          <span className="font-semibold text-foreground">Free delivery</span> on orders over $250. Ships nationwide.
+        </span>
+      </div>
 
       {/* Category Filter */}
-      <div className="flex flex-wrap gap-2 mb-8">
+      <div className="flex flex-wrap gap-2 mb-10">
         <button
           onClick={() => setSelectedCategory(undefined)}
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+          className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
             !selectedCategory
               ? "bg-hibiscus text-white"
-              : "bg-muted text-muted-foreground hover:bg-hibiscus/10"
+              : "bg-[#F7F7F7] text-muted-foreground hover:bg-hibiscus/10"
           }`}
         >
           All
@@ -37,10 +51,10 @@ export default function Products() {
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium capitalize transition-colors ${
+            className={`rounded-full px-5 py-2 text-sm font-medium capitalize transition-colors ${
               selectedCategory === cat
                 ? "bg-hibiscus text-white"
-                : "bg-muted text-muted-foreground hover:bg-hibiscus/10"
+                : "bg-[#F7F7F7] text-muted-foreground hover:bg-hibiscus/10"
             }`}
           >
             {cat}
@@ -48,9 +62,15 @@ export default function Products() {
         ))}
       </div>
 
+      {/* Product listing description */}
+      <p className="text-muted-foreground text-sm mb-8">
+        A bold and refreshing ready-to-drink hibiscus beverage crafted for everyday enjoyment
+        and social moments. Best served cold.
+      </p>
+
       {/* Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="rounded-xl border border-border bg-card animate-pulse">
               <div className="aspect-square bg-muted" />
@@ -62,7 +82,7 @@ export default function Products() {
           ))}
         </div>
       ) : products && products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {products.map((product) => (
             <ProductCard
               key={product.id}
