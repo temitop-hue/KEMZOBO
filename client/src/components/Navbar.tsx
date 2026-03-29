@@ -24,9 +24,9 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <img
-              src="/images/logo.png"
+              src="/images/logo-navbar.png"
               alt="KEMZOBO"
-              className="h-10 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
 

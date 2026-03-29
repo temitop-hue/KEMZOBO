@@ -64,9 +64,12 @@ export default function Home() {
         <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-end pb-16 lg:pb-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <motion.div initial="hidden" animate="visible" variants={stagger}>
-              <motion.p variants={fadeUp} className="text-white/60 text-sm uppercase tracking-[0.3em] mb-4">
-                KEMZOBO, The Original Zobo Drink
-              </motion.p>
+              <motion.img
+                variants={fadeUp}
+                src="/images/logo-dark.png"
+                alt="KEMZOBO"
+                className="h-16 lg:h-20 w-auto mb-6"
+              />
 
               <motion.h1 variants={fadeUp} className="font-display text-5xl sm:text-6xl lg:text-8xl font-bold text-white leading-[1]">
                 Original Zobo.
@@ -413,9 +416,12 @@ export default function Home() {
       <section className="py-24 lg:py-28 bg-foreground text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
-            <motion.p variants={fadeUp} className="text-white/40 text-sm uppercase tracking-[0.3em] mb-4">
-              For Businesses & Events
-            </motion.p>
+            <motion.img
+              variants={fadeUp}
+              src="/images/logo-dark.png"
+              alt="KEMZOBO"
+              className="h-14 w-auto mx-auto mb-6"
+            />
             <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold mb-6">
               Planning an event or stocking your store?
             </motion.h2>

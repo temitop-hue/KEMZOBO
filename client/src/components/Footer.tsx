@@ -7,9 +7,11 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="font-display text-xl font-bold text-foreground mb-2">
-              KEMZOBO
-            </h3>
+            <img
+              src="/images/logo-navbar.png"
+              alt="KEMZOBO"
+              className="h-14 w-auto mb-4"
+            />
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
               THE ORIGINAL ZOBO DRINK. Bold hibiscus. Timeless tradition. Ready to drink.
             </p>

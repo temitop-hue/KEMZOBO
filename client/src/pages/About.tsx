@@ -14,6 +14,11 @@ export default function About() {
       <section className="py-20 lg:py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+            <img
+              src="/images/logo-navbar.png"
+              alt="KEMZOBO"
+              className="h-16 w-auto mx-auto mb-8"
+            />
             <p className="text-hibiscus text-sm uppercase tracking-[0.3em] font-medium mb-4">
               Our Story
             </p>
