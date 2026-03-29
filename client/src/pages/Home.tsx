@@ -8,11 +8,11 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, type: "spring", bounce: 0.3 } },
 };
 const stagger: Variants = {
-  visible: { transition: { staggerChildren: 0.12 } },
+  visible: { transition: { staggerChildren: 0.15 } },
 };
 
 export default function Home() {
@@ -83,10 +83,10 @@ export default function Home() {
               <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-4">
                 <Link
                   href="/products"
-                  className="btn-primary group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all"
+                  className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all"
                 >
                   Shop Now
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
                 </Link>
                 <Link
                   href="/wholesale"
@@ -123,7 +123,7 @@ export default function Home() {
             variants={stagger}
             className="text-center mb-20"
           >
-            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold">
+            <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold text-shimmer">
               Why KEMZOBO
             </motion.h2>
           </motion.div>
@@ -242,7 +242,7 @@ export default function Home() {
                 key={t.name}
                 initial="hidden" whileInView="visible" viewport={{ once: true }}
                 variants={fadeUp}
-                className="bg-[#F7F7F7] rounded-2xl p-8 lg:p-10"
+                className="card-hover bg-[#F7F7F7] rounded-2xl p-8 lg:p-10"
               >
                 <div className="flex gap-1 mb-5">
                   {[...Array(5)].map((_, i) => (
@@ -311,7 +311,7 @@ export default function Home() {
               variants={fadeUp}
               className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4"
             >
-              <div className="flex items-center gap-4 bg-white rounded-xl p-5 border border-border">
+              <div className="card-hover flex items-center gap-4 bg-white rounded-xl p-5 border border-border">
                 <Package className="h-8 w-8 text-hibiscus flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-foreground">Bulk Pricing Available</p>
@@ -320,7 +320,7 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 bg-white rounded-xl p-5 border border-border">
+              <div className="card-hover flex items-center gap-4 bg-white rounded-xl p-5 border border-border">
                 <Truck className="h-8 w-8 text-hibiscus flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-foreground">Free Delivery</p>

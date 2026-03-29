@@ -37,7 +37,7 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-sm font-medium tracking-wide transition-colors hover:text-hibiscus",
+                  "text-sm font-medium tracking-wide reveal-line nav-magnetic hover:text-hibiscus",
                   location === link.href
                     ? "text-hibiscus"
                     : "text-foreground/70"
