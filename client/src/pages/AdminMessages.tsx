@@ -1,44 +1,42 @@
-import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { format } from "date-fns";
 
 export default function AdminMessages() {
-  const { user } = useAuth({ redirectOnUnauthenticated: true });
-  const { data: messages, isLoading } = trpc.admin.messages.list.useQuery(undefined, {
-    enabled: !!user && user.role === "admin",
-  });
-
-  if (user?.role !== "admin") return <div className="p-8 text-center text-muted-foreground">Access denied.</div>;
+  const { data: messages, isLoading } = trpc.admin.messages.list.useQuery();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="p-6 lg:p-8">
       <h1 className="font-display text-2xl font-bold mb-6">Contact Messages</h1>
 
       {isLoading ? (
         <div className="animate-pulse space-y-3">
-          {[...Array(3)].map((_, i) => <div key={i} className="h-16 bg-muted rounded" />)}
+          {[...Array(3)].map((_, i) => <div key={i} className="h-24 bg-white rounded-lg" />)}
         </div>
       ) : messages && messages.length > 0 ? (
         <div className="space-y-3">
           {messages.map((m) => (
-            <div key={m.id} className="rounded-xl border border-border bg-card p-4">
+            <div key={m.id} className="bg-white rounded-xl border border-border p-5 hover:border-hibiscus/20 transition-colors">
               <div className="flex items-center justify-between mb-2">
                 <div>
-                  <span className="font-semibold">{m.name}</span>
+                  <span className="font-semibold text-foreground">{m.name}</span>
                   <span className="text-sm text-muted-foreground ml-2">{m.email}</span>
                 </div>
-                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-muted capitalize">{m.status}</span>
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${
+                  m.status === "new" ? "bg-hibiscus/10 text-hibiscus" : "bg-gray-100 text-gray-500"
+                }`}>{m.status}</span>
               </div>
-              {m.subject && <p className="text-sm font-medium mb-1">{m.subject}</p>}
+              {m.subject && <p className="text-sm font-medium text-foreground mb-1">{m.subject}</p>}
               <p className="text-sm text-muted-foreground">{m.message}</p>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-muted-foreground mt-3">
                 {m.createdAt ? format(new Date(m.createdAt), "MMM d, yyyy 'at' h:mm a") : ""}
               </p>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-muted-foreground text-sm">No messages yet.</p>
+        <div className="bg-white rounded-xl border border-border p-12 text-center">
+          <p className="text-muted-foreground">No messages yet.</p>
+        </div>
       )}
     </div>
   );
