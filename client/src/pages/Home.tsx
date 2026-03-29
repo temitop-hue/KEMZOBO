@@ -44,46 +44,65 @@ export default function Home() {
     <div>
 
       {/* ═══════════════════════════════════════════════════
-          HERO — Dual CTA
+          HERO — Lifestyle-driven, warm social gathering
+          Video: gathering → pouring → laughter → product shot
+          Static fallback: lifestyle friends image
           ═══════════════════════════════════════════════════ */}
-      <section ref={heroRef} className="relative h-screen overflow-hidden bg-[#1a0a08]">
+      <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0f0806]">
+        {/* Layer 1: Lifestyle video/image — the gathering */}
         <motion.div style={{ scale: heroScale }} className="absolute inset-0">
           <video
             autoPlay loop muted playsInline
-            poster="/images/hero-can.png"
+            poster="/images/lifestyle-friends.jpg"
             className="w-full h-full object-cover"
           >
             <source src="/videos/hero.mp4" type="video/mp4" />
             <source src="/videos/hero.webm" type="video/webm" />
           </video>
-          <img src="/images/hero-can.png" alt="KEMZOBO" className="absolute inset-0 w-full h-full object-cover" />
+          {/* Static fallback: the lifestyle friends gathering */}
+          <img
+            src="/images/lifestyle-friends.jpg"
+            alt="Friends sharing KEMZOBO at a gathering"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         </motion.div>
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
+        {/* Layer 2: Warm gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806] via-[#0f0806]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0f0806]/70 via-[#0f0806]/30 to-transparent" />
+        {/* Warm color wash */}
+        <div className="absolute inset-0 bg-[#1a0500]/20 mix-blend-multiply" />
 
-        <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-end pb-16 lg:pb-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        {/* Layer 3: Content */}
+        <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-between">
+          {/* Top: Logo */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 lg:pt-28">
+            <motion.img
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              src="/images/logo-dark.png"
+              alt="KEMZOBO"
+              className="h-14 lg:h-16 w-auto"
+            />
+          </div>
+
+          {/* Bottom: Headline + CTAs */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-20 lg:pb-28">
             <motion.div initial="hidden" animate="visible" variants={stagger}>
-              <motion.img
-                variants={fadeUp}
-                src="/images/logo-dark.png"
-                alt="KEMZOBO"
-                className="h-16 lg:h-20 w-auto mb-6"
-              />
-
-              <motion.h1 variants={fadeUp} className="font-display text-5xl sm:text-6xl lg:text-8xl font-bold text-white leading-[1]">
+              <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.05] max-w-3xl">
                 Original Zobo.
                 <br />
-                <span className="text-hibiscus">Boldly Refreshing.</span>
+                <span className="text-hibiscus">Boldly</span> Refreshing.
               </motion.h1>
 
-              <motion.p variants={fadeUp} className="mt-6 text-white/70 text-lg max-w-lg">
-                Inspired by traditional zobo, KEMZOBO is a refreshing ready-to-drink
-                hibiscus beverage crafted for modern sipping.
+              <motion.p variants={fadeUp} className="mt-6 text-white/60 text-lg lg:text-xl max-w-xl leading-relaxed">
+                Made for the moments that bring people together.
+                Bold hibiscus. Timeless tradition. Ready to drink.
               </motion.p>
 
               {/* Dual CTAs */}
-              <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-4">
+              <motion.div variants={fadeUp} className="mt-10 flex flex-wrap gap-4">
                 <Link
                   href="/products"
                   className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all"
@@ -93,24 +112,40 @@ export default function Home() {
                 </Link>
                 <Link
                   href="/wholesale"
-                  className="btn-primary inline-flex items-center gap-3 rounded-full border-2 border-white/40 text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:border-white hover:bg-white/10 transition-all"
+                  className="btn-primary inline-flex items-center gap-3 rounded-full border-2 border-white/30 text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:border-white hover:bg-white/10 transition-all"
                 >
                   Order in Bulk
                 </Link>
               </motion.div>
-
-              <motion.p variants={fadeUp} className="mt-6 text-white/40 text-sm tracking-wider">
-                BOLD hibiscus. Timeless tradition. Ready to drink.
-              </motion.p>
             </motion.div>
           </div>
 
+          {/* Floating product badge — bottom right */}
           <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2 }}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+            className="absolute bottom-24 right-8 lg:bottom-28 lg:right-16 hidden md:block"
+          >
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+              <img
+                src="/images/hero-can.png"
+                alt="KEMZOBO can"
+                className="h-28 lg:h-36 w-auto object-contain drop-shadow-2xl"
+              />
+              <p className="text-white/70 text-xs text-center mt-2 uppercase tracking-wider">16 FL. OZ</p>
+            </div>
+          </motion.div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.5 }}
+            className="absolute bottom-6 left-1/2 -translate-x-1/2"
           >
             <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-              <ChevronDown className="h-6 w-6 text-white/30" />
+              <ChevronDown className="h-6 w-6 text-white/20" />
             </motion.div>
           </motion.div>
         </motion.div>
