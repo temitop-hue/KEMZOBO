@@ -18,10 +18,11 @@ export default function Products() {
       <PageMeta title="Shop" description="Explore KEMZOBO, THE ORIGINAL ZOBO DRINK — shop online and have KEMZOBO delivered nationwide." path="/products" />
       {/* Intro */}
       <div className="max-w-2xl mb-12">
-        <p className="text-hibiscus text-sm uppercase tracking-[0.3em] font-medium mb-4">Shop</p>
-        <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-4">
+        <p className="text-[#B91C1C] font-bold text-sm uppercase tracking-[0.3em] font-medium mb-4">Shop</p>
+        <div className="flex items-center gap-3 mb-4"><div className="w-1 h-10 rounded-full bg-[#B91C1C]" />
+        <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground">
           KEMZOBO, THE ORIGINAL ZOBO DRINK
-        </h1>
+        </h1></div>
         <p className="text-muted-foreground text-lg leading-relaxed">
           Explore KEMZOBO, THE ORIGINAL ZOBO DRINK — a bold, refreshing ready-to-drink
           hibiscus beverage inspired by tradition and made for modern moments. Shop online
@@ -43,7 +44,7 @@ export default function Products() {
           onClick={() => setSelectedCategory(undefined)}
           className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
             !selectedCategory
-              ? "bg-hibiscus text-white"
+              ? "bg-[#7F1D1D] text-white"
               : "bg-hibiscus-bg text-muted-foreground hover:bg-hibiscus/10"
           }`}
         >
@@ -55,7 +56,7 @@ export default function Products() {
             onClick={() => setSelectedCategory(cat)}
             className={`rounded-full px-5 py-2 text-sm font-medium capitalize transition-colors ${
               selectedCategory === cat
-                ? "bg-hibiscus text-white"
+                ? "bg-[#7F1D1D] text-white"
                 : "bg-hibiscus-bg text-muted-foreground hover:bg-hibiscus/10"
             }`}
           >

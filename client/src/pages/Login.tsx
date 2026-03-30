@@ -69,14 +69,14 @@ export default function Login() {
         </div>
 
         <button type="submit" disabled={loading}
-          className="w-full rounded-lg bg-hibiscus text-white py-2.5 font-semibold hover:bg-hibiscus-light transition-colors disabled:opacity-50"
+          className="w-full rounded-lg bg-[#7F1D1D] hover:bg-[#991B1B] text-white py-2.5 font-semibold transition-colors disabled:opacity-50"
         >
           {loading ? "Loading..." : isRegister ? "Create Account" : "Sign In"}
         </button>
       </form>
 
       <div className="mt-6 text-center text-sm">
-        <button onClick={() => setIsRegister(!isRegister)} className="text-hibiscus hover:underline">
+        <button onClick={() => setIsRegister(!isRegister)} className="text-[#B91C1C] font-semibold hover:underline">
           {isRegister ? "Already have an account? Sign in" : "Don't have an account? Create one"}
         </button>
       </div>

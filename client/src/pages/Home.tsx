@@ -118,7 +118,7 @@ function HeroSlideshow({
             <motion.div variants={fadeUp} className="mt-10 flex flex-wrap gap-4">
               <Link
                 href="/products"
-                className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all"
+                className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-[#7F1D1D] text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-[#991B1B] transition-all"
               >
                 Shop Now
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
@@ -223,7 +223,7 @@ export default function Home() {
                 variants={fadeUp}
                 className="text-center"
               >
-                <div className="w-12 h-[2px] bg-hibiscus mx-auto mb-8" />
+                <div className="w-12 h-[2px] bg-[#B91C1C] mx-auto mb-8" />
                 <h3 className="font-display text-xl font-bold text-foreground mb-4">{item.title}</h3>
                 <p className="text-muted-foreground leading-relaxed text-lg">{item.text}</p>
               </motion.div>
@@ -463,7 +463,7 @@ export default function Home() {
                 "Enjoyed anytime you want something refreshing and different",
               ].map((item, i) => (
                 <motion.div key={i} variants={fadeUp} className="flex items-center gap-5 mb-6">
-                  <span className="w-10 h-10 rounded-full bg-hibiscus text-white font-bold text-sm flex items-center justify-center flex-shrink-0">
+                  <span className="w-10 h-10 rounded-full bg-[#B91C1C] text-white font-bold text-sm flex items-center justify-center flex-shrink-0">
                     {i + 1}
                   </span>
                   <p className="text-muted-foreground text-lg">{item}</p>
@@ -505,7 +505,7 @@ export default function Home() {
             <motion.div variants={fadeUp}>
               <Link
                 href="/wholesale"
-                className="btn-primary group inline-flex items-center gap-3 rounded-full bg-hibiscus text-white px-10 py-4 font-bold text-lg uppercase tracking-wider hover:bg-hibiscus-light transition-all"
+                className="btn-primary group inline-flex items-center gap-3 rounded-full bg-[#7F1D1D] text-white px-10 py-4 font-bold text-lg uppercase tracking-wider hover:bg-[#991B1B] transition-all"
               >
                 Request Bulk Pricing
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -547,7 +547,7 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={subscribeMutation.isPending}
-                  className="btn-primary rounded-full bg-hibiscus text-white px-8 py-4 font-semibold hover:bg-hibiscus-light transition-all disabled:opacity-50"
+                  className="btn-primary rounded-full bg-hibiscus text-white px-8 py-4 font-semibold hover:bg-[#991B1B] transition-all disabled:opacity-50"
                 >
                   Join
                 </button>
@@ -560,7 +560,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           FINAL CTA
           ═══════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-hibiscus text-white">
+      <section className="py-24 lg:py-32 bg-[#7F1D1D] text-white">
         <div className="max-w-3xl mx-auto px-4 text-center">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
             <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold mb-8">

@@ -42,15 +42,15 @@ export default function Wholesale() {
         <h3 className="font-display font-semibold text-lg mb-3">Bulk Pricing</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
           <div className="rounded-lg bg-muted p-4 text-center">
-            <div className="font-display font-bold text-xl text-hibiscus">~5% off</div>
+            <div className="font-display font-bold text-xl text-[#B91C1C]">~5% off</div>
             <div className="text-muted-foreground mt-1">24+ cases</div>
           </div>
           <div className="rounded-lg bg-muted p-4 text-center">
-            <div className="font-display font-bold text-xl text-hibiscus">~9% off</div>
+            <div className="font-display font-bold text-xl text-[#B91C1C]">~9% off</div>
             <div className="text-muted-foreground mt-1">100+ cases</div>
           </div>
           <div className="rounded-lg bg-muted p-4 text-center">
-            <div className="font-display font-bold text-xl text-hibiscus">~14% off</div>
+            <div className="font-display font-bold text-xl text-[#B91C1C]">~14% off</div>
             <div className="text-muted-foreground mt-1">500+ cases</div>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function Wholesale() {
           />
         </div>
         <button type="submit" disabled={submitMutation.isPending}
-          className="rounded-lg bg-hibiscus text-white px-6 py-2.5 font-semibold hover:bg-hibiscus-light transition-colors disabled:opacity-50"
+          className="rounded-lg bg-[#7F1D1D] hover:bg-[#991B1B] text-white px-6 py-2.5 font-semibold transition-colors disabled:opacity-50"
         >
           {submitMutation.isPending ? "Submitting..." : "Submit Inquiry"}
         </button>
