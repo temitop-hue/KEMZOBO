@@ -6,7 +6,9 @@ export default function AdminWholesale() {
 
   return (
     <div className="p-6 lg:p-8">
-      <h1 className="font-display text-2xl font-bold mb-6">Wholesale Inquiries</h1>
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2"><div className="w-1 h-8 rounded-full bg-[#B91C1C]" /><h1 className="font-display text-2xl font-bold">Wholesale Inquiries</h1></div>
+      </div>
 
       {isLoading ? (
         <div className="animate-pulse space-y-3">
@@ -15,10 +17,10 @@ export default function AdminWholesale() {
       ) : requests && requests.length > 0 ? (
         <div className="space-y-3">
           {requests.map((r) => (
-            <div key={r.id} className="bg-white rounded-xl border border-border p-5 hover:border-hibiscus/20 transition-colors">
+            <div key={r.id} className="bg-white rounded-xl border border-[#B91C1C]/10 p-5 hover:border-hibiscus/20 transition-colors">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-foreground">{r.businessName}</h3>
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 capitalize">
+                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#B91C1C]/10 text-[#B91C1C] capitalize">
                   {r.status}
                 </span>
               </div>

@@ -7,23 +7,25 @@ export default function AdminOrders() {
 
   return (
     <div className="p-6 lg:p-8">
-      <h1 className="font-display text-2xl font-bold mb-6">Orders</h1>
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2"><div className="w-1 h-8 rounded-full bg-[#B91C1C]" /><h1 className="font-display text-2xl font-bold">Orders</h1></div>
+      </div>
 
       {isLoading ? (
         <div className="animate-pulse space-y-3">
           {[...Array(5)].map((_, i) => <div key={i} className="h-14 bg-white rounded-lg" />)}
         </div>
       ) : orders && orders.length > 0 ? (
-        <div className="bg-white rounded-xl border border-border overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#B91C1C]/10 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-[#F7F7F7]">
+            <thead className="bg-[#7F1D1D]">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Order #</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Customer</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Payment</th>
-                <th className="text-right px-4 py-3 font-medium text-muted-foreground">Total</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Date</th>
+                <th className="text-left px-4 py-3 font-medium text-white">Order #</th>
+                <th className="text-left px-4 py-3 font-medium text-white">Customer</th>
+                <th className="text-left px-4 py-3 font-medium text-white">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-white">Payment</th>
+                <th className="text-right px-4 py-3 font-medium text-white">Total</th>
+                <th className="text-left px-4 py-3 font-medium text-white">Date</th>
               </tr>
             </thead>
             <tbody>

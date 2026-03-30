@@ -6,21 +6,23 @@ export default function AdminCustomers() {
 
   return (
     <div className="p-6 lg:p-8">
-      <h1 className="font-display text-2xl font-bold mb-6">Customers</h1>
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2"><div className="w-1 h-8 rounded-full bg-[#B91C1C]" /><h1 className="font-display text-2xl font-bold">Customers</h1></div>
+      </div>
 
       {isLoading ? (
         <div className="animate-pulse space-y-3">
           {[...Array(5)].map((_, i) => <div key={i} className="h-14 bg-white rounded-lg" />)}
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-border overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#B91C1C]/10 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-[#F7F7F7]">
+            <thead className="bg-[#7F1D1D]">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Email</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Role</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Joined</th>
+                <th className="text-left px-4 py-3 font-medium text-white">Name</th>
+                <th className="text-left px-4 py-3 font-medium text-white">Email</th>
+                <th className="text-left px-4 py-3 font-medium text-white">Role</th>
+                <th className="text-left px-4 py-3 font-medium text-white">Joined</th>
               </tr>
             </thead>
             <tbody>

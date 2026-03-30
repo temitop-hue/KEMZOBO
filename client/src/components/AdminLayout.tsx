@@ -31,18 +31,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading...</div>
+      <div className="min-h-screen bg-[#1a0508] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
       </div>
     );
   }
 
   if (user?.role !== "admin") {
     return (
-      <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
+      <div className="min-h-screen bg-[#1a0508] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground text-lg mb-4">Access denied.</p>
-          <Link href="/" className="text-hibiscus font-semibold hover:underline">
+          <p className="text-white/60 text-lg mb-4">Access denied.</p>
+          <Link href="/" className="text-white font-semibold hover:underline">
             Go to Homepage
           </Link>
         </div>
@@ -56,80 +56,88 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] flex">
-      {/* ─── Sidebar (desktop) ─────────────────────────────── */}
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-white border-r border-border">
+    <div className="min-h-screen bg-[#FDF2F2] flex">
+
+      {/* ─── Sidebar (desktop) — Dark hibiscus red ────────── */}
+      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-[#7F1D1D]">
         {/* Logo area */}
-        <div className="px-6 py-5 border-b border-border">
+        <div className="px-6 py-6 border-b border-white/10">
           <Link href="/admin" className="flex items-center gap-3">
-            <img src="/images/logo-navbar.png" alt="KEMZOBO" className="h-9 w-auto" />
+            <img src="/images/logo-dark.png" alt="KEMZOBO" className="h-10 w-auto" />
           </Link>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1.5">
+          <p className="text-[10px] text-white/40 uppercase tracking-[0.25em] mt-2 font-medium">
             Admin Portal
           </p>
         </div>
 
         {/* Nav links */}
-        <nav className="flex-1 px-3 py-4 space-y-1">
+        <nav className="flex-1 px-3 py-5 space-y-1">
           {adminLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                 isActive(link.href)
-                  ? "bg-hibiscus/10 text-hibiscus"
-                  : "text-muted-foreground hover:bg-[#F7F7F7] hover:text-foreground"
+                  ? "bg-white text-[#7F1D1D] shadow-lg shadow-black/10"
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
               )}
             >
-              <link.icon className="h-4 w-4 flex-shrink-0" />
+              <link.icon className="h-[18px] w-[18px] flex-shrink-0" />
               {link.label}
             </Link>
           ))}
         </nav>
 
         {/* Bottom */}
-        <div className="px-3 py-4 border-t border-border space-y-1">
+        <div className="px-3 py-4 border-t border-white/10 space-y-1">
           <Link
             href="/"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-[#F7F7F7] hover:text-foreground transition-all"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:bg-white/10 hover:text-white transition-all"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Site
           </Link>
           <button
             onClick={logout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-red-50 hover:text-red-600 transition-all w-full text-left"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:bg-white/10 hover:text-red-200 transition-all w-full text-left"
           >
             <LogOut className="h-4 w-4" />
             Sign Out
           </button>
 
           {/* User info */}
-          <div className="px-3 pt-3">
-            <p className="text-xs font-medium text-foreground truncate">{user.name || "Admin"}</p>
-            <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
+          <div className="px-4 pt-4 pb-2">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-xs">
+                {(user.name || user.email || "A").charAt(0).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-white truncate">{user.name || "Admin"}</p>
+                <p className="text-[10px] text-white/40 truncate">{user.email}</p>
+              </div>
+            </div>
           </div>
         </div>
       </aside>
 
-      {/* ─── Mobile header ─────────────────────────────────── */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-border">
+      {/* ─── Mobile header — Hibiscus red ─────────────────── */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#7F1D1D]">
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-3">
-            <button onClick={() => setSidebarOpen(!sidebarOpen)}>
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white/80">
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
-            <img src="/images/logo-navbar.png" alt="KEMZOBO" className="h-7 w-auto" />
-            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Admin</span>
+            <img src="/images/logo-dark.png" alt="KEMZOBO" className="h-7 w-auto" />
+            <span className="text-[10px] text-white/40 uppercase tracking-wider font-medium">Admin</span>
           </div>
         </div>
 
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <>
-            <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setSidebarOpen(false)} />
-            <div className="fixed left-0 top-14 bottom-0 w-64 bg-white z-50 border-r border-border overflow-y-auto">
+            <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setSidebarOpen(false)} />
+            <div className="fixed left-0 top-14 bottom-0 w-64 bg-[#7F1D1D] z-50 overflow-y-auto">
               <nav className="px-3 py-4 space-y-1">
                 {adminLinks.map((link) => (
                   <Link
@@ -137,27 +145,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     href={link.href}
                     onClick={() => setSidebarOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+                      "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
                       isActive(link.href)
-                        ? "bg-hibiscus/10 text-hibiscus"
-                        : "text-muted-foreground hover:bg-[#F7F7F7]"
+                        ? "bg-white text-[#7F1D1D]"
+                        : "text-white/70 hover:bg-white/10"
                     )}
                   >
-                    <link.icon className="h-4 w-4" />
+                    <link.icon className="h-[18px] w-[18px]" />
                     {link.label}
                   </Link>
                 ))}
               </nav>
-              <div className="px-3 py-4 border-t border-border space-y-1">
+              <div className="px-3 py-4 border-t border-white/10 space-y-1">
                 <Link
                   href="/"
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-white/50 hover:text-white"
                 >
                   <ArrowLeft className="h-4 w-4" /> Back to Site
                 </Link>
                 <button
                   onClick={logout}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground w-full text-left"
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-white/50 hover:text-white w-full text-left"
                 >
                   <LogOut className="h-4 w-4" /> Sign Out
                 </button>
@@ -169,7 +177,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* ─── Main content ──────────────────────────────────── */}
       <main className="flex-1 lg:pl-64">
-        <div className="pt-14 lg:pt-0">
+        <div className="pt-14 lg:pt-0 min-h-screen">
           {children}
         </div>
       </main>

@@ -6,7 +6,9 @@ export default function AdminMessages() {
 
   return (
     <div className="p-6 lg:p-8">
-      <h1 className="font-display text-2xl font-bold mb-6">Contact Messages</h1>
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2"><div className="w-1 h-8 rounded-full bg-[#B91C1C]" /><h1 className="font-display text-2xl font-bold">Contact Messages</h1></div>
+      </div>
 
       {isLoading ? (
         <div className="animate-pulse space-y-3">
@@ -15,14 +17,14 @@ export default function AdminMessages() {
       ) : messages && messages.length > 0 ? (
         <div className="space-y-3">
           {messages.map((m) => (
-            <div key={m.id} className="bg-white rounded-xl border border-border p-5 hover:border-hibiscus/20 transition-colors">
+            <div key={m.id} className="bg-white rounded-xl border border-[#B91C1C]/10 p-5 hover:border-hibiscus/20 transition-colors">
               <div className="flex items-center justify-between mb-2">
                 <div>
                   <span className="font-semibold text-foreground">{m.name}</span>
                   <span className="text-sm text-muted-foreground ml-2">{m.email}</span>
                 </div>
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${
-                  m.status === "new" ? "bg-hibiscus/10 text-hibiscus" : "bg-gray-100 text-gray-500"
+                  m.status === "new" ? "bg-[#B91C1C] text-white" : "bg-gray-100 text-gray-500"
                 }`}>{m.status}</span>
               </div>
               {m.subject && <p className="text-sm font-medium text-foreground mb-1">{m.subject}</p>}
