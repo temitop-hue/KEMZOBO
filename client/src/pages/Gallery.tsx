@@ -66,7 +66,7 @@ export default function Gallery() {
               key={i}
               initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={fadeUp}
-              className={`${uc.span} relative rounded-2xl overflow-hidden group cursor-pointer h-[350px] lg:h-[450px]`}
+              className={`${uc.span} relative rounded-2xl overflow-hidden group cursor-pointer h-[350px] lg:h-[450px] ring-1 ring-hibiscus/10 hover:ring-hibiscus/30 transition-all`}
             >
               <img
                 src={uc.image}

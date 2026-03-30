@@ -28,7 +28,7 @@ export default function Products() {
       </div>
 
       {/* Delivery banner */}
-      <div className="flex items-center gap-3 bg-[#F7F7F7] rounded-xl px-5 py-3 mb-8 text-sm">
+      <div className="flex items-center gap-3 bg-hibiscus-bg rounded-xl px-5 py-3 mb-8 text-sm border border-hibiscus/10">
         <Truck className="h-5 w-5 text-hibiscus flex-shrink-0" />
         <span className="text-muted-foreground">
           <span className="font-semibold text-foreground">Free delivery</span> on orders over $250. Ships nationwide.
@@ -42,7 +42,7 @@ export default function Products() {
           className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
             !selectedCategory
               ? "bg-hibiscus text-white"
-              : "bg-[#F7F7F7] text-muted-foreground hover:bg-hibiscus/10"
+              : "bg-hibiscus-bg text-muted-foreground hover:bg-hibiscus/10"
           }`}
         >
           All
@@ -54,7 +54,7 @@ export default function Products() {
             className={`rounded-full px-5 py-2 text-sm font-medium capitalize transition-colors ${
               selectedCategory === cat
                 ? "bg-hibiscus text-white"
-                : "bg-[#F7F7F7] text-muted-foreground hover:bg-hibiscus/10"
+                : "bg-hibiscus-bg text-muted-foreground hover:bg-hibiscus/10"
             }`}
           >
             {cat}

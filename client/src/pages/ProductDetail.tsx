@@ -71,7 +71,7 @@ export default function ProductDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
 
           {/* Image */}
-          <div className="aspect-square bg-[#F7F7F7] rounded-2xl overflow-hidden">
+          <div className="aspect-square bg-hibiscus-bg rounded-2xl overflow-hidden">
             {data.imageUrl ? (
               <img src={data.imageUrl} alt={data.name} className="w-full h-full object-cover" />
             ) : (
@@ -226,7 +226,7 @@ export default function ProductDetail() {
       </div>
 
       {/* How to Enjoy — below product */}
-      <section className="bg-[#F7F7F7] py-16 lg:py-24">
+      <section className="bg-hibiscus-bg py-16 lg:py-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-6">
             How to Enjoy
@@ -244,7 +244,7 @@ export default function ProductDetail() {
               { label: "Shared at gatherings", icon: "🎉" },
               { label: "Anytime refreshment", icon: "☀️" },
             ].map((item) => (
-              <div key={item.label} className="bg-white rounded-xl p-6 text-center">
+              <div key={item.label} className="bg-white rounded-xl p-6 text-center border border-hibiscus/10">
                 <span className="text-3xl mb-3 block">{item.icon}</span>
                 <p className="text-sm font-medium text-foreground">{item.label}</p>
               </div>

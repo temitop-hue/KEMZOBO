@@ -52,7 +52,7 @@ export default function About() {
       </section>
 
       {/* Mission */}
-      <section className="py-20 lg:py-28 bg-[#F7F7F7]">
+      <section className="py-20 lg:py-28 bg-hibiscus-bg">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }}

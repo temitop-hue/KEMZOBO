@@ -38,14 +38,14 @@ export default function Contact() {
             <label className="text-sm font-medium text-foreground mb-1.5 block">Name *</label>
             <input type="text" required value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded-lg border border-border bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus"
+              className="w-full rounded-lg border border-hibiscus/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus focus:bg-white transition-colors"
             />
           </div>
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">Email *</label>
             <input type="email" required value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-lg border border-border bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus"
+              className="w-full rounded-lg border border-hibiscus/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus focus:bg-white transition-colors"
             />
           </div>
         </div>
@@ -53,14 +53,14 @@ export default function Contact() {
           <label className="text-sm font-medium text-foreground mb-1.5 block">Subject</label>
           <input type="text" value={form.subject}
             onChange={(e) => setForm({ ...form, subject: e.target.value })}
-            className="w-full rounded-lg border border-border bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus"
+            className="w-full rounded-lg border border-hibiscus/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus focus:bg-white transition-colors"
           />
         </div>
         <div>
           <label className="text-sm font-medium text-foreground mb-1.5 block">Message *</label>
           <textarea required rows={5} value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
-            className="w-full rounded-lg border border-border bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus"
+            className="w-full rounded-lg border border-hibiscus/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus focus:bg-white transition-colors"
           />
         </div>
         <button type="submit" disabled={submitMutation.isPending}

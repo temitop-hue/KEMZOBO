@@ -233,7 +233,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           MORE THAN A DRINK
           ═══════════════════════════════════════════════════ */}
-      <section className="py-24 lg:py-32 bg-[#F7F7F7]">
+      <section className="py-24 lg:py-32 bg-hibiscus-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             <motion.div
@@ -314,7 +314,7 @@ export default function Home() {
                 key={t.name}
                 initial="hidden" whileInView="visible" viewport={{ once: true }}
                 variants={fadeUp}
-                className="card-hover bg-[#F7F7F7] rounded-2xl p-8 lg:p-10"
+                className="card-hover bg-hibiscus-bg rounded-2xl p-8 lg:p-10 border border-hibiscus/10"
               >
                 <div className="flex gap-1 mb-5">
                   {[...Array(5)].map((_, i) => (
@@ -338,7 +338,7 @@ export default function Home() {
           FEATURED PRODUCTS + Bulk Pricing + Delivery
           ═══════════════════════════════════════════════════ */}
       {featured && featured.length > 0 && (
-        <section className="py-24 lg:py-32 bg-[#F7F7F7]">
+        <section className="py-24 lg:py-32 bg-hibiscus-bg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial="hidden" whileInView="visible" viewport={{ once: true }}
@@ -460,7 +460,7 @@ export default function Home() {
                 "Enjoyed anytime you want something refreshing and different",
               ].map((item, i) => (
                 <motion.div key={i} variants={fadeUp} className="flex items-center gap-5 mb-6">
-                  <span className="w-10 h-10 rounded-full bg-hibiscus/10 text-hibiscus font-bold text-sm flex items-center justify-center flex-shrink-0">
+                  <span className="w-10 h-10 rounded-full bg-hibiscus text-white font-bold text-sm flex items-center justify-center flex-shrink-0">
                     {i + 1}
                   </span>
                   <p className="text-muted-foreground text-lg">{item}</p>
@@ -538,7 +538,7 @@ export default function Home() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 rounded-full border border-border bg-[#F7F7F7] px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus focus:bg-white transition-colors"
+                  className="flex-1 rounded-full border border-hibiscus/20 bg-hibiscus-bg px-6 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus focus:bg-white transition-colors"
                 />
                 <button
                   type="submit"

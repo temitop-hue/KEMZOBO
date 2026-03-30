@@ -29,12 +29,12 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="border-b border-border">
+    <div className="border-b border-hibiscus/10">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-5 text-left"
+        className="w-full flex items-center justify-between py-5 text-left group"
       >
-        <span className="font-medium text-foreground text-lg pr-4">{q}</span>
+        <span className="font-medium text-foreground text-lg pr-4 group-hover:text-hibiscus transition-colors">{q}</span>
         <ChevronDown className={cn("h-5 w-5 text-muted-foreground flex-shrink-0 transition-transform", open && "rotate-180")} />
       </button>
       {open && (
