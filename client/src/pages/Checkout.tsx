@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -105,6 +106,7 @@ export default function Checkout() {
   if (items.length === 0 && !orderData) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+        <PageMeta title="Checkout" path="/checkout" />
         <p className="text-muted-foreground">Your cart is empty.</p>
       </div>
     );
@@ -183,6 +185,7 @@ export default function Checkout() {
   // ─── Step 1: Shipping & Order Summary ───────────────────
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <PageMeta title="Checkout" path="/checkout" />
       <h1 className="font-display text-3xl font-bold text-foreground mb-8">Checkout</h1>
 
       <form onSubmit={handleCreateOrder}>

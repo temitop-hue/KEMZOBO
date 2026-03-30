@@ -1,6 +1,9 @@
+import PageMeta from "@/components/PageMeta";
+
 export default function Privacy() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <PageMeta title="Privacy Policy" path="/privacy" />
       <h1 className="font-display text-4xl font-bold text-foreground mb-8">
         Privacy Policy
       </h1>

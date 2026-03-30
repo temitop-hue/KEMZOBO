@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import ProductCard from "@/components/ProductCard";
@@ -14,6 +15,7 @@ export default function Products() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+      <PageMeta title="Shop" description="Explore KEMZOBO, THE ORIGINAL ZOBO DRINK — shop online and have KEMZOBO delivered nationwide." path="/products" />
       {/* Intro */}
       <div className="max-w-2xl mb-12">
         <p className="text-hibiscus text-sm uppercase tracking-[0.3em] font-medium mb-4">Shop</p>

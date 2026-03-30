@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { motion, type Variants } from "framer-motion";
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
@@ -40,6 +41,7 @@ const useCases = [
 export default function Gallery() {
   return (
     <div>
+      <PageMeta title="Gallery" description="See how KEMZOBO fits into real-life moments — from cookouts to celebrations." path="/gallery" />
       {/* Header */}
       <section className="py-20 lg:py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -71,6 +73,7 @@ export default function Gallery() {
               <img
                 src={uc.image}
                 alt={uc.title}
+                loading="lazy"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
@@ -93,6 +96,7 @@ export default function Gallery() {
           <img
             src="/images/hero-can.png"
             alt="KEMZOBO product"
+            loading="lazy"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">

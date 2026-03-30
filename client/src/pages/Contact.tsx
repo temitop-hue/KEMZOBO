@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ export default function Contact() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <PageMeta title="Contact" description="Have a question or wholesale interest? Reach out to the KEMZOBO team." path="/contact" />
       <div className="text-center mb-12">
         <p className="text-hibiscus text-sm uppercase tracking-[0.3em] font-medium mb-4">
           Get in Touch

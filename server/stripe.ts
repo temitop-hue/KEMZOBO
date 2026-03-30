@@ -4,6 +4,7 @@ import { ENV } from "./_core/env";
 import * as db from "./db";
 import { sendEmail } from "./_core/email";
 import { formatPrice } from "@shared/const";
+import { orderConfirmationEmail } from "./emailTemplates";
 
 let stripeInstance: Stripe | null = null;
 
@@ -60,20 +61,18 @@ export async function handleStripeWebhook(req: Request, res: Response) {
           await db.reduceInventory(item.variantId, item.quantity);
         }
 
-        // Send confirmation email
+        // Send styled confirmation email
+        const emailData = orderConfirmationEmail({
+          orderNumber: order.orderNumber,
+          total: order.total,
+          items,
+          shippingAddress: order.shippingAddress,
+        });
         await sendEmail({
           to: order.customerEmail,
-          subject: `Order Confirmed - ${order.orderNumber}`,
+          subject: emailData.subject,
           content: `Your order ${order.orderNumber} has been confirmed! Total: $${formatPrice(order.total)}.`,
-          html: `
-            <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-              <h2 style="color: #7C2D12;">Order Confirmed!</h2>
-              <p>Thank you for your order. Your order <strong>${order.orderNumber}</strong> has been confirmed.</p>
-              <p><strong>Total:</strong> $${formatPrice(order.total)}</p>
-              <p>We'll notify you when your order ships.</p>
-              <p style="margin-top: 24px; color: #666; font-size: 14px;">— KEMZOBO</p>
-            </div>
-          `,
+          html: emailData.html,
         });
       }
       break;

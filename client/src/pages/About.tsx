@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
@@ -10,6 +11,7 @@ const fadeUp: Variants = {
 export default function About() {
   return (
     <div>
+      <PageMeta title="Our Story" description="KEMZOBO was born from a desire to bring something rooted in culture into a format that feels natural for modern life." path="/about" />
       {/* Hero */}
       <section className="py-20 lg:py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -17,6 +19,7 @@ export default function About() {
             <img
               src="/images/logo-navbar.png"
               alt="KEMZOBO"
+              loading="lazy"
               className="h-16 w-auto mx-auto mb-8"
             />
             <p className="text-hibiscus text-sm uppercase tracking-[0.3em] font-medium mb-4">
@@ -46,6 +49,7 @@ export default function About() {
           <img
             src="/images/heritage-glass.jpg"
             alt="KEMZOBO heritage"
+            loading="lazy"
             className="w-full h-[400px] lg:h-[500px] object-cover"
           />
         </motion.div>
@@ -105,6 +109,7 @@ export default function About() {
               <img
                 src="/images/lifestyle-friends.jpg"
                 alt="Friends sharing KEMZOBO"
+                loading="lazy"
                 className="w-full h-[400px] object-cover"
               />
             </motion.div>

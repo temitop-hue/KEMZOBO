@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { formatPrice } from "@shared/const";
@@ -14,6 +15,7 @@ export default function MyAccount() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <PageMeta title="My Account" path="/my-account" />
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-display text-3xl font-bold">My Account</h1>
         <button onClick={logout} className="text-sm text-muted-foreground hover:text-destructive transition-colors">

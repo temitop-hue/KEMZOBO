@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { useParams } from "wouter";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
@@ -66,6 +67,7 @@ export default function ProductDetail() {
 
   return (
     <div>
+      <PageMeta title={data?.name ?? "Product"} description="KEMZOBO brings the bold flavor of traditional zobo into a modern, convenient can." path={"/products/" + (slug ?? "")} />
       {/* Main product section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
@@ -73,7 +75,7 @@ export default function ProductDetail() {
           {/* Image */}
           <div className="aspect-square bg-hibiscus-bg rounded-2xl overflow-hidden">
             {data.imageUrl ? (
-              <img src={data.imageUrl} alt={data.name} className="w-full h-full object-cover" />
+              <img src={data.imageUrl} alt={data.name} loading="lazy" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-6xl">🌺</div>
             )}

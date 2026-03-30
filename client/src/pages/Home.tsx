@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { Link } from "wouter";
 import { ArrowRight, ChevronDown, Star, Truck, Package } from "lucide-react";
 import { trpc } from "@/lib/trpc";
@@ -178,6 +179,7 @@ export default function Home() {
 
   return (
     <div>
+      <PageMeta title="Home" path="/" />
 
       {/* ═══════════════════════════════════════════════════
           HERO — Crossfade slideshow: can & glass as hero,
@@ -244,6 +246,7 @@ export default function Home() {
               <img
                 src="/images/heritage-glass.jpg"
                 alt="KEMZOBO"
+                loading="lazy"
                 className="w-full h-[500px] object-cover"
               />
             </motion.div>
@@ -422,7 +425,7 @@ export default function Home() {
           LIFESTYLE — Made for Real-Life Moments
           ═══════════════════════════════════════════════════ */}
       <section className="relative h-[75vh] min-h-[550px]">
-        <img src="/images/lifestyle-friends.jpg" alt="Friends sharing KEMZOBO" className="w-full h-full object-cover" />
+        <img src="/images/lifestyle-friends.jpg" alt="Friends sharing KEMZOBO" loading="lazy" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-20">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
@@ -473,7 +476,7 @@ export default function Home() {
               variants={fadeUp}
               className="rounded-2xl overflow-hidden"
             >
-              <img src="/images/tropical-glass.jpg" alt="KEMZOBO poured over ice" className="w-full h-[500px] object-cover" />
+              <img src="/images/tropical-glass.jpg" alt="KEMZOBO poured over ice" loading="lazy" className="w-full h-[500px] object-cover" />
             </motion.div>
           </div>
         </div>
@@ -489,6 +492,7 @@ export default function Home() {
               variants={fadeUp}
               src="/images/logo-dark.png"
               alt="KEMZOBO"
+              loading="lazy"
               className="h-14 w-auto mx-auto mb-6"
             />
             <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold mb-6">

@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ export default function Login() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-20">
+      <PageMeta title="Sign In" path="/login" />
       <h1 className="font-display text-2xl font-bold text-foreground text-center mb-6">
         {isRegister ? "Create an Account" : "Welcome Back"}
       </h1>

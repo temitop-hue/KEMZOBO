@@ -1,3 +1,4 @@
+import PageMeta from "@/components/PageMeta";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -28,6 +29,7 @@ export default function Wholesale() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <PageMeta title="Wholesale" description="Carry KEMZOBO at your store, restaurant, or event. Bulk pricing available." path="/wholesale" />
       <h1 className="font-display text-3xl font-bold text-foreground mb-2">
         Wholesale Inquiry
       </h1>
