@@ -163,8 +163,13 @@ export async function getLowStockItems() {
 // ─── Orders ──────────────────────────────────────────────
 export async function createOrder(data: Omit<NewOrder, "id" | "createdAt" | "updatedAt">): Promise<number> {
   const db = getDb();
-  const result = await db.insert(orders).values(data);
-  return Number((result as any).insertId);
+  await db.insert(orders).values(data);
+  // TiDB serverless doesn't return insertId reliably — query by orderNumber
+  if (data.orderNumber) {
+    const order = await getOrderByNumber(data.orderNumber);
+    if (order) return order.id;
+  }
+  return 0;
 }
 
 export async function getOrderById(id: number) {
@@ -201,10 +206,9 @@ export async function updateOrder(id: number, data: Partial<NewOrder>) {
 }
 
 // ─── Order Items ─────────────────────────────────────────
-export async function createOrderItem(data: Omit<NewOrderItem, "id" | "createdAt">): Promise<number> {
+export async function createOrderItem(data: Omit<NewOrderItem, "id" | "createdAt">): Promise<void> {
   const db = getDb();
-  const result = await db.insert(orderItems).values(data);
-  return Number((result as any).insertId);
+  await db.insert(orderItems).values(data);
 }
 
 export async function getOrderItemsByOrderId(orderId: number) {

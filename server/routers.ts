@@ -100,7 +100,7 @@ export const appRouter = router({
           subtotal += variant.price * item.quantity;
         }
 
-        const deliveryFee = subtotal >= 5000 ? 0 : 599; // Free delivery over $50
+        const deliveryFee = subtotal >= 25000 ? 0 : 599; // Free delivery over $250
         const tax = Math.round(subtotal * 0.06); // 6% tax estimate
         const total = subtotal + deliveryFee + tax;
 
@@ -108,11 +108,21 @@ export const appRouter = router({
         const orderCount = (await db.getAllOrders()).length;
         const orderNumber = `KZ-${10000 + orderCount + 1}`;
 
-        // Create Stripe payment intent
-        const paymentIntent = await createPaymentIntent(total, {
-          orderNumber,
-          customerEmail: input.customerEmail,
-        });
+        // Create Stripe payment intent (skip if no Stripe keys)
+        let stripePaymentIntentId: string | null = null;
+        let clientSecret: string | null = null;
+        try {
+          if (process.env.STRIPE_SECRET_KEY) {
+            const paymentIntent = await createPaymentIntent(total, {
+              orderNumber,
+              customerEmail: input.customerEmail,
+            });
+            stripePaymentIntentId = paymentIntent.id;
+            clientSecret = paymentIntent.client_secret;
+          }
+        } catch (err) {
+          console.warn("[Stripe] Payment intent creation failed, Zelle available:", err);
+        }
 
         // Create order
         const orderId = await db.createOrder({
@@ -126,7 +136,7 @@ export const appRouter = router({
           total,
           shippingAddress: input.shippingAddress,
           customerEmail: input.customerEmail,
-          stripePaymentIntentId: paymentIntent.id,
+          stripePaymentIntentId,
         });
 
         // Create order items
@@ -140,7 +150,7 @@ export const appRouter = router({
         return {
           orderId,
           orderNumber,
-          clientSecret: paymentIntent.client_secret,
+          clientSecret,
           total,
         };
       }),
