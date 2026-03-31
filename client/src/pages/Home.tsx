@@ -211,17 +211,21 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: "🥫", title: "Straight from the Can", text: "Cold. Bold. Grab and go." },
-              { icon: "🧊", title: "Poured Over Ice", text: "The classic serve. Watch that deep red pour." },
-              { icon: "🎉", title: "Shared at Gatherings", text: "Cookouts, parties, celebrations. KEMZOBO belongs." },
-              { icon: "☀️", title: "Anytime Refreshment", text: "Tuesday afternoon. Sunday brunch. Any moment." },
+              { img: "/images/enjoy-can.jpg", title: "Straight from the Can", text: "Cold. Bold. Grab and go." },
+              { img: "/images/enjoy-ice.jpg", title: "Poured Over Ice", text: "The classic serve. Watch that deep red pour." },
+              { img: "/images/enjoy-gathering.jpg", title: "Shared at Gatherings", text: "Cookouts, parties, celebrations. KEMZOBO belongs." },
+              { img: "/images/enjoy-anytime.jpg", title: "Anytime Refreshment", text: "Tuesday afternoon. Sunday brunch. Any moment." },
             ].map((item) => (
               <motion.div key={item.title} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="bg-white rounded-2xl p-8 text-center card-hover border border-[#B91C1C]/10"
+                className="bg-white rounded-2xl overflow-hidden card-hover border border-[#B91C1C]/10"
               >
-                <span className="text-4xl block mb-4">{item.icon}</span>
-                <h3 className="font-display text-lg font-bold mb-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm">{item.text}</p>
+                <div className="h-48 overflow-hidden">
+                  <img src={item.img} alt={item.title} loading="lazy" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                </div>
+                <div className="p-6 text-center">
+                  <h3 className="font-display text-lg font-bold mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm">{item.text}</p>
+                </div>
               </motion.div>
             ))}
           </div>
