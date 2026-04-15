@@ -16,107 +16,167 @@ const stagger: Variants = {
   visible: { transition: { staggerChildren: 0.15 } },
 };
 
-// ─── Hero Slideshow ───────────────────────────────────────
-const heroSlides = [
-  { src: "/images/hero-can.png", alt: "KEMZOBO can and glass", kenBurns: "scale-105" },
-  { src: "/images/lifestyle-friends.jpg", alt: "Friends sharing KEMZOBO", kenBurns: "scale-110 translate-x-2" },
-  { src: "/images/hero-can-alt.png", alt: "KEMZOBO product", kenBurns: "scale-105 -translate-x-1" },
-  { src: "/images/tropical-glass.jpg", alt: "KEMZOBO refreshment", kenBurns: "scale-110 translate-y-2" },
-  { src: "/images/heritage-glass.jpg", alt: "KEMZOBO heritage", kenBurns: "scale-105 translate-x-1" },
-  { src: "/images/bar-glass.jpg", alt: "KEMZOBO at a gathering", kenBurns: "scale-110 -translate-y-1" },
+// ─── Lifestyle Hero ──────────────────────────────────────
+// Lifestyle-first: video of people gathering → fallback to friends image
+// Product appears as a supporting element, not the hero
+const lifestyleImages = [
+  "/images/lifestyle-friends.jpg",
+  "/images/heritage-glass.jpg",
+  "/images/bar-glass.jpg",
+  "/images/tropical-glass.jpg",
 ];
 
-function HeroSlideshow({ heroRef, heroScale, heroOpacity }: {
+function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
   heroRef: React.RefObject<HTMLElement | null>; heroScale: any; heroOpacity: any;
 }) {
-  const [current, setCurrent] = useState(-1); // -1 = video playing
-  const [videoEnded, setVideoEnded] = useState(false);
-  const advance = useCallback(() => setCurrent((p) => (p + 1) % heroSlides.length), []);
+  const [bgIndex, setBgIndex] = useState(0);
+  const [videoReady, setVideoReady] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(true);
 
-  // After video ends (or 8s), start image slideshow
+  // Cycle background images after video ends
   useEffect(() => {
-    if (videoEnded) {
-      setCurrent(0);
-    }
-  }, [videoEnded]);
-
-  // Auto-advance images after video
-  useEffect(() => {
-    if (current < 0) return;
-    const t = setInterval(advance, 5000);
+    if (videoPlaying) return;
+    const t = setInterval(() => setBgIndex((p) => (p + 1) % lifestyleImages.length), 6000);
     return () => clearInterval(t);
-  }, [current, advance]);
+  }, [videoPlaying]);
 
-  // Preload next image
+  // Preload images
   useEffect(() => {
-    if (current >= 0) {
-      const img = new Image();
-      img.src = heroSlides[(current + 1) % heroSlides.length].src;
-    }
-  }, [current]);
-
-  // Fallback: if video doesn't play, start slideshow after 1s
-  useEffect(() => {
-    const fallback = setTimeout(() => {
-      if (!videoEnded) setVideoEnded(true);
-    }, 8000);
-    return () => clearTimeout(fallback);
-  }, [videoEnded]);
+    lifestyleImages.forEach((src) => { const img = new Image(); img.src = src; });
+  }, []);
 
   return (
     <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0f0806]">
-      <motion.div style={{ scale: heroScale }} className="absolute inset-0">
-        {/* Video layer — plays first */}
-        <div className="absolute inset-0 transition-opacity duration-[1500ms]" style={{ opacity: current < 0 ? 1 : 0 }}>
-          <video
-            autoPlay muted playsInline
-            poster="/images/hero-can.png"
-            className="w-full h-full object-cover"
-            onEnded={() => setVideoEnded(true)}
-          >
-            <source src="/videos/kemzobo-final.mp4" type="video/mp4" />
-          </video>
-        </div>
 
-        {/* Image slideshow layers — after video */}
-        {heroSlides.map((slide, i) => (
-          <div key={i} className="absolute inset-0 transition-opacity duration-[1500ms]" style={{ opacity: i === current ? 1 : 0 }}>
-            <img src={slide.src} alt={slide.alt} className={`w-full h-full object-cover transition-transform duration-[6000ms] ease-out ${i === current ? slide.kenBurns : "scale-100"}`} />
+      {/* Layer 1: Ambient lifestyle video */}
+      <motion.div style={{ scale: heroScale }} className="absolute inset-0">
+        <video
+          autoPlay loop muted playsInline
+          poster="/images/lifestyle-friends.jpg"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoReady ? "opacity-100" : "opacity-0"}`}
+          onCanPlay={() => setVideoReady(true)}
+          onEnded={() => setVideoPlaying(false)}
+        >
+          <source src="/videos/kemzobo-final.mp4" type="video/mp4" />
+        </video>
+
+        {/* Fallback: crossfading lifestyle images */}
+        {lifestyleImages.map((src, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 transition-opacity duration-[2000ms] ease-in-out"
+            style={{ opacity: !videoReady && i === bgIndex ? 1 : videoReady ? 0 : i === bgIndex ? 1 : 0 }}
+          >
+            <img
+              src={src}
+              alt="KEMZOBO lifestyle"
+              className="w-full h-full object-cover scale-105"
+            />
           </div>
         ))}
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806] via-[#0f0806]/40 to-[#0f0806]/15 z-[1]" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0f0806]/70 via-[#0f0806]/25 to-transparent z-[1]" />
 
+      {/* Layer 2: Warm cinematic overlays */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent z-[1]" />
+      <div className="absolute inset-0 bg-[#1a0500]/10 mix-blend-multiply z-[1]" />
+
+      {/* Layer 3: Content */}
       <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-between">
+
+        {/* Top: Logo */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 lg:pt-28">
-          <motion.img initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }} src="/images/logo-dark.png" alt="KEMZOBO" className="h-14 lg:h-16 w-auto" />
+          <motion.img
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            src="/images/logo-dark.png"
+            alt="KEMZOBO"
+            className="h-14 lg:h-16 w-auto"
+          />
         </div>
+
+        {/* Center/Bottom: Story-driven headline */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-20 lg:pb-28">
-          <motion.div initial="hidden" animate="visible" variants={stagger}>
-            <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.05] max-w-3xl">
-              Original Zobo.
-              <br />
-              <span className="text-[#F87171]">Boldly</span> Refreshing.
-            </motion.h1>
-            <motion.p variants={fadeUp} className="mt-6 text-white/60 text-lg lg:text-xl max-w-xl leading-relaxed">
-              Made for the moments that bring people together. Bold hibiscus. Timeless tradition. Ready to drink.
-            </motion.p>
-            <motion.div variants={fadeUp} className="mt-10 flex flex-wrap gap-4">
-              <Link href="/products" className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-[#F87171] text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-[#FCA5A5] transition-all">
-                Shop Now <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
-              </Link>
-              <Link href="/wholesale" className="btn-primary inline-flex items-center gap-3 rounded-full border-2 border-white/30 text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:border-white hover:bg-white/10 transition-all">
-                Order in Bulk
-              </Link>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+
+            {/* Left: Emotional copy */}
+            <motion.div initial="hidden" animate="visible" variants={stagger} className="lg:col-span-8">
+              <motion.p variants={fadeUp} className="text-white/40 text-sm uppercase tracking-[0.3em] mb-5">
+                KEMZOBO, The Original Zobo Drink
+              </motion.p>
+
+              <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1]">
+                The drink that
+                <br />
+                brings people{" "}
+                <span className="italic text-[#F87171]">together.</span>
+              </motion.h1>
+
+              <motion.p variants={fadeUp} className="mt-6 text-white/50 text-lg lg:text-xl max-w-lg leading-relaxed">
+                Bold hibiscus. Timeless tradition. Ready to drink.
+                Made for cookouts, celebrations, and the everyday
+                moments where good drinks belong.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/products"
+                  className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-[#EF4444] text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-[#FCA5A5] transition-all"
+                >
+                  Shop Now
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                </Link>
+                <Link
+                  href="/wholesale"
+                  className="btn-primary inline-flex items-center gap-3 rounded-full border-2 border-white/25 text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:border-white/60 hover:bg-white/5 transition-all"
+                >
+                  Order in Bulk
+                </Link>
+              </motion.div>
             </motion.div>
+
+            {/* Right: Floating product card — the product is present but secondary */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 1.5 }}
+              className="lg:col-span-4 hidden lg:flex justify-end"
+            >
+              <div className="relative">
+                <div className="bg-white/[0.08] backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-2xl shadow-black/30">
+                  <img
+                    src="/images/hero-can.png"
+                    alt="KEMZOBO 16 FL. OZ"
+                    className="h-48 w-auto object-contain mx-auto drop-shadow-2xl"
+                  />
+                  <div className="mt-4 text-center">
+                    <p className="text-white font-display font-bold text-sm">KEMZOBO</p>
+                    <p className="text-white/40 text-xs uppercase tracking-wider mt-0.5">16 FL. OZ &bull; Ready to Drink</p>
+                  </div>
+                  <Link
+                    href="/products"
+                    className="mt-4 block text-center rounded-full bg-white/10 text-white text-xs font-semibold py-2.5 px-4 hover:bg-white/20 transition-colors uppercase tracking-wider"
+                  >
+                    View Collection
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 3 }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2"
+        >
+          <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+            <ChevronDown className="h-5 w-5 text-white/20" />
           </motion.div>
-        </div>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-          {heroSlides.map((_, i) => (
-            <button key={i} onClick={() => setCurrent(i)} className={`transition-all duration-500 rounded-full ${i === current ? "w-8 h-2 bg-[#F87171]" : "w-2 h-2 bg-white/30 hover:bg-white/50"}`} />
-          ))}
-        </div>
+        </motion.div>
       </motion.div>
     </section>
   );
@@ -144,7 +204,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           CHAPTER 1: THE PRODUCT — Hero slideshow
           ═══════════════════════════════════════════════════ */}
-      <HeroSlideshow heroRef={heroRef} heroScale={heroScale} heroOpacity={heroOpacity} />
+      <LifestyleHero heroRef={heroRef} heroScale={heroScale} heroOpacity={heroOpacity} />
 
       {/* ═══════════════════════════════════════════════════
           CHAPTER 2: THE STORY — Where it started
