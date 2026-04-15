@@ -76,10 +76,10 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
         ))}
       </motion.div>
 
-      {/* Layer 2: Warm cinematic overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 z-[1]" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent z-[1]" />
-      <div className="absolute inset-0 bg-[#1a0500]/10 mix-blend-multiply z-[1]" />
+      {/* Layer 2: Strong overlays for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20 z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/10 z-[1]" />
+      <div className="absolute inset-0 bg-black/25 z-[1]" />
 
       {/* Layer 3: Content */}
       <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-between">
@@ -102,18 +102,18 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
 
             {/* Left: Emotional copy */}
             <motion.div initial="hidden" animate="visible" variants={stagger} className="lg:col-span-8">
-              <motion.p variants={fadeUp} className="text-white/40 text-sm uppercase tracking-[0.3em] mb-5">
+              <motion.p variants={fadeUp} className="text-white/70 text-sm uppercase tracking-[0.3em] mb-5 font-medium" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.5)" }}>
                 KEMZOBO, The Original Zobo Drink
               </motion.p>
 
-              <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1]">
+              <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1]" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.5), 0 4px 40px rgba(0,0,0,0.3)" }}>
                 The drink that
                 <br />
                 brings people{" "}
-                <span className="italic text-[#CC2936]">together.</span>
+                <span className="italic text-[#EF4444]">together.</span>
               </motion.h1>
 
-              <motion.p variants={fadeUp} className="mt-6 text-white/50 text-lg lg:text-xl max-w-lg leading-relaxed">
+              <motion.p variants={fadeUp} className="mt-6 text-white/70 text-lg lg:text-xl max-w-lg leading-relaxed" style={{ textShadow: "0 1px 10px rgba(0,0,0,0.4)" }}>
                 Bold hibiscus. Timeless tradition. Ready to drink.
                 Made for cookouts, celebrations, and the everyday
                 moments where good drinks belong.
