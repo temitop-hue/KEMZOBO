@@ -59,11 +59,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-[#FDF2F2] flex">
 
       {/* ─── Sidebar (desktop) — Dark hibiscus red ────────── */}
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-[#F87171]">
+      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-[#CC2936]">
         {/* Logo area */}
         <div className="px-6 py-6 border-b border-white/10">
           <Link href="/admin" className="flex items-center gap-3">
-            <img src="/images/logo-dark.png" alt="KEMZOBO" className="h-10 w-auto" />
+            <img src="/images/New_Logo.jpeg" alt="KEMZOBO" className="h-10 w-auto" />
           </Link>
           <p className="text-[10px] text-white/40 uppercase tracking-[0.25em] mt-2 font-medium">
             Admin Portal
@@ -79,7 +79,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
                 isActive(link.href)
-                  ? "bg-white text-[#F87171] shadow-lg shadow-black/10"
+                  ? "bg-white text-[#CC2936] shadow-lg shadow-black/10"
                   : "text-white/70 hover:bg-white/10 hover:text-white"
               )}
             >
@@ -122,13 +122,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* ─── Mobile header — Hibiscus red ─────────────────── */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#F87171]">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#CC2936]">
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-3">
             <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white/80">
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
-            <img src="/images/logo-dark.png" alt="KEMZOBO" className="h-7 w-auto" />
+            <img src="/images/New_Logo.jpeg" alt="KEMZOBO" className="h-7 w-auto" />
             <span className="text-[10px] text-white/40 uppercase tracking-wider font-medium">Admin</span>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {sidebarOpen && (
           <>
             <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setSidebarOpen(false)} />
-            <div className="fixed left-0 top-14 bottom-0 w-64 bg-[#F87171] z-50 overflow-y-auto">
+            <div className="fixed left-0 top-14 bottom-0 w-64 bg-[#CC2936] z-50 overflow-y-auto">
               <nav className="px-3 py-4 space-y-1">
                 {adminLinks.map((link) => (
                   <Link
@@ -147,7 +147,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     className={cn(
                       "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
                       isActive(link.href)
-                        ? "bg-white text-[#F87171]"
+                        ? "bg-white text-[#CC2936]"
                         : "text-white/70 hover:bg-white/10"
                     )}
                   >

@@ -203,7 +203,7 @@ export default function ProductDetail() {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={handleAddToCart}
-                    className="btn-primary flex-1 flex items-center justify-center gap-2 rounded-full bg-[#F87171] text-white px-6 py-4 font-bold text-lg hover:bg-[#FCA5A5] transition-all"
+                    className="btn-primary flex-1 flex items-center justify-center gap-2 rounded-full bg-[#CC2936] text-white px-6 py-4 font-bold text-lg hover:bg-[#E63946] transition-all"
                   >
                     <ShoppingCart className="h-5 w-5" /> Add to Cart
                   </button>

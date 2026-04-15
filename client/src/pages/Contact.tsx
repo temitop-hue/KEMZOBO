@@ -22,7 +22,7 @@ export default function Contact() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
       <PageMeta title="Contact" description="Have a question or wholesale interest? Reach out to the KEMZOBO team." path="/contact" />
       <div className="text-center mb-12">
-        <p className="text-[#F87171] font-bold text-sm uppercase tracking-[0.3em] font-medium mb-4">
+        <p className="text-[#CC2936] font-bold text-sm uppercase tracking-[0.3em] font-medium mb-4">
           Get in Touch
         </p>
         <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-4">
@@ -66,7 +66,7 @@ export default function Contact() {
           />
         </div>
         <button type="submit" disabled={submitMutation.isPending}
-          className="rounded-full bg-[#F87171] hover:bg-[#FCA5A5] text-white px-8 py-3 font-semibold transition-colors disabled:opacity-50"
+          className="rounded-full bg-[#CC2936] hover:bg-[#E63946] text-white px-8 py-3 font-semibold transition-colors disabled:opacity-50"
         >
           {submitMutation.isPending ? "Sending..." : "Send Message"}
         </button>

@@ -16,7 +16,7 @@ export default function Cart() {
         <p className="text-muted-foreground mb-6">Add some drinks to get started!</p>
         <Link
           href="/products"
-          className="inline-block rounded-lg bg-[#F87171] hover:bg-[#FCA5A5] text-white px-6 py-2.5 font-semibold transition-colors"
+          className="inline-block rounded-lg bg-[#CC2936] hover:bg-[#E63946] text-white px-6 py-2.5 font-semibold transition-colors"
         >
           Browse Products
         </Link>
@@ -128,7 +128,7 @@ export default function Cart() {
           </Link>
           <Link
             href="/checkout"
-            className="flex-1 rounded-lg bg-[#F87171] hover:bg-[#FCA5A5] text-white px-6 py-2.5 text-center font-semibold transition-colors"
+            className="flex-1 rounded-lg bg-[#CC2936] hover:bg-[#E63946] text-white px-6 py-2.5 text-center font-semibold transition-colors"
           >
             Proceed to Checkout
           </Link>

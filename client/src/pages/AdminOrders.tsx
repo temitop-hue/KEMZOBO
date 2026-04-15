@@ -8,7 +8,7 @@ export default function AdminOrders() {
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2"><div className="w-1 h-8 rounded-full bg-[#F87171]" /><h1 className="font-display text-2xl font-bold">Orders</h1></div>
+        <div className="flex items-center gap-3 mb-2"><div className="w-1 h-8 rounded-full bg-[#CC2936]" /><h1 className="font-display text-2xl font-bold">Orders</h1></div>
       </div>
 
       {isLoading ? (
@@ -16,9 +16,9 @@ export default function AdminOrders() {
           {[...Array(5)].map((_, i) => <div key={i} className="h-14 bg-white rounded-lg" />)}
         </div>
       ) : orders && orders.length > 0 ? (
-        <div className="bg-white rounded-2xl border border-[#F87171]/10 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#CC2936]/10 overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-[#F87171]">
+            <thead className="bg-[#CC2936]">
               <tr>
                 <th className="text-left px-4 py-3 font-medium text-white">Order #</th>
                 <th className="text-left px-4 py-3 font-medium text-white">Customer</th>

@@ -69,12 +69,12 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Brand colors — lighter red palette */
-  --color-hibiscus: #EF4444;
-  --color-hibiscus-light: #F87171;
-  --color-hibiscus-dark: #DC2626;
-  --color-hibiscus-bg: #FEF2F2;
-  --color-hibiscus-bg-deep: #FECACA;
+  /* Brand colors — matched to logo hibiscus red */
+  --color-hibiscus: #CC2936;
+  --color-hibiscus-light: #E63946;
+  --color-hibiscus-dark: #A61D2B;
+  --color-hibiscus-bg: #FBF7F4;
+  --color-hibiscus-bg-deep: #FEF1F1;
   --color-gold: #D4A843;
   --color-gold-light: #F5E6C8;
   --color-cream: #FAFAF8;
@@ -92,7 +92,7 @@
   --card-foreground: #111111;
   --popover: #FFFFFF;
   --popover-foreground: #111111;
-  --primary: #EF4444;
+  --primary: #CC2936;
   --primary-foreground: #FFFFFF;
   --secondary: #F7F7F7;
   --secondary-foreground: #333333;
@@ -100,15 +100,15 @@
   --muted-foreground: #777777;
   --accent: #F7F7F7;
   --accent-foreground: #111111;
-  --destructive: #EF4444;
+  --destructive: #CC2936;
   --destructive-foreground: #FFFFFF;
   --border: #E5E5E5;
   --input: #E5E5E5;
-  --ring: #EF4444;
+  --ring: #CC2936;
 
   --sidebar-background: #FAFAFA;
   --sidebar-foreground: #333333;
-  --sidebar-primary: #EF4444;
+  --sidebar-primary: #CC2936;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #F5F5F5;
   --sidebar-accent-foreground: #333333;

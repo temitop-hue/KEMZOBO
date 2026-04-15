@@ -40,11 +40,11 @@ function StripePaymentForm({ orderNumber, total, onSuccess }: {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="rounded-xl border border-[#F87171]/10 bg-white p-5 mb-4">
+      <div className="rounded-xl border border-[#CC2936]/10 bg-white p-5 mb-4">
         <PaymentElement />
       </div>
       <button type="submit" disabled={processing || !stripe}
-        className="btn-primary w-full rounded-full bg-[#F87171] text-white py-4 font-bold text-lg hover:bg-[#FCA5A5] transition-all disabled:opacity-50">
+        className="btn-primary w-full rounded-full bg-[#CC2936] text-white py-4 font-bold text-lg hover:bg-[#E63946] transition-all disabled:opacity-50">
         {processing ? "Processing..." : `Pay $${formatPrice(total)}`}
       </button>
     </form>
@@ -110,14 +110,14 @@ export default function Checkout() {
         <PageMeta title="Complete Payment" path="/checkout" />
 
         {/* Order summary card */}
-        <div className="rounded-2xl border border-[#F87171]/10 bg-hibiscus-bg p-6 mb-8">
+        <div className="rounded-2xl border border-[#CC2936]/10 bg-hibiscus-bg p-6 mb-8">
           <div className="flex justify-between text-sm mb-1">
             <span className="text-muted-foreground">Order</span>
             <span className="font-semibold text-foreground">{orderData.orderNumber}</span>
           </div>
           <div className="flex justify-between font-display font-bold text-2xl mt-2">
             <span>Total</span>
-            <span className="text-[#F87171]">${formatPrice(orderData.total)}</span>
+            <span className="text-[#CC2936]">${formatPrice(orderData.total)}</span>
           </div>
         </div>
 
@@ -127,8 +127,8 @@ export default function Checkout() {
             onClick={() => setPaymentMethod("card")}
             className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all ${
               paymentMethod === "card"
-                ? "bg-[#F87171] text-white shadow-lg"
-                : "bg-hibiscus-bg text-muted-foreground hover:bg-[#FCA5A5]/10 border border-[#F87171]/10"
+                ? "bg-[#CC2936] text-white shadow-lg"
+                : "bg-hibiscus-bg text-muted-foreground hover:bg-[#E63946]/10 border border-[#CC2936]/10"
             }`}
           >
             <CreditCard className="h-4 w-4" /> Card Payment
@@ -137,8 +137,8 @@ export default function Checkout() {
             onClick={() => setPaymentMethod("zelle")}
             className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all ${
               paymentMethod === "zelle"
-                ? "bg-[#F87171] text-white shadow-lg"
-                : "bg-hibiscus-bg text-muted-foreground hover:bg-[#FCA5A5]/10 border border-[#F87171]/10"
+                ? "bg-[#CC2936] text-white shadow-lg"
+                : "bg-hibiscus-bg text-muted-foreground hover:bg-[#E63946]/10 border border-[#CC2936]/10"
             }`}
           >
             💸 Zelle / Venmo
@@ -151,7 +151,7 @@ export default function Checkout() {
             {stripePromise && orderData.clientSecret ? (
               <Elements stripe={stripePromise} options={{
                 clientSecret: orderData.clientSecret,
-                appearance: { theme: "stripe", variables: { colorPrimary: "#F87171", borderRadius: "10px" } },
+                appearance: { theme: "stripe", variables: { colorPrimary: "#CC2936", borderRadius: "10px" } },
               }}>
                 <StripePaymentForm
                   orderNumber={orderData.orderNumber}
@@ -160,11 +160,11 @@ export default function Checkout() {
                 />
               </Elements>
             ) : (
-              <div className="rounded-2xl border border-[#F87171]/10 bg-white p-8 text-center">
-                <CreditCard className="h-10 w-10 text-[#F87171]/30 mx-auto mb-4" />
+              <div className="rounded-2xl border border-[#CC2936]/10 bg-white p-8 text-center">
+                <CreditCard className="h-10 w-10 text-[#CC2936]/30 mx-auto mb-4" />
                 <p className="text-muted-foreground mb-4">Card payments are being set up. Please use Zelle for now.</p>
                 <button onClick={() => setPaymentMethod("zelle")}
-                  className="btn-primary rounded-full bg-[#F87171] text-white px-6 py-3 font-semibold hover:bg-[#FCA5A5] transition-all">
+                  className="btn-primary rounded-full bg-[#CC2936] text-white px-6 py-3 font-semibold hover:bg-[#E63946] transition-all">
                   Pay with Zelle
                 </button>
               </div>
@@ -175,14 +175,14 @@ export default function Checkout() {
         {/* Zelle payment */}
         {paymentMethod === "zelle" && (
           <div className="space-y-4">
-            <div className="rounded-2xl border border-[#F87171]/10 bg-white p-6">
+            <div className="rounded-2xl border border-[#CC2936]/10 bg-white p-6">
               <h3 className="font-display text-lg font-bold text-foreground mb-4">Pay via Zelle</h3>
 
               <div className="bg-hibiscus-bg rounded-xl p-4 mb-4">
                 <p className="text-sm text-muted-foreground mb-1">Send payment to:</p>
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-foreground text-lg">temitop@gmail.com</span>
-                  <button onClick={copyZelle} className="flex items-center gap-1.5 text-sm text-[#F87171] font-medium hover:underline">
+                  <button onClick={copyZelle} className="flex items-center gap-1.5 text-sm text-[#CC2936] font-medium hover:underline">
                     {zelleCopied ? <><Check className="h-4 w-4" /> Copied</> : <><Copy className="h-4 w-4" /> Copy</>}
                   </button>
                 </div>
@@ -190,7 +190,7 @@ export default function Checkout() {
 
               <div className="bg-hibiscus-bg rounded-xl p-4 mb-4">
                 <p className="text-sm text-muted-foreground mb-1">Amount:</p>
-                <p className="font-display font-bold text-2xl text-[#F87171]">${formatPrice(orderData.total)}</p>
+                <p className="font-display font-bold text-2xl text-[#CC2936]">${formatPrice(orderData.total)}</p>
               </div>
 
               <div className="bg-hibiscus-bg rounded-xl p-4 mb-6">
@@ -198,23 +198,23 @@ export default function Checkout() {
                 <p className="font-semibold text-foreground">KEMZOBO — {orderData.orderNumber}</p>
               </div>
 
-              <div className="border-t border-[#F87171]/10 pt-4">
+              <div className="border-t border-[#CC2936]/10 pt-4">
                 <h4 className="font-semibold text-foreground text-sm mb-3">Steps:</h4>
                 <ol className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex gap-3">
-                    <span className="w-6 h-6 rounded-full bg-[#F87171] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
+                    <span className="w-6 h-6 rounded-full bg-[#CC2936] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
                     <span>Open your Zelle or Venmo app</span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="w-6 h-6 rounded-full bg-[#F87171] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
+                    <span className="w-6 h-6 rounded-full bg-[#CC2936] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
                     <span>Send <strong className="text-foreground">${formatPrice(orderData.total)}</strong> to <strong className="text-foreground">temitop@gmail.com</strong></span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="w-6 h-6 rounded-full bg-[#F87171] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
+                    <span className="w-6 h-6 rounded-full bg-[#CC2936] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
                     <span>Include <strong className="text-foreground">KEMZOBO — {orderData.orderNumber}</strong> in the memo</span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="w-6 h-6 rounded-full bg-[#F87171] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">4</span>
+                    <span className="w-6 h-6 rounded-full bg-[#CC2936] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">4</span>
                     <span>We'll confirm your order within 24 hours</span>
                   </li>
                 </ol>
@@ -223,7 +223,7 @@ export default function Checkout() {
 
             <button
               onClick={() => { clearCart(); setLocation(`/order-confirmation/${orderData.orderNumber}`); }}
-              className="btn-primary w-full rounded-full bg-[#F87171] text-white py-4 font-bold text-lg hover:bg-[#FCA5A5] transition-all flex items-center justify-center gap-2"
+              className="btn-primary w-full rounded-full bg-[#CC2936] text-white py-4 font-bold text-lg hover:bg-[#E63946] transition-all flex items-center justify-center gap-2"
             >
               I've Sent the Payment <ArrowRight className="h-5 w-5" />
             </button>
@@ -251,40 +251,40 @@ export default function Checkout() {
             <div>
               <label className="text-sm font-medium mb-1.5 block">Email *</label>
               <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-[#F87171]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F87171] focus:bg-white transition-colors" />
+                className="w-full rounded-lg border border-[#CC2936]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors" />
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Full Name *</label>
               <input type="text" required value={shipping.name} onChange={(e) => setShipping({ ...shipping, name: e.target.value })}
-                className="w-full rounded-lg border border-[#F87171]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F87171] focus:bg-white transition-colors" />
+                className="w-full rounded-lg border border-[#CC2936]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors" />
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Street Address *</label>
               <input type="text" required value={shipping.street} onChange={(e) => setShipping({ ...shipping, street: e.target.value })}
-                className="w-full rounded-lg border border-[#F87171]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F87171] focus:bg-white transition-colors" />
+                className="w-full rounded-lg border border-[#CC2936]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-1.5 block">City *</label>
                 <input type="text" required value={shipping.city} onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
-                  className="w-full rounded-lg border border-[#F87171]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F87171] focus:bg-white transition-colors" />
+                  className="w-full rounded-lg border border-[#CC2936]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors" />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">State *</label>
                 <input type="text" required value={shipping.state} onChange={(e) => setShipping({ ...shipping, state: e.target.value })}
-                  className="w-full rounded-lg border border-[#F87171]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F87171] focus:bg-white transition-colors" />
+                  className="w-full rounded-lg border border-[#CC2936]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium mb-1.5 block">ZIP *</label>
                 <input type="text" required value={shipping.zip} onChange={(e) => setShipping({ ...shipping, zip: e.target.value })}
-                  className="w-full rounded-lg border border-[#F87171]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F87171] focus:bg-white transition-colors" />
+                  className="w-full rounded-lg border border-[#CC2936]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors" />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1.5 block">Phone *</label>
                 <input type="tel" required value={shipping.phone} onChange={(e) => setShipping({ ...shipping, phone: e.target.value })}
-                  className="w-full rounded-lg border border-[#F87171]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#F87171] focus:bg-white transition-colors" />
+                  className="w-full rounded-lg border border-[#CC2936]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors" />
               </div>
             </div>
           </div>
@@ -292,14 +292,14 @@ export default function Checkout() {
           {/* Order Summary */}
           <div>
             <h2 className="font-display text-xl font-semibold mb-4">Order Summary</h2>
-            <div className="rounded-2xl border border-[#F87171]/10 bg-hibiscus-bg p-5 space-y-3">
+            <div className="rounded-2xl border border-[#CC2936]/10 bg-hibiscus-bg p-5 space-y-3">
               {items.map((item) => (
                 <div key={item.variantId} className="flex justify-between text-sm">
                   <span>{item.productName} x{item.quantity}</span>
                   <span className="font-medium">${formatPrice(item.price * item.quantity)}</span>
                 </div>
               ))}
-              <div className="border-t border-[#F87171]/10 pt-3 space-y-2">
+              <div className="border-t border-[#CC2936]/10 pt-3 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span>${formatPrice(subtotal)}</span>
@@ -312,24 +312,24 @@ export default function Checkout() {
                   <span className="text-muted-foreground">Tax (est.)</span>
                   <span>${formatPrice(tax)}</span>
                 </div>
-                <div className="border-t border-[#F87171]/10 pt-2 flex justify-between font-display font-bold text-xl">
+                <div className="border-t border-[#CC2936]/10 pt-2 flex justify-between font-display font-bold text-xl">
                   <span>Total</span>
-                  <span className="text-[#F87171]">${formatPrice(total)}</span>
+                  <span className="text-[#CC2936]">${formatPrice(total)}</span>
                 </div>
               </div>
             </div>
 
             {/* Payment method preview */}
-            <div className="mt-6 rounded-xl bg-white border border-[#F87171]/10 p-4">
+            <div className="mt-6 rounded-xl bg-white border border-[#CC2936]/10 p-4">
               <p className="text-sm text-muted-foreground mb-2">Payment methods available:</p>
               <div className="flex gap-3">
-                <span className="text-xs font-medium bg-hibiscus-bg text-[#F87171] rounded-full px-3 py-1">💳 Card (Stripe)</span>
-                <span className="text-xs font-medium bg-hibiscus-bg text-[#F87171] rounded-full px-3 py-1">💸 Zelle / Venmo</span>
+                <span className="text-xs font-medium bg-hibiscus-bg text-[#CC2936] rounded-full px-3 py-1">💳 Card (Stripe)</span>
+                <span className="text-xs font-medium bg-hibiscus-bg text-[#CC2936] rounded-full px-3 py-1">💸 Zelle / Venmo</span>
               </div>
             </div>
 
             <button type="submit" disabled={createOrderMutation.isPending}
-              className="btn-primary mt-6 w-full rounded-full bg-[#F87171] text-white py-4 font-bold text-lg hover:bg-[#FCA5A5] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+              className="btn-primary mt-6 w-full rounded-full bg-[#CC2936] text-white py-4 font-bold text-lg hover:bg-[#E63946] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
               {createOrderMutation.isPending ? "Creating Order..." : <>Continue to Payment <ArrowRight className="h-5 w-5" /></>}
             </button>
           </div>
