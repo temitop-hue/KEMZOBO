@@ -36,7 +36,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         className="w-full flex items-center justify-between py-5 text-left group"
       >
         <span className="font-medium text-foreground text-lg pr-4 group-hover:text-hibiscus transition-colors">{q}</span>
-        <ChevronDown className={cn("h-5 w-5 text-muted-foreground flex-shrink-0 transition-transform", open && "rotate-180 text-[#B91C1C]")} />
+        <ChevronDown className={cn("h-5 w-5 text-muted-foreground flex-shrink-0 transition-transform", open && "rotate-180 text-[#DC2626]")} />
       </button>
       {open && (
         <p className="pb-5 text-muted-foreground leading-relaxed">{a}</p>
@@ -50,7 +50,7 @@ export default function FAQ() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
       <PageMeta title="FAQ" description="Frequently asked questions about KEMZOBO, THE ORIGINAL ZOBO DRINK." path="/faq" />
       <div className="text-center mb-12">
-        <p className="text-[#B91C1C] font-bold text-sm uppercase tracking-[0.3em] font-medium mb-4">
+        <p className="text-[#DC2626] font-bold text-sm uppercase tracking-[0.3em] font-medium mb-4">
           Help
         </p>
         <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground">
