@@ -18,7 +18,7 @@ export default function MyAccount() {
       <PageMeta title="My Account" path="/my-account" />
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-display text-3xl font-bold">My Account</h1>
-        <button onClick={logout} className="text-sm text-muted-foreground hover:text-[#DC2626] transition-colors">
+        <button onClick={logout} className="text-sm text-muted-foreground hover:text-[#F87171] transition-colors">
           Sign Out
         </button>
       </div>

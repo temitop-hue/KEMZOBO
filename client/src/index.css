@@ -70,9 +70,9 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* Brand colors — lighter red palette */
-  --color-hibiscus: #DC2626;
-  --color-hibiscus-light: #EF4444;
-  --color-hibiscus-dark: #B91C1C;
+  --color-hibiscus: #EF4444;
+  --color-hibiscus-light: #F87171;
+  --color-hibiscus-dark: #DC2626;
   --color-hibiscus-bg: #FEF2F2;
   --color-hibiscus-bg-deep: #FECACA;
   --color-gold: #D4A843;
@@ -92,7 +92,7 @@
   --card-foreground: #111111;
   --popover: #FFFFFF;
   --popover-foreground: #111111;
-  --primary: #DC2626;
+  --primary: #EF4444;
   --primary-foreground: #FFFFFF;
   --secondary: #F7F7F7;
   --secondary-foreground: #333333;
@@ -100,15 +100,15 @@
   --muted-foreground: #777777;
   --accent: #F7F7F7;
   --accent-foreground: #111111;
-  --destructive: #DC2626;
+  --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
   --border: #E5E5E5;
   --input: #E5E5E5;
-  --ring: #DC2626;
+  --ring: #EF4444;
 
   --sidebar-background: #FAFAFA;
   --sidebar-foreground: #333333;
-  --sidebar-primary: #DC2626;
+  --sidebar-primary: #EF4444;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #F5F5F5;
   --sidebar-accent-foreground: #333333;

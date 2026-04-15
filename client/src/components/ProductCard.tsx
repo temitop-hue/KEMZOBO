@@ -66,7 +66,7 @@ export default function ProductCard({ product, variant, onAddToCart }: ProductCa
           {onAddToCart && (
             <button
               onClick={onAddToCart}
-              className="rounded-lg bg-[#DC2626] text-white p-2 hover:bg-[#EF4444] transition-colors"
+              className="rounded-lg bg-[#F87171] text-white p-2 hover:bg-[#FCA5A5] transition-colors"
             >
               <ShoppingCart className="h-4 w-4" />
             </button>

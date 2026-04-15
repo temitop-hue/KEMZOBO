@@ -46,7 +46,7 @@ export default function Gallery() {
       <section className="py-20 lg:py-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-            <p className="text-[#DC2626] font-bold text-sm uppercase tracking-[0.3em] font-medium mb-4">
+            <p className="text-[#F87171] font-bold text-sm uppercase tracking-[0.3em] font-medium mb-4">
               Lifestyle
             </p>
             <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-4">
@@ -109,7 +109,7 @@ export default function Gallery() {
               </p>
               <Link
                 href="/products"
-                className="btn-primary group inline-flex items-center gap-2 rounded-full bg-[#DC2626] text-white px-8 py-3.5 font-bold hover:bg-[#EF4444] transition-colors"
+                className="btn-primary group inline-flex items-center gap-2 rounded-full bg-[#F87171] text-white px-8 py-3.5 font-bold hover:bg-[#FCA5A5] transition-colors"
               >
                 Shop Now <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>

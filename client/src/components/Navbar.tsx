@@ -18,7 +18,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#DC2626] shadow-lg shadow-[#DC2626]/10">
+    <header className="sticky top-0 z-50 bg-[#F87171] shadow-lg shadow-[#F87171]/10">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -60,7 +60,7 @@ export default function Navbar() {
             <Link href="/cart" className="relative">
               <ShoppingCart className="h-5 w-5 text-white/50 hover:text-white transition-colors" />
               {itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-white text-[#DC2626] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 bg-white text-[#F87171] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                   {itemCount}
                 </span>
               )}

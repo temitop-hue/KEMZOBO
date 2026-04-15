@@ -22,7 +22,7 @@ export default function About() {
               loading="lazy"
               className="h-16 w-auto mx-auto mb-8"
             />
-            <p className="text-[#DC2626] font-bold text-sm uppercase tracking-[0.3em] font-medium mb-4">
+            <p className="text-[#F87171] font-bold text-sm uppercase tracking-[0.3em] font-medium mb-4">
               Our Story
             </p>
             <h1 className="font-display text-4xl lg:text-5xl font-bold text-foreground mb-8">
@@ -118,7 +118,7 @@ export default function About() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-[#DC2626] text-white text-center">
+      <section className="py-16 bg-[#F87171] text-white text-center">
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="font-display text-3xl font-bold mb-6">
             Ready to Experience KEMZOBO?
