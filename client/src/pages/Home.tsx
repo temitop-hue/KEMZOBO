@@ -20,7 +20,9 @@ const stagger: Variants = {
 // Lifestyle-first: video of people gathering → fallback to friends image
 // Product appears as a supporting element, not the hero
 const lifestyleImages = [
+  "/images/Gemini_Generated_Image_xilss5xilss5xils.png",
   "/images/lifestyle-friends.jpg",
+  "/images/hero-can.png",
   "/images/heritage-glass.jpg",
   "/images/bar-glass.jpg",
   "/images/tropical-glass.jpg",
@@ -52,11 +54,12 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
       <motion.div style={{ scale: heroScale }} className="absolute inset-0">
         <video
           autoPlay loop muted playsInline
-          poster="/images/lifestyle-friends.jpg"
+          poster="/images/Gemini_Generated_Image_xilss5xilss5xils.png"
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoReady ? "opacity-100" : "opacity-0"}`}
           onCanPlay={() => setVideoReady(true)}
           onEnded={() => setVideoPlaying(false)}
         >
+          <source src="/videos/Kemzobo-scene1.mp4" type="video/mp4" />
           <source src="/videos/kemzobo-final.mp4" type="video/mp4" />
         </video>
 
