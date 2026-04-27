@@ -2,7 +2,7 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure, adminProcedure } from "./_core/trpc";
 import { COOKIE_NAME } from "@shared/const";
 import * as db from "./db";
-import { createPaymentIntent } from "./stripe";
+import { createPaymentIntent, refundPaymentIntent } from "./stripe";
 
 export const appRouter = router({
   // ─── Auth ────────────────────────────────────────────────
@@ -378,6 +378,30 @@ export const appRouter = router({
             status: "shipped",
           });
           return { success: true };
+        }),
+      refund: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          const order = await db.getOrderById(input.id);
+          if (!order) throw new Error("Order not found");
+          if (order.paymentStatus !== "paid") {
+            throw new Error("Only paid orders can be refunded");
+          }
+
+          // Stripe refund (only if payment was via card)
+          if (order.stripePaymentIntentId) {
+            await refundPaymentIntent(order.stripePaymentIntentId);
+          }
+
+          await db.updateOrder(input.id, {
+            paymentStatus: "refunded",
+            status: "cancelled",
+          });
+
+          return {
+            success: true,
+            method: order.stripePaymentIntentId ? "stripe" : "manual",
+          };
         }),
     }),
 

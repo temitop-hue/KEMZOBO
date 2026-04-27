@@ -1,9 +1,35 @@
 import { trpc } from "@/lib/trpc";
 import { formatPrice } from "@shared/const";
 import { format } from "date-fns";
+import { toast } from "sonner";
+import { useState } from "react";
+import { RotateCcw } from "lucide-react";
 
 export default function AdminOrders() {
+  const utils = trpc.useUtils();
   const { data: orders, isLoading } = trpc.admin.orders.list.useQuery();
+  const [refundingId, setRefundingId] = useState<number | null>(null);
+
+  const refundMutation = trpc.admin.orders.refund.useMutation({
+    onSuccess: (data) => {
+      const msg = data.method === "stripe"
+        ? "Stripe refund issued. Customer notified."
+        : "Marked as refunded. Send Zelle reversal manually.";
+      toast.success(msg);
+      utils.admin.orders.list.invalidate();
+    },
+    onError: (err) => toast.error(err.message),
+    onSettled: () => setRefundingId(null),
+  });
+
+  const handleRefund = (id: number, orderNumber: string, total: number) => {
+    const confirmed = window.confirm(
+      `Refund order ${orderNumber} for $${formatPrice(total)}?\n\nThis cannot be undone. For card payments the customer is refunded automatically; for Zelle/Venmo you must reverse the payment manually.`
+    );
+    if (!confirmed) return;
+    setRefundingId(id);
+    refundMutation.mutate({ id });
+  };
 
   return (
     <div className="p-6 lg:p-8">
@@ -26,6 +52,7 @@ export default function AdminOrders() {
                 <th className="text-left px-4 py-3 font-medium text-white">Payment</th>
                 <th className="text-right px-4 py-3 font-medium text-white">Total</th>
                 <th className="text-left px-4 py-3 font-medium text-white">Date</th>
+                <th className="text-right px-4 py-3 font-medium text-white">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -38,12 +65,28 @@ export default function AdminOrders() {
                   </td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full capitalize ${
-                      o.paymentStatus === "paid" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"
+                      o.paymentStatus === "paid"
+                        ? "bg-green-50 text-green-700"
+                        : o.paymentStatus === "refunded"
+                          ? "bg-gray-100 text-gray-600"
+                          : "bg-amber-50 text-amber-700"
                     }`}>{o.paymentStatus}</span>
                   </td>
                   <td className="px-4 py-3 text-right font-medium">${formatPrice(o.total)}</td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {o.createdAt ? format(new Date(o.createdAt), "MMM d") : ""}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    {o.paymentStatus === "paid" && (
+                      <button
+                        onClick={() => handleRefund(o.id, o.orderNumber, o.total)}
+                        disabled={refundingId === o.id}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-[#CC2936]/30 text-[#CC2936] hover:bg-[#CC2936] hover:text-white text-xs font-medium px-2.5 py-1 transition-colors disabled:opacity-50"
+                      >
+                        <RotateCcw className="h-3 w-3" />
+                        {refundingId === o.id ? "Refunding..." : "Refund"}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

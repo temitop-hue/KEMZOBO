@@ -28,6 +28,22 @@ export async function createPaymentIntent(
   });
 }
 
+export async function refundPaymentIntent(paymentIntentId: string): Promise<Stripe.Refund> {
+  const stripe = getStripe();
+  return stripe.refunds.create({ payment_intent: paymentIntentId });
+}
+
+export async function cancelPaymentIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent | null> {
+  const stripe = getStripe();
+  try {
+    return await stripe.paymentIntents.cancel(paymentIntentId);
+  } catch (err: any) {
+    // Already cancelled / succeeded / etc — log and move on
+    console.warn(`[Stripe] Could not cancel PaymentIntent ${paymentIntentId}:`, err.message);
+    return null;
+  }
+}
+
 export async function handleStripeWebhook(req: Request, res: Response) {
   if (!ENV.stripeWebhookSecret) {
     console.warn("[Stripe] Webhook secret not configured");
