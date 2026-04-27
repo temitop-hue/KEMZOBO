@@ -32,11 +32,11 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
   return (
     <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-black flex flex-col">
 
-      {/* Layer 1: Full-bleed lifestyle image — slight zoom + cinematic color treatment */}
+      {/* Layer 1: Full-bleed lifestyle image — refined cinematic treatment */}
       <motion.div
-        initial={{ scale: 1.12, opacity: 0 }}
-        animate={{ scale: 1.04, opacity: 1 }}
-        transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+        initial={{ scale: 1.06, opacity: 0 }}
+        animate={{ scale: 1.02, opacity: 1 }}
+        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
         className="absolute inset-0"
       >
         <motion.div style={{ scale: heroScale }} className="absolute inset-0">
@@ -45,27 +45,27 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
             alt="Friends raising KEMZOBO cans together"
             className="absolute inset-0 w-full h-full object-cover object-[58%_center] lg:object-[60%_center]"
             style={{
-              filter: "saturate(1.18) contrast(1.10) brightness(1.03)",
+              filter: "saturate(1.08) contrast(1.06)",
             }}
           />
         </motion.div>
       </motion.div>
 
-      {/* Layer 2: Warm golden-hour wash (subtle) */}
+      {/* Layer 2: Subtle vignette (edges slightly darker, preserves skin tones) */}
       <div
-        className="absolute inset-0 z-[1] pointer-events-none mix-blend-overlay"
+        className="absolute inset-0 z-[1] pointer-events-none"
         style={{
           background:
-            "linear-gradient(180deg, rgba(255,170,90,0.10) 0%, rgba(255,120,60,0.05) 50%, rgba(0,0,0,0) 100%)",
+            "radial-gradient(ellipse at 60% 50%, transparent 45%, rgba(0,0,0,0.28) 100%)",
         }}
       />
 
-      {/* Layer 3: Cinematic dark gradient — heavy left, fades to clear on right (desktop) */}
+      {/* Layer 3: Cinematic dark gradient — softer, lets image breathe (desktop) */}
       <div
         className="absolute inset-0 z-[2] pointer-events-none hidden lg:block"
         style={{
           background:
-            "linear-gradient(to right, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0.3) 65%, rgba(0,0,0,0) 100%)",
+            "linear-gradient(to right, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0) 100%)",
         }}
       />
       {/* Mobile: vertical gradient */}
@@ -73,7 +73,17 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
         className="absolute inset-0 z-[2] pointer-events-none lg:hidden"
         style={{
           background:
-            "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.3) 75%, rgba(0,0,0,0) 100%)",
+            "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0) 100%)",
+        }}
+      />
+
+      {/* Layer 3b: Fine-grain film texture — barely-there premium polish */}
+      <div
+        className="absolute inset-0 z-[3] pointer-events-none opacity-[0.05] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+          backgroundSize: "240px 240px",
         }}
       />
 
@@ -90,23 +100,23 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
         >
           <motion.h1
             variants={fadeUp}
-            className="font-display font-black text-[3.5rem] sm:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] leading-[0.95] tracking-tight"
+            className="font-display font-black text-[3.25rem] sm:text-7xl lg:text-[5.25rem] xl:text-[6.25rem] leading-[1.02] tracking-[-0.01em]"
             style={{
               textShadow:
-                "0 10px 40px rgba(0,0,0,0.85), 0 2px 6px rgba(0,0,0,0.95)",
+                "0 10px 40px rgba(0,0,0,0.7), 0 2px 6px rgba(0,0,0,0.85)",
             }}
           >
             <span style={{ color: "#ffffff" }}>Bold Hibiscus.</span>
             <br />
-            <span style={{ color: "#E63946" }}>Timeless Tradition.</span>
+            <span style={{ color: "#C81D25" }}>Timeless Tradition.</span>
           </motion.h1>
 
           <motion.p
             variants={fadeUp}
-            className="mt-10 lg:mt-12 text-lg lg:text-xl leading-relaxed max-w-md font-medium"
+            className="mt-8 lg:mt-10 text-lg lg:text-xl leading-relaxed max-w-md font-medium"
             style={{
-              color: "rgba(255,255,255,0.88)",
-              textShadow: "0 2px 14px rgba(0,0,0,0.7)",
+              color: "rgba(255,255,255,0.86)",
+              textShadow: "0 2px 14px rgba(0,0,0,0.6)",
             }}
           >
             The Original Zobo Drink&mdash;made for every gathering.
@@ -115,14 +125,21 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
           <motion.div variants={fadeUp} className="mt-12 lg:mt-14 flex flex-wrap items-center gap-4">
             <Link
               href="/products"
-              className="group inline-flex items-center gap-3 rounded-full bg-[#CC2936] text-white px-9 py-4 font-bold text-base uppercase tracking-[0.15em] hover:bg-[#E63946] hover:scale-[1.05] transition-all duration-300 ease-out shadow-xl shadow-[#CC2936]/30 will-change-transform"
+              className="group inline-flex items-center gap-3 rounded-full text-white px-9 py-4 font-bold text-base uppercase tracking-[0.15em] hover:scale-[1.04] transition-all duration-300 ease-out will-change-transform"
+              style={{
+                background:
+                  "linear-gradient(180deg, #D62F3D 0%, #B81F2A 100%)",
+                boxShadow:
+                  "0 10px 30px rgba(230,57,70,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
+              }}
             >
               Shop Now
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
             <Link
               href="/wholesale"
-              className="group inline-flex items-center gap-3 rounded-full border border-white/50 text-white px-9 py-4 font-bold text-base uppercase tracking-[0.15em] hover:bg-white hover:text-[#0f0806] hover:border-white hover:scale-[1.05] transition-all duration-300 ease-out will-change-transform"
+              className="group inline-flex items-center gap-3 rounded-full border text-white px-9 py-4 font-bold text-base uppercase tracking-[0.15em] hover:bg-white/10 hover:backdrop-blur-md hover:border-white hover:scale-[1.04] transition-all duration-300 ease-out will-change-transform"
+              style={{ borderColor: "rgba(255,255,255,0.8)" }}
             >
               Order in Bulk
             </Link>
