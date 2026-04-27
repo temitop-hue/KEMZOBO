@@ -71,11 +71,23 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
 
             <motion.h1
               variants={fadeUp}
-              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[1.05]"
-              style={{ textShadow: "0 2px 16px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.95)" }}
+              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05]"
+              style={{
+                color: "#ffffff",
+                textShadow: "0 6px 30px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.9)",
+                mixBlendMode: "normal",
+              }}
             >
               The drink that brings people{" "}
-              <span className="italic text-[#EF4444]" style={{ textShadow: "0 2px 16px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.95)" }}>together.</span>
+              <span
+                className="italic"
+                style={{
+                  color: "#E63946",
+                  textShadow: "0 6px 30px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.9)",
+                }}
+              >
+                together.
+              </span>
             </motion.h1>
 
             <motion.p
