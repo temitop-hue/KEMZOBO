@@ -34,9 +34,9 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
 
       {/* Layer 1: Full-bleed lifestyle image — refined cinematic treatment */}
       <motion.div
-        initial={{ scale: 1.06, opacity: 0 }}
-        animate={{ scale: 1.02, opacity: 1 }}
-        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+        initial={{ scale: 1.04, opacity: 0 }}
+        animate={{ scale: 1.01, opacity: 1 }}
+        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
         className="absolute inset-0"
       >
         <motion.div style={{ scale: heroScale }} className="absolute inset-0">
@@ -77,9 +77,9 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
         }}
       />
 
-      {/* Layer 3b: Fine-grain film texture — barely-there premium polish */}
+      {/* Layer 3b: Fine-grain film texture — overlay blend lets it sit in shadows, fade in highlights */}
       <div
-        className="absolute inset-0 z-[3] pointer-events-none opacity-[0.05] mix-blend-overlay"
+        className="absolute inset-0 z-[3] pointer-events-none opacity-[0.035] mix-blend-overlay"
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
@@ -92,11 +92,20 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
         style={{ opacity: heroOpacity }}
         className="relative z-10 flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-20 xl:px-28 py-24 lg:py-32"
       >
+        {/* Subtle "lit" highlight behind text — barely perceptible, just feels better */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle at 30% 50%, rgba(255,255,255,0.035), transparent 60%)",
+          }}
+        />
+
         <motion.div
           initial="hidden"
           animate="visible"
           variants={stagger}
-          className="max-w-[560px] w-full"
+          className="relative max-w-[560px] w-full lg:ml-2"
         >
           <motion.h1
             variants={fadeUp}
@@ -108,15 +117,25 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
           >
             <span style={{ color: "#ffffff" }}>Bold Hibiscus.</span>
             <br />
-            <span style={{ color: "#C81D25" }}>Timeless Tradition.</span>
+            <span
+              style={{
+                color: "rgba(200,29,37,0.95)",
+                fontSize: "0.93em",
+                display: "inline-block",
+                lineHeight: "1.05",
+              }}
+            >
+              Timeless Tradition.
+            </span>
           </motion.h1>
 
           <motion.p
             variants={fadeUp}
-            className="mt-8 lg:mt-10 text-lg lg:text-xl leading-relaxed max-w-md font-medium"
+            className="mt-8 lg:mt-10 text-lg lg:text-xl leading-relaxed max-w-md"
             style={{
-              color: "rgba(255,255,255,0.86)",
-              textShadow: "0 2px 14px rgba(0,0,0,0.6)",
+              color: "rgba(255,255,255,0.85)",
+              fontWeight: 350,
+              textShadow: "0 2px 14px rgba(0,0,0,0.55)",
             }}
           >
             The Original Zobo Drink&mdash;made for every gathering.
@@ -130,7 +149,7 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
                 background:
                   "linear-gradient(180deg, #D62F3D 0%, #B81F2A 100%)",
                 boxShadow:
-                  "0 10px 30px rgba(230,57,70,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
+                  "0 10px 30px rgba(200,29,37,0.25), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -2px 6px rgba(0,0,0,0.25)",
               }}
             >
               Shop Now
