@@ -1,6 +1,6 @@
 import PageMeta from "@/components/PageMeta";
 import { Link } from "wouter";
-import { ArrowRight, ChevronDown, Star, Truck, Package } from "lucide-react";
+import { ArrowRight, ChevronDown, Star, Truck, Package, ShoppingBag, Sparkles, Calendar } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/contexts/CartContext";
@@ -65,13 +65,12 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
             </motion.p>
 
             <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.05] drop-shadow-2xl">
-              Bold Hibiscus.
-              <br />
-              <span className="italic text-[#EF4444] drop-shadow-2xl">Timeless Tradition.</span>
+              The drink that brings people{" "}
+              <span className="italic text-[#EF4444] drop-shadow-2xl">together.</span>
             </motion.h1>
 
             <motion.p variants={fadeUp} className="mt-6 text-white/85 text-lg lg:text-xl max-w-lg leading-relaxed drop-shadow-lg">
-              The Original Zobo Drink&mdash;made for every gathering.
+              Bold hibiscus. Ready to drink.
             </motion.p>
 
             <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center gap-4">
@@ -134,6 +133,93 @@ export default function Home() {
           CHAPTER 1: THE PRODUCT — Hero slideshow
           ═══════════════════════════════════════════════════ */}
       <LifestyleHero heroRef={heroRef} heroScale={heroScale} heroOpacity={heroOpacity} />
+
+      {/* ═══════════════════════════════════════════════════
+          START HERE — Quick purchase entry points
+          ═══════════════════════════════════════════════════ */}
+      <section className="py-16 lg:py-20 bg-white border-b border-[#CC2936]/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="text-center mb-10"
+          >
+            <motion.p
+              variants={fadeUp}
+              className="text-[#CC2936] text-sm uppercase tracking-[0.3em] font-bold mb-3"
+            >
+              Start Here
+            </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              className="font-display text-3xl lg:text-4xl font-bold text-foreground"
+            >
+              Pick your KEMZOBO moment
+            </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              className="mt-3 text-sm font-medium text-[#CC2936]/80 uppercase tracking-wider"
+            >
+              Now shipping nationwide &middot; Limited first batch available
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={stagger}
+            className="grid grid-cols-1 md:grid-cols-3 gap-5"
+          >
+            {[
+              {
+                icon: Package,
+                title: "Buy a Case",
+                text: "Stock up on a 12-pack. Best value, ready to share.",
+                cta: "Shop Cases",
+                href: "/products",
+              },
+              {
+                icon: Sparkles,
+                title: "Try KEMZOBO",
+                text: "First time? Start with a single can or 6-pack.",
+                cta: "Try It",
+                href: "/products",
+              },
+              {
+                icon: Calendar,
+                title: "Order for Events",
+                text: "Cookouts, weddings, parties — bulk delivery available.",
+                cta: "Plan an Event",
+                href: "/wholesale",
+              },
+            ].map((item) => (
+              <motion.div
+                key={item.title}
+                variants={fadeUp}
+                className="group relative rounded-2xl border border-[#CC2936]/10 bg-white p-6 lg:p-7 card-hover hover:border-[#CC2936]/30 transition-all"
+              >
+                <item.icon className="h-9 w-9 text-[#CC2936] mb-4" />
+                <h3 className="font-display text-xl font-bold text-foreground mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                  {item.text}
+                </p>
+                <Link
+                  href={item.href}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#CC2936] text-white text-sm font-bold uppercase tracking-wider px-5 py-2.5 hover:bg-[#E63946] transition-colors"
+                >
+                  {item.cta}
+                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
 
       {/* ═══════════════════════════════════════════════════
           CHAPTER 2: THE STORY — Where it started
@@ -203,6 +289,26 @@ export default function Home() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Mid-page CTA strip */}
+      <section className="bg-[#CC2936] py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div>
+            <p className="font-display text-2xl lg:text-3xl font-bold text-white">
+              Ready to taste it?
+            </p>
+            <p className="text-white/80 text-sm mt-1">
+              Now shipping nationwide &middot; Limited first batch available
+            </p>
+          </div>
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 rounded-full bg-white text-[#CC2936] px-8 py-3.5 font-bold uppercase tracking-wider hover:bg-gray-100 transition-colors whitespace-nowrap"
+          >
+            Shop Now <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
@@ -320,6 +426,26 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Mid-page CTA strip — sales nudge before products */}
+      <section className="bg-foreground py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div>
+            <p className="font-display text-2xl lg:text-3xl font-bold text-white">
+              Don't just take their word for it.
+            </p>
+            <p className="text-white/70 text-sm mt-1">
+              Try the Original Zobo today.
+            </p>
+          </div>
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 rounded-full bg-[#CC2936] text-white px-8 py-3.5 font-bold uppercase tracking-wider hover:bg-[#E63946] transition-colors whitespace-nowrap"
+          >
+            Shop Now <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
       {/* ═══════════════════════════════════════════════════
           CHAPTER 8: THE COLLECTION — Products
           ═══════════════════════════════════════════════════ */}
@@ -327,25 +453,57 @@ export default function Home() {
         <section className="py-28 lg:py-36 bg-hibiscus-bg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="text-center mb-14">
-              <motion.p variants={fadeUp} className="text-[#CC2936] text-sm uppercase tracking-[0.3em] font-bold mb-4">The Collection</motion.p>
-              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold">Find Your Flavor</motion.h2>
-              <motion.p variants={fadeUp} className="mt-4 text-muted-foreground text-lg">Six bold flavors. One heritage. Best served cold.</motion.p>
+              <motion.p variants={fadeUp} className="text-[#CC2936] text-sm uppercase tracking-[0.3em] font-bold mb-4">Available Now</motion.p>
+              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold">Start with the Original</motion.h2>
+              <motion.p variants={fadeUp} className="mt-4 text-muted-foreground text-lg">
+                Bold hibiscus. 12-pack cases. Single cans available.
+              </motion.p>
+              <motion.div variants={fadeUp} className="mt-4 flex flex-wrap justify-center items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#CC2936] text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5">
+                  <Truck className="h-3 w-3" /> Now Shipping Nationwide
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#CC2936]/20 text-[#CC2936] text-xs font-bold uppercase tracking-wider px-3 py-1.5">
+                  Limited First Batch
+                </span>
+              </motion.div>
             </motion.div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 max-w-5xl mx-auto">
               {featured.map((product) => (
                 <motion.div key={product.id} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-                  <ProductCard product={product} onAddToCart={() => addItem({ productId: product.id, variantId: 0, productName: product.name, variantName: "Default", price: 0, imageUrl: product.imageUrl ?? undefined })} />
+                  <ProductCard
+                    product={product}
+                    onAddToCart={(v) =>
+                      addItem({
+                        productId: product.id,
+                        variantId: v.id,
+                        productName: product.name,
+                        variantName: v.name,
+                        price: v.price,
+                        imageUrl: product.imageUrl ?? undefined,
+                      })
+                    }
+                  />
                 </motion.div>
               ))}
             </div>
+
+            <motion.p
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeUp}
+              className="text-center mt-8 text-sm font-medium text-muted-foreground italic"
+            >
+              More flavors coming soon.
+            </motion.p>
 
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="card-hover flex items-center gap-4 bg-white rounded-xl p-5 border border-[#CC2936]/10">
                 <Package className="h-8 w-8 text-[#CC2936] flex-shrink-0" />
                 <div>
                   <p className="font-semibold text-foreground">Bulk Pricing</p>
-                  <p className="text-sm text-muted-foreground">24+ cases ~5% off • 100+ ~9% off • 500+ ~14% off</p>
+                  <p className="text-sm text-muted-foreground">24+ cases ~5% off &bull; 100+ ~9% off &bull; 500+ ~14% off</p>
                 </div>
               </div>
               <div className="card-hover flex items-center gap-4 bg-white rounded-xl p-5 border border-[#CC2936]/10">
@@ -357,9 +515,18 @@ export default function Home() {
               </div>
             </motion.div>
 
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mt-12">
-              <Link href="/products" className="btn-primary group inline-flex items-center gap-2 rounded-full border-2 border-foreground text-foreground px-8 py-3.5 font-semibold hover:bg-foreground hover:text-white transition-colors">
-                View All Products <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center mt-12 flex flex-wrap justify-center gap-3">
+              <Link
+                href="/products"
+                className="btn-primary group inline-flex items-center gap-2 rounded-full bg-[#CC2936] text-white px-8 py-3.5 font-bold uppercase tracking-wider hover:bg-[#E63946] transition-colors"
+              >
+                Shop Now <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/wholesale"
+                className="btn-primary inline-flex items-center gap-2 rounded-full border-2 border-foreground text-foreground px-8 py-3.5 font-bold uppercase tracking-wider hover:bg-foreground hover:text-white transition-colors"
+              >
+                Order in Bulk
               </Link>
             </motion.div>
           </div>

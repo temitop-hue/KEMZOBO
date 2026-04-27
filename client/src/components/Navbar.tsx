@@ -42,7 +42,13 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#CC2936] text-white text-xs sm:text-sm font-bold uppercase tracking-wider px-4 py-2 sm:px-5 sm:py-2.5 hover:bg-[#E63946] transition-colors shadow-sm"
+            >
+              Shop Now
+            </Link>
             <Link href="/login" className="hidden md:block">
               <User className="h-5 w-5 text-gray-400 hover:text-[#CC2936] transition-colors" />
             </Link>

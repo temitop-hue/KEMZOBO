@@ -90,13 +90,13 @@ export default function Products() {
             <ProductCard
               key={product.id}
               product={product}
-              onAddToCart={() =>
+              onAddToCart={(v) =>
                 addItem({
                   productId: product.id,
-                  variantId: 0,
+                  variantId: v.id,
                   productName: product.name,
-                  variantName: "Default",
-                  price: 0,
+                  variantName: v.name,
+                  price: v.price,
                   imageUrl: product.imageUrl ?? undefined,
                 })
               }

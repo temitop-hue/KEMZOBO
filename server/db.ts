@@ -1,6 +1,6 @@
 import { connect } from "@tidbcloud/serverless";
 import { drizzle } from "drizzle-orm/tidb-serverless";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import {
   users,
   products,
@@ -89,7 +89,10 @@ export async function getProductById(id: number) {
 
 export async function getFeaturedProducts() {
   const db = getDb();
-  return db.select().from(products).where(eq(products.isFeatured, 1));
+  return db
+    .select()
+    .from(products)
+    .where(and(eq(products.isFeatured, 1), eq(products.isActive, 1)));
 }
 
 export async function createProduct(data: Omit<NewProduct, "id" | "createdAt" | "updatedAt">): Promise<number> {

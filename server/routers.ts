@@ -22,10 +22,15 @@ export const appRouter = router({
       .input(z.object({ category: z.string().optional() }).optional())
       .query(async ({ input }) => {
         const allProducts = await db.getAllProducts(true);
-        if (input?.category) {
-          return allProducts.filter((p) => p.category === input.category);
-        }
-        return allProducts;
+        const filtered = input?.category
+          ? allProducts.filter((p) => p.category === input.category)
+          : allProducts;
+        return Promise.all(
+          filtered.map(async (p) => ({
+            ...p,
+            variants: await db.getVariantsByProductId(p.id),
+          }))
+        );
       }),
 
     getBySlug: publicProcedure
@@ -38,7 +43,13 @@ export const appRouter = router({
       }),
 
     featured: publicProcedure.query(async () => {
-      return db.getFeaturedProducts();
+      const featured = await db.getFeaturedProducts();
+      return Promise.all(
+        featured.map(async (p) => ({
+          ...p,
+          variants: await db.getVariantsByProductId(p.id),
+        }))
+      );
     }),
 
     getVariants: publicProcedure

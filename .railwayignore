@@ -1,0 +1,22 @@
+# PowerPoint/Office lock files
+~$*
+
+# Local-only docs and contract artifacts (not part of deployed app)
+*.pptx
+KEMZOBO_Contract*.md
+KEMZOBO_Invoice*.md
+KEMZOBO_Quote*.md
+Kem_Zobo_Platform_Overview*
+generate-contract-invoice.mjs
+generate-presentation.mjs
+generate-quote.mjs
+
+# Build artifacts and caches (Railway rebuilds these)
+node_modules/
+dist/
+.git/
+tsconfig.tsbuildinfo
+
+# Local uploads and env
+uploads/
+.env
