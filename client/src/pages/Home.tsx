@@ -63,21 +63,15 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
         }}
       />
 
-      {/* Layer 3: Cinematic dark gradient — softer, lets image breathe (desktop) */}
+      {/* Layer 3: Cinematic dark gradient — tokenized so future edits can't flatten it */}
       <div
         className="absolute inset-0 z-[2] pointer-events-none hidden lg:block"
-        style={{
-          background:
-            "linear-gradient(to right, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.6) 35%, rgba(0,0,0,0.25) 65%, rgba(0,0,0,0) 100%)",
-        }}
+        style={{ background: "var(--hero-grad-h)" }}
       />
       {/* Mobile: vertical gradient */}
       <div
         className="absolute inset-0 z-[2] pointer-events-none lg:hidden"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0) 100%)",
-        }}
+        style={{ background: "var(--hero-grad-v)" }}
       />
 
       {/* Layer 3b: Fine-grain film texture — overlay blend lets it sit in shadows, fade in highlights */}
@@ -112,7 +106,7 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
         >
           <motion.h1
             variants={fadeUp}
-            className="font-display font-black text-[2.6rem] sm:text-[3.75rem] lg:text-[5.25rem] xl:text-[6.25rem] leading-[1.02] tracking-[-0.01em]"
+            className="hero-title font-display font-black text-[2.6rem] sm:text-[3.75rem] lg:text-[5.25rem] xl:text-[6.25rem] leading-[1.02] tracking-[-0.01em]"
             style={{
               textShadow:
                 "0 10px 40px rgba(0,0,0,0.7), 0 2px 6px rgba(0,0,0,0.85)",
@@ -144,7 +138,7 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
             The Original Zobo Drink&mdash;made for every gathering.
           </motion.p>
 
-          <motion.div variants={fadeUp} className="mt-10 lg:mt-14 flex flex-wrap items-center gap-3">
+          <motion.div variants={fadeUp} className="hero-ctas mt-10 lg:mt-14 flex flex-wrap items-center gap-3">
             <Link
               href="/products"
               className="group inline-flex items-center gap-3 rounded-full text-white px-9 py-4 font-bold text-base uppercase tracking-[0.15em] hover:scale-[1.04] transition-all duration-300 ease-out will-change-transform"
