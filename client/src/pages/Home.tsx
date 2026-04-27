@@ -5,7 +5,7 @@ import { trpc } from "@/lib/trpc";
 import ProductCard from "@/components/ProductCard";
 import { useCart } from "@/contexts/CartContext";
 import { motion, type Variants, useScroll, useTransform } from "framer-motion";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 const fadeUp: Variants = {
@@ -17,73 +17,31 @@ const stagger: Variants = {
 };
 
 // ─── Lifestyle Hero ──────────────────────────────────────
-// Lifestyle-first: video of people gathering → fallback to friends image
-// Product appears as a supporting element, not the hero
-const lifestyleImages = [
-  "/images/Gemini_Generated_Image_xilss5xilss5xils.png",
-  "/images/lifestyle-friends.jpg",
-  "/images/hero-can.png",
-  "/images/heritage-glass.jpg",
-  "/images/bar-glass.jpg",
-  "/images/tropical-glass.jpg",
-];
-
+// Two-column hero per creative direction:
+// Left: headline + subtext + CTAs (with subtle dark gradient for readability)
+// Right: cropped lifestyle cheers image (people + product + moment)
 function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
   heroRef: React.RefObject<HTMLElement | null>; heroScale: any; heroOpacity: any;
 }) {
-  const [bgIndex, setBgIndex] = useState(0);
-  const [videoReady, setVideoReady] = useState(false);
-  const [videoPlaying, setVideoPlaying] = useState(true);
-
-  // Cycle background images after video ends
-  useEffect(() => {
-    if (videoPlaying) return;
-    const t = setInterval(() => setBgIndex((p) => (p + 1) % lifestyleImages.length), 6000);
-    return () => clearInterval(t);
-  }, [videoPlaying]);
-
-  // Preload images
-  useEffect(() => {
-    lifestyleImages.forEach((src) => { const img = new Image(); img.src = src; });
-  }, []);
-
   return (
     <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0f0806]">
 
-      {/* Layer 1: Ambient lifestyle video */}
+      {/* Layer 1: Full-bleed lifestyle hero shot */}
       <motion.div style={{ scale: heroScale }} className="absolute inset-0">
-        <video
-          autoPlay loop muted playsInline
-          poster="/images/Gemini_Generated_Image_xilss5xilss5xils.png"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoReady ? "opacity-100" : "opacity-0"}`}
-          onCanPlay={() => setVideoReady(true)}
-          onEnded={() => setVideoPlaying(false)}
-        >
-          <source src="/videos/Kemzobo-scene1.mp4" type="video/mp4" />
-          <source src="/videos/kemzobo-final.mp4" type="video/mp4" />
-        </video>
-
-        {/* Fallback: crossfading lifestyle images */}
-        {lifestyleImages.map((src, i) => (
-          <div
-            key={i}
-            className="absolute inset-0 transition-opacity duration-[2000ms] ease-in-out"
-            style={{ opacity: !videoReady && i === bgIndex ? 1 : videoReady ? 0 : i === bgIndex ? 1 : 0 }}
-          >
-            <img
-              src={src}
-              alt="KEMZOBO lifestyle"
-              className="w-full h-full object-cover scale-105"
-            />
-          </div>
-        ))}
+        <img
+          src="/images/hero%20shot.jpeg"
+          alt="Friends raising KEMZOBO cans together"
+          className="absolute inset-0 w-full h-full object-cover object-[70%_center] lg:object-right"
+        />
       </motion.div>
 
-      {/* Layer 2: Clean gradient — dark at bottom only, image visible at top */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-[1]" />
+      {/* Layer 2: Dark gradient — heavy on left for text readability, fades on right (desktop) */}
+      <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-black/85 via-black/55 to-transparent z-[1]" />
+      {/* Mobile: vertical gradient so text sits over a darkened bottom */}
+      <div className="absolute inset-0 lg:hidden bg-gradient-to-t from-black/85 via-black/45 to-black/20 z-[1]" />
 
       {/* Layer 3: Content */}
-      <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col justify-between">
+      <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col">
 
         {/* Top: Logo */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24 lg:pt-28">
@@ -97,74 +55,44 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
           />
         </div>
 
-        {/* Center/Bottom: Story-driven headline */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-20 lg:pb-28">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+        {/* Center: Two-column split — text left, image bleeds through on right */}
+        <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-2 items-center gap-8 pb-20 lg:pb-28">
 
-            {/* Left: Emotional copy */}
-            <motion.div initial="hidden" animate="visible" variants={stagger} className="lg:col-span-8">
-              <motion.p variants={fadeUp} className="text-white/60 text-sm uppercase tracking-[0.3em] mb-5 font-medium">
-                KEMZOBO, The Original Zobo Drink
-              </motion.p>
+          {/* Left: Headline + CTAs */}
+          <motion.div initial="hidden" animate="visible" variants={stagger}>
+            <motion.p variants={fadeUp} className="text-white/70 text-sm uppercase tracking-[0.3em] mb-5 font-medium">
+              KEMZOBO, The Original Zobo Drink
+            </motion.p>
 
-              <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1] drop-shadow-lg">
-                The drink that
-                <br />
-                brings people{" "}
-                <span className="italic text-[#EF4444] drop-shadow-lg">together.</span>
-              </motion.h1>
+            <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.05] drop-shadow-2xl">
+              Bold Hibiscus.
+              <br />
+              <span className="italic text-[#EF4444] drop-shadow-2xl">Timeless Tradition.</span>
+            </motion.h1>
 
-              <motion.p variants={fadeUp} className="mt-6 text-white/60 text-lg lg:text-xl max-w-lg leading-relaxed">
-                Bold hibiscus. Timeless tradition. Ready to drink.
-                Made for cookouts, celebrations, and the everyday
-                moments where good drinks belong.
-              </motion.p>
+            <motion.p variants={fadeUp} className="mt-6 text-white/85 text-lg lg:text-xl max-w-lg leading-relaxed drop-shadow-lg">
+              The Original Zobo Drink&mdash;made for every gathering.
+            </motion.p>
 
-              <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center gap-4">
-                <Link
-                  href="/products"
-                  className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-[#CC2936] text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-[#E63946] transition-all"
-                >
-                  Shop Now
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
-                </Link>
-                <Link
-                  href="/wholesale"
-                  className="btn-primary inline-flex items-center gap-3 rounded-full border-2 border-white/25 text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:border-white/60 hover:bg-white/5 transition-all"
-                >
-                  Order in Bulk
-                </Link>
-              </motion.div>
+            <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center gap-4">
+              <Link
+                href="/products"
+                className="btn-primary glow-pulse group inline-flex items-center gap-3 rounded-full bg-[#CC2936] text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:bg-[#E63946] transition-all"
+              >
+                Shop Now
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+              </Link>
+              <Link
+                href="/wholesale"
+                className="btn-primary inline-flex items-center gap-3 rounded-full border-2 border-white/30 text-white px-8 py-4 font-bold text-lg uppercase tracking-wider hover:border-white/70 hover:bg-white/5 transition-all"
+              >
+                Order in Bulk
+              </Link>
             </motion.div>
+          </motion.div>
 
-            {/* Right: Floating product card — the product is present but secondary */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 1.5 }}
-              className="lg:col-span-4 hidden lg:flex justify-end"
-            >
-              <div className="relative">
-                <div className="bg-white/[0.08] backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-2xl shadow-black/30">
-                  <img
-                    src="/images/hero-can.png"
-                    alt="KEMZOBO 16 FL. OZ"
-                    className="h-48 w-auto object-contain mx-auto drop-shadow-2xl"
-                  />
-                  <div className="mt-4 text-center">
-                    <p className="text-white font-display font-bold text-sm">KEMZOBO</p>
-                    <p className="text-white/40 text-xs uppercase tracking-wider mt-0.5">16 FL. OZ &bull; Ready to Drink</p>
-                  </div>
-                  <Link
-                    href="/products"
-                    className="mt-4 block text-center rounded-full bg-white/10 text-white text-xs font-semibold py-2.5 px-4 hover:bg-white/20 transition-colors uppercase tracking-wider"
-                  >
-                    View Collection
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+          {/* Right column intentionally empty — the lifestyle image bleeds through */}
+          <div className="hidden lg:block" />
         </div>
 
         {/* Scroll indicator */}
@@ -175,7 +103,7 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
           className="absolute bottom-6 left-1/2 -translate-x-1/2"
         >
           <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-            <ChevronDown className="h-5 w-5 text-white/20" />
+            <ChevronDown className="h-5 w-5 text-white/40" />
           </motion.div>
         </motion.div>
       </motion.div>
