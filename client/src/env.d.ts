@@ -2,6 +2,8 @@
 
 interface ImportMetaEnv {
   readonly VITE_STRIPE_PUBLISHABLE_KEY: string;
+  readonly VITE_TAWK_PROPERTY_ID?: string;
+  readonly VITE_TAWK_WIDGET_ID?: string;
 }
 
 interface ImportMeta {

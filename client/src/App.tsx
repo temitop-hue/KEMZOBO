@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { CartProvider } from "./contexts/CartContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import TawkChat from "./components/TawkChat";
 
 // Eager load: Home (first paint) + critical shell
 import Home from "./pages/Home";
@@ -76,6 +77,7 @@ function PublicRouter() {
         </Suspense>
       </main>
       <Footer />
+      <TawkChat />
     </div>
   );
 }
