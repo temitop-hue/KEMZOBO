@@ -43,7 +43,10 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
           <img
             src="/images/hero%20shot.jpeg"
             alt="Friends raising KEMZOBO cans together"
-            className="absolute inset-0 w-full h-full object-cover object-[58%_center] lg:object-[60%_center]"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 w-full h-full object-cover object-[60%_42%] lg:object-[60%_center]"
             style={{
               filter: "saturate(1.08) contrast(1.06)",
             }}
@@ -109,7 +112,7 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
         >
           <motion.h1
             variants={fadeUp}
-            className="font-display font-black text-[3.25rem] sm:text-7xl lg:text-[5.25rem] xl:text-[6.25rem] leading-[1.02] tracking-[-0.01em]"
+            className="font-display font-black text-[2.6rem] sm:text-[3.75rem] lg:text-[5.25rem] xl:text-[6.25rem] leading-[1.02] tracking-[-0.01em]"
             style={{
               textShadow:
                 "0 10px 40px rgba(0,0,0,0.7), 0 2px 6px rgba(0,0,0,0.85)",
@@ -131,17 +134,17 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
 
           <motion.p
             variants={fadeUp}
-            className="mt-8 lg:mt-10 text-lg lg:text-xl leading-relaxed max-w-md"
+            className="mt-6 sm:mt-8 lg:mt-10 text-base sm:text-lg lg:text-xl leading-relaxed max-w-md"
             style={{
               color: "rgba(255,255,255,0.85)",
-              fontWeight: 350,
+              fontWeight: 300,
               textShadow: "0 2px 14px rgba(0,0,0,0.55)",
             }}
           >
             The Original Zobo Drink&mdash;made for every gathering.
           </motion.p>
 
-          <motion.div variants={fadeUp} className="mt-12 lg:mt-14 flex flex-wrap items-center gap-4">
+          <motion.div variants={fadeUp} className="mt-10 lg:mt-14 flex flex-wrap items-center gap-3">
             <Link
               href="/products"
               className="group inline-flex items-center gap-3 rounded-full text-white px-9 py-4 font-bold text-base uppercase tracking-[0.15em] hover:scale-[1.04] transition-all duration-300 ease-out will-change-transform"
