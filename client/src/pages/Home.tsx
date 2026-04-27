@@ -30,88 +30,124 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
   heroRef: React.RefObject<HTMLElement | null>; heroScale: any; heroOpacity: any;
 }) {
   return (
-    <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-[#0f0806] flex flex-col">
+    <section ref={heroRef} className="relative min-h-screen overflow-hidden bg-black flex flex-col">
 
-      <motion.div style={{ opacity: heroOpacity }} className="flex-1 flex flex-col">
-        {/* Split: text panel (40%) | lifestyle image (60%) */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 min-h-[640px]">
-
-          {/* LEFT 40%: Dark text panel */}
-          <div className="lg:col-span-2 relative bg-gradient-to-br from-[#1a0d08] via-[#0f0806] to-[#0a0504] flex items-center px-6 sm:px-10 lg:px-14 xl:px-20 py-20 lg:py-24">
-            <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-xl w-full">
-              <motion.h1
-                variants={fadeUp}
-                className="font-display font-black text-5xl sm:text-6xl lg:text-6xl xl:text-7xl leading-[1.02] tracking-tight"
-                style={{
-                  textShadow: "0 4px 24px rgba(0,0,0,0.4)",
-                }}
-              >
-                <span style={{ color: "#ffffff" }}>Bold Hibiscus.</span>
-                <br />
-                <span style={{ color: "#E63946" }}>Timeless Tradition.</span>
-              </motion.h1>
-
-              <motion.p
-                variants={fadeUp}
-                className="mt-6 lg:mt-8 text-lg lg:text-xl leading-relaxed max-w-md font-medium"
-                style={{ color: "rgba(255,255,255,0.78)" }}
-              >
-                The Original Zobo Drink&mdash;made for every gathering.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="mt-10 lg:mt-12 flex flex-wrap items-center gap-4">
-                <Link
-                  href="/products"
-                  className="btn-primary group inline-flex items-center gap-3 rounded-full bg-[#CC2936] text-white px-8 py-4 font-bold text-base uppercase tracking-wider hover:bg-[#E63946] transition-all shadow-lg shadow-[#CC2936]/20"
-                >
-                  Shop Now
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1.5 transition-transform duration-300" />
-                </Link>
-                <Link
-                  href="/wholesale"
-                  className="btn-primary inline-flex items-center gap-3 rounded-full border-2 border-white/40 text-white px-8 py-4 font-bold text-base uppercase tracking-wider hover:border-white hover:bg-white/5 transition-all"
-                >
-                  Order in Bulk
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-
-          {/* RIGHT 60%: Lifestyle image */}
-          <div className="lg:col-span-3 relative min-h-[420px] lg:min-h-0">
-            <motion.div style={{ scale: heroScale }} className="absolute inset-0">
-              <img
-                src="/images/hero%20shot.jpeg"
-                alt="Friends raising KEMZOBO cans together"
-                className="absolute inset-0 w-full h-full object-cover object-center"
-                style={{
-                  filter: "saturate(1.08) contrast(1.05)",
-                }}
-              />
-            </motion.div>
-            {/* Soft left-edge fade so the image dissolves into the dark panel on desktop */}
-            <div className="absolute inset-y-0 left-0 w-24 lg:w-32 hidden lg:block bg-gradient-to-r from-[#0f0806] to-transparent z-[1]" />
-            {/* Mobile: bottom fade so trust strip sits cleanly under image */}
-            <div className="absolute inset-x-0 bottom-0 h-24 lg:hidden bg-gradient-to-t from-[#0f0806] to-transparent z-[1]" />
-          </div>
-        </div>
-
-        {/* Trust-badge strip — full width across hero base */}
-        <div className="bg-[#0f0806]/95 backdrop-blur-sm border-t border-white/5">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 lg:py-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-10 items-center">
-              {trustBadges.map((badge) => (
-                <div key={badge.label} className="flex items-center gap-3">
-                  <badge.icon className="h-6 w-6 flex-shrink-0" style={{ color: badge.color }} />
-                  <span className="text-sm lg:text-base font-medium" style={{ color: "rgba(255,255,255,0.92)" }}>
-                    {badge.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+      {/* Layer 1: Full-bleed lifestyle image — slight zoom + cinematic color treatment */}
+      <motion.div
+        initial={{ scale: 1.12, opacity: 0 }}
+        animate={{ scale: 1.04, opacity: 1 }}
+        transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute inset-0"
+      >
+        <motion.div style={{ scale: heroScale }} className="absolute inset-0">
+          <img
+            src="/images/hero%20shot.jpeg"
+            alt="Friends raising KEMZOBO cans together"
+            className="absolute inset-0 w-full h-full object-cover object-[58%_center] lg:object-[60%_center]"
+            style={{
+              filter: "saturate(1.18) contrast(1.10) brightness(1.03)",
+            }}
+          />
+        </motion.div>
       </motion.div>
+
+      {/* Layer 2: Warm golden-hour wash (subtle) */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none mix-blend-overlay"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255,170,90,0.10) 0%, rgba(255,120,60,0.05) 50%, rgba(0,0,0,0) 100%)",
+        }}
+      />
+
+      {/* Layer 3: Cinematic dark gradient — heavy left, fades to clear on right (desktop) */}
+      <div
+        className="absolute inset-0 z-[2] pointer-events-none hidden lg:block"
+        style={{
+          background:
+            "linear-gradient(to right, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 35%, rgba(0,0,0,0.3) 65%, rgba(0,0,0,0) 100%)",
+        }}
+      />
+      {/* Mobile: vertical gradient */}
+      <div
+        className="absolute inset-0 z-[2] pointer-events-none lg:hidden"
+        style={{
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.3) 75%, rgba(0,0,0,0) 100%)",
+        }}
+      />
+
+      {/* Layer 4: Content */}
+      <motion.div
+        style={{ opacity: heroOpacity }}
+        className="relative z-10 flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-20 xl:px-28 py-24 lg:py-32"
+      >
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={stagger}
+          className="max-w-[560px] w-full"
+        >
+          <motion.h1
+            variants={fadeUp}
+            className="font-display font-black text-[3.5rem] sm:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] leading-[0.95] tracking-tight"
+            style={{
+              textShadow:
+                "0 10px 40px rgba(0,0,0,0.85), 0 2px 6px rgba(0,0,0,0.95)",
+            }}
+          >
+            <span style={{ color: "#ffffff" }}>Bold Hibiscus.</span>
+            <br />
+            <span style={{ color: "#E63946" }}>Timeless Tradition.</span>
+          </motion.h1>
+
+          <motion.p
+            variants={fadeUp}
+            className="mt-10 lg:mt-12 text-lg lg:text-xl leading-relaxed max-w-md font-medium"
+            style={{
+              color: "rgba(255,255,255,0.88)",
+              textShadow: "0 2px 14px rgba(0,0,0,0.7)",
+            }}
+          >
+            The Original Zobo Drink&mdash;made for every gathering.
+          </motion.p>
+
+          <motion.div variants={fadeUp} className="mt-12 lg:mt-14 flex flex-wrap items-center gap-4">
+            <Link
+              href="/products"
+              className="group inline-flex items-center gap-3 rounded-full bg-[#CC2936] text-white px-9 py-4 font-bold text-base uppercase tracking-[0.15em] hover:bg-[#E63946] hover:scale-[1.05] transition-all duration-300 ease-out shadow-xl shadow-[#CC2936]/30 will-change-transform"
+            >
+              Shop Now
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1.5 transition-transform duration-300" />
+            </Link>
+            <Link
+              href="/wholesale"
+              className="group inline-flex items-center gap-3 rounded-full border border-white/50 text-white px-9 py-4 font-bold text-base uppercase tracking-[0.15em] hover:bg-white hover:text-[#0f0806] hover:border-white hover:scale-[1.05] transition-all duration-300 ease-out will-change-transform"
+            >
+              Order in Bulk
+            </Link>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+
+      {/* Layer 5: Trust-badge strip — full width across hero base */}
+      <div className="relative z-10 bg-black/80 backdrop-blur-md border-t border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 lg:py-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-10 items-center">
+            {trustBadges.map((badge) => (
+              <div key={badge.label} className="flex items-center gap-3">
+                <badge.icon className="h-6 w-6 flex-shrink-0" style={{ color: badge.color }} />
+                <span
+                  className="text-sm lg:text-base font-medium"
+                  style={{ color: "rgba(255,255,255,0.92)" }}
+                >
+                  {badge.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
