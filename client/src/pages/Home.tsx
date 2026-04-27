@@ -36,9 +36,9 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
       </motion.div>
 
       {/* Layer 2: Dark gradient — heavy on left for text readability, fades on right (desktop) */}
-      <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-black/85 via-black/55 to-transparent z-[1]" />
+      <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-black/95 via-black/75 to-transparent z-[1]" />
       {/* Mobile: vertical gradient so text sits over a darkened bottom */}
-      <div className="absolute inset-0 lg:hidden bg-gradient-to-t from-black/85 via-black/45 to-black/20 z-[1]" />
+      <div className="absolute inset-0 lg:hidden bg-gradient-to-t from-black/90 via-black/60 to-black/30 z-[1]" />
 
       {/* Layer 3: Content */}
       <motion.div style={{ opacity: heroOpacity }} className="absolute inset-0 z-10 flex flex-col">
@@ -58,18 +58,31 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
         {/* Center: Two-column split — text left, image bleeds through on right */}
         <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-2 items-center gap-8 pb-20 lg:pb-28">
 
-          {/* Left: Headline + CTAs */}
-          <motion.div initial="hidden" animate="visible" variants={stagger}>
-            <motion.p variants={fadeUp} className="text-white/70 text-sm uppercase tracking-[0.3em] mb-5 font-medium">
+          {/* Left: Headline + CTAs (with subtle frosted panel for premium readability) */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={stagger}
+            className="relative max-w-2xl rounded-2xl backdrop-blur-[2px] bg-black/15 p-6 lg:p-8 lg:-ml-2"
+          >
+            <motion.p variants={fadeUp} className="text-white/85 text-sm uppercase tracking-[0.3em] mb-5 font-semibold drop-shadow-md">
               KEMZOBO, The Original Zobo Drink
             </motion.p>
 
-            <motion.h1 variants={fadeUp} className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.05] drop-shadow-2xl">
+            <motion.h1
+              variants={fadeUp}
+              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[1.05]"
+              style={{ textShadow: "0 2px 16px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.95)" }}
+            >
               The drink that brings people{" "}
-              <span className="italic text-[#EF4444] drop-shadow-2xl">together.</span>
+              <span className="italic text-[#EF4444]" style={{ textShadow: "0 2px 16px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.95)" }}>together.</span>
             </motion.h1>
 
-            <motion.p variants={fadeUp} className="mt-6 text-white/85 text-lg lg:text-xl max-w-lg leading-relaxed drop-shadow-lg">
+            <motion.p
+              variants={fadeUp}
+              className="mt-6 text-white text-lg lg:text-xl max-w-lg leading-relaxed font-medium"
+              style={{ textShadow: "0 1px 8px rgba(0,0,0,0.8)" }}
+            >
               Bold hibiscus. Ready to drink.
             </motion.p>
 
