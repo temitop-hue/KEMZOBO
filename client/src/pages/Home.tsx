@@ -212,7 +212,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           START HERE — Quick purchase entry points
           ═══════════════════════════════════════════════════ */}
-      <section className="py-16 lg:py-20 bg-white border-b border-[#CC2936]/5">
+      <section className="py-16 lg:py-20 border-b border-[#CC2936]/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
