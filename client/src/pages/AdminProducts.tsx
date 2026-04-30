@@ -14,6 +14,7 @@ type ProductForm = {
 };
 
 type VariantForm = {
+  id?: number; // present for existing variants
   name: string;
   price: string;
   sku: string;
@@ -59,11 +60,6 @@ export default function AdminProducts() {
   });
 
   const updateProduct = trpc.admin.products.update.useMutation({
-    onSuccess: () => {
-      toast.success("Product updated!");
-      resetForm();
-      utils.admin.products.list.invalidate();
-    },
     onError: (err) => toast.error(err.message),
   });
 
@@ -76,6 +72,7 @@ export default function AdminProducts() {
   });
 
   const createVariant = trpc.admin.variants.create.useMutation();
+  const updateVariant = trpc.admin.variants.update.useMutation();
 
   function resetForm() {
     setForm(emptyProduct);
@@ -94,7 +91,14 @@ export default function AdminProducts() {
       isFeatured: product.isFeatured ?? 0,
     });
     setEditingId(product.id);
-    setVariants([{ ...emptyVariant }]); // Can't load existing variants here without extra query
+    const existing = (product.variants ?? []).map((v) => ({
+      id: v.id,
+      name: v.name,
+      price: (v.price / 100).toFixed(2),
+      sku: v.sku ?? "",
+      weight: v.weight ?? "",
+    }));
+    setVariants(existing.length > 0 ? existing : [{ ...emptyVariant }]);
     setShowForm(true);
   }
 
@@ -110,17 +114,51 @@ export default function AdminProducts() {
     }
 
     if (editingId) {
-      updateProduct.mutate({
-        id: editingId,
-        data: {
-          name: form.name,
-          slug: form.slug,
-          description: form.description || undefined,
-          imageUrl: form.imageUrl || undefined,
-          category: form.category,
-          isFeatured: form.isFeatured,
-        },
-      });
+      const productId = editingId;
+      (async () => {
+        try {
+          await updateProduct.mutateAsync({
+            id: productId,
+            data: {
+              name: form.name,
+              slug: form.slug,
+              description: form.description || undefined,
+              imageUrl: form.imageUrl || undefined,
+              category: form.category,
+              isFeatured: form.isFeatured,
+            },
+          });
+          for (const v of variants) {
+            if (!v.name || !v.price) continue;
+            const priceCents = Math.round(parseFloat(v.price) * 100);
+            if (Number.isNaN(priceCents)) continue;
+            if (v.id) {
+              await updateVariant.mutateAsync({
+                id: v.id,
+                data: {
+                  name: v.name,
+                  price: priceCents,
+                  sku: v.sku || undefined,
+                  weight: v.weight || undefined,
+                },
+              });
+            } else {
+              await createVariant.mutateAsync({
+                productId,
+                name: v.name,
+                price: priceCents,
+                sku: v.sku || undefined,
+                weight: v.weight || undefined,
+              });
+            }
+          }
+          toast.success("Product updated!");
+          resetForm();
+          utils.admin.products.list.invalidate();
+        } catch (err: any) {
+          toast.error(err.message || "Update failed");
+        }
+      })();
     } else {
       createProduct.mutate({
         name: form.name,
@@ -236,22 +274,23 @@ export default function AdminProducts() {
                 </div>
               </div>
 
-              {/* Variants (new product only) */}
-              {!editingId && (
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-semibold text-foreground">Variants</label>
-                    <button
-                      type="button"
-                      onClick={() => setVariants([...variants, { ...emptyVariant }])}
-                      className="text-xs text-hibiscus font-semibold hover:underline flex items-center gap-1"
-                    >
-                      <Plus className="h-3 w-3" /> Add Variant
-                    </button>
-                  </div>
+              {/* Variants — editable in both create and edit modes */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-sm font-semibold text-foreground">
+                    Variants &amp; Pricing
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setVariants([...variants, { ...emptyVariant }])}
+                    className="text-xs text-hibiscus font-semibold hover:underline flex items-center gap-1"
+                  >
+                    <Plus className="h-3 w-3" /> Add Variant
+                  </button>
+                </div>
 
-                  {variants.map((v, i) => (
-                    <div key={i} className="grid grid-cols-4 gap-2 mb-2">
+                {variants.map((v, i) => (
+                  <div key={v.id ?? `new-${i}`} className="grid grid-cols-4 gap-2 mb-2">
                       <input
                         type="text"
                         placeholder="Name (e.g. Single Can)"
@@ -309,10 +348,9 @@ export default function AdminProducts() {
                         )}
                       </div>
                     </div>
-                  ))}
-                  <p className="text-xs text-muted-foreground mt-1">Price in dollars (e.g. 3.99). Will be stored in cents.</p>
-                </div>
-              )}
+                ))}
+                <p className="text-xs text-muted-foreground mt-1">Price in dollars (e.g. 3.99). Will be stored in cents.</p>
+              </div>
 
               {/* Submit */}
               <div className="flex gap-3 pt-2">

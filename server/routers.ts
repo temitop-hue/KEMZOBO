@@ -256,7 +256,13 @@ export const appRouter = router({
     // Admin Products
     products: router({
       list: adminProcedure.query(async () => {
-        return db.getAllProducts(false);
+        const all = await db.getAllProducts(false);
+        return Promise.all(
+          all.map(async (p) => ({
+            ...p,
+            variants: await db.getVariantsByProductId(p.id),
+          }))
+        );
       }),
       create: adminProcedure
         .input(
