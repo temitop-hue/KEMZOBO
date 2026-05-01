@@ -57,9 +57,24 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // Hashed assets in /assets/* are content-addressed by Vite — safe to cache forever.
+  // Anything else (index.html, favicon, etc.) must always revalidate so a fresh
+  // deploy reaches the client immediately and we never serve a stale index.html
+  // pointing at chunk hashes that no longer exist.
+  app.use(
+    express.static(distPath, {
+      setHeaders: (res, filePath) => {
+        if (/[\\/]assets[\\/].+\.[a-zA-Z0-9]+$/.test(filePath)) {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        } else {
+          res.setHeader("Cache-Control", "no-cache, must-revalidate");
+        }
+      },
+    })
+  );
 
   app.use("*", (_req, res) => {
+    res.setHeader("Cache-Control", "no-cache, must-revalidate");
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
