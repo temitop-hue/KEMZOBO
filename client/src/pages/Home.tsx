@@ -41,12 +41,12 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
       >
         <motion.div style={{ scale: heroScale }} className="absolute inset-0">
           <img
-            src="/images/hero%20shot.jpeg"
-            alt="Friends raising KEMZOBO cans together"
+            src="/images/Hero%20picture.jpeg"
+            alt="Friends gathered around an ice bucket of KEMZOBO cans"
             loading="eager"
             fetchPriority="high"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover object-[60%_42%] lg:object-[60%_center]"
+            className="absolute inset-0 w-full h-full object-cover object-[55%_38%] lg:object-[55%_center]"
             style={{
               filter: "saturate(1.08) contrast(1.06)",
             }}
