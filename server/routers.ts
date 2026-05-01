@@ -362,11 +362,17 @@ export const appRouter = router({
         .input(
           z.object({
             id: z.number(),
-            status: z.enum(["pending", "processing", "shipped", "delivered", "cancelled"]),
+            status: z.enum(["pending", "processing", "packed", "shipped", "delivered", "cancelled"]),
           })
         )
         .mutation(async ({ input }) => {
-          await db.updateOrder(input.id, { status: input.status });
+          // Stamp the corresponding timestamp when entering a fulfillment state
+          const patch: Record<string, unknown> = { status: input.status };
+          const now = new Date();
+          if (input.status === "packed") patch.packedAt = now;
+          if (input.status === "shipped") patch.shippedAt = now;
+          if (input.status === "delivered") patch.deliveredAt = now;
+          await db.updateOrder(input.id, patch as any);
           return { success: true };
         }),
       updateTracking: adminProcedure
@@ -382,7 +388,8 @@ export const appRouter = router({
             trackingNumber: input.trackingNumber,
             trackingCarrier: input.trackingCarrier,
             status: "shipped",
-          });
+            shippedAt: new Date(),
+          } as any);
           return { success: true };
         }),
       refund: adminProcedure
@@ -408,6 +415,61 @@ export const appRouter = router({
             success: true,
             method: order.stripePaymentIntentId ? "stripe" : "manual",
           };
+        }),
+    }),
+
+    // Admin Fulfillment Queue — paid orders that aren't yet shipped/delivered
+    fulfillment: router({
+      queue: adminProcedure.query(async () => {
+        const all = await db.getAllOrders();
+        // Anything paid but not yet out the door
+        const queue = all.filter(
+          (o) =>
+            o.paymentStatus === "paid" &&
+            (o.status === "pending" ||
+              o.status === "processing" ||
+              o.status === "packed")
+        );
+        // Resolve items for each row so the UI can show what to pack
+        return Promise.all(
+          queue.map(async (o) => ({
+            ...o,
+            items: await db.getOrderItemsByOrderId(o.id),
+          }))
+        );
+      }),
+
+      markPacked: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          const order = await db.getOrderById(input.id);
+          if (!order) throw new Error("Order not found");
+          if (order.paymentStatus !== "paid") {
+            throw new Error("Only paid orders can be marked packed");
+          }
+          await db.updateOrder(input.id, {
+            status: "packed",
+            packedAt: new Date(),
+          } as any);
+          return { success: true };
+        }),
+
+      markShipped: adminProcedure
+        .input(
+          z.object({
+            id: z.number(),
+            trackingNumber: z.string().min(1),
+            trackingCarrier: z.string().optional(),
+          })
+        )
+        .mutation(async ({ input }) => {
+          await db.updateOrder(input.id, {
+            status: "shipped",
+            shippedAt: new Date(),
+            trackingNumber: input.trackingNumber,
+            trackingCarrier: input.trackingCarrier,
+          } as any);
+          return { success: true };
         }),
     }),
 

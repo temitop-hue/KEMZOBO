@@ -76,7 +76,10 @@ export const orders = mysqlTable("orders", {
   id: int().autoincrement().primaryKey(),
   userId: int(), // nullable for guest checkout
   orderNumber: varchar({ length: 50 }).unique().notNull(),
-  status: mysqlEnum(["pending", "processing", "shipped", "delivered", "cancelled"]).default("pending"),
+  status: mysqlEnum(["pending", "processing", "packed", "shipped", "delivered", "cancelled"]).default("pending"),
+  packedAt: timestamp(),
+  shippedAt: timestamp(),
+  deliveredAt: timestamp(),
   paymentStatus: mysqlEnum(["unpaid", "paid", "refunded"]).default("unpaid"),
   subtotal: int().notNull(), // cents
   deliveryFee: int().default(0),
