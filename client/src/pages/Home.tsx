@@ -488,9 +488,9 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-24">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
               <motion.p variants={fadeUp} className="text-white/40 text-sm uppercase tracking-[0.3em] mb-4">The Moment</motion.p>
-              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-6xl font-bold text-white max-w-2xl leading-tight">
+              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-6xl font-bold max-w-2xl leading-tight" style={{ color: "#ffffff", textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>
                 It belongs wherever people{" "}
-                <span className="italic text-[#E63946]">come together</span>
+                <span className="italic" style={{ color: "#E63946" }}>come together</span>
               </motion.h2>
               <motion.p variants={fadeUp} className="mt-4 text-white/60 text-lg max-w-xl">
                 Cookouts. Brunches. Parties. Family dinners. The drink you bring when you
