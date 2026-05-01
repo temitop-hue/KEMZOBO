@@ -7,17 +7,14 @@ const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
-const stagger: Variants = {
-  visible: { transition: { staggerChildren: 0.12 } },
-};
 
 const galleryImages = [
-  { src: "/images/gallery%201.jpeg", alt: "KEMZOBO lifestyle moment", span: "lg:col-span-2" },
-  { src: "/images/Pineapple.jpeg", alt: "KEMZOBO Original Zobo with pineapple, lime and hibiscus", span: "lg:col-span-1" },
-  { src: "/images/gallery%202.jpeg", alt: "KEMZOBO can in hand", span: "lg:col-span-1" },
-  { src: "/images/gallery%203.jpeg", alt: "Six KEMZOBO cans on grass", span: "lg:col-span-1" },
-  { src: "/images/gallery%204.jpeg", alt: "Friends laughing with KEMZOBO cans", span: "lg:col-span-1" },
-  { src: "/images/gallery%205.jpeg", alt: "Pouring KEMZOBO over ice", span: "lg:col-span-2" },
+  { src: "/images/gallery%201.jpeg", alt: "KEMZOBO lifestyle moment" },
+  { src: "/images/Pineapple.jpeg", alt: "KEMZOBO Original Zobo with pineapple, lime and hibiscus" },
+  { src: "/images/gallery%202.jpeg", alt: "KEMZOBO can in hand" },
+  { src: "/images/gallery%203.jpeg", alt: "Six KEMZOBO cans on grass" },
+  { src: "/images/gallery%204.jpeg", alt: "Friends laughing with KEMZOBO cans" },
+  { src: "/images/gallery%205.jpeg", alt: "Pouring KEMZOBO over ice" },
 ];
 
 export default function Gallery() {
@@ -42,29 +39,30 @@ export default function Gallery() {
         </div>
       </section>
 
-      {/* Photo grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <motion.div
-          initial="hidden" whileInView="visible" viewport={{ once: true }}
-          variants={stagger}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5"
-        >
-          {galleryImages.map((img, i) => (
-            <motion.div
-              key={i}
-              variants={fadeUp}
-              className={`${img.span} relative rounded-2xl overflow-hidden group h-[360px] lg:h-[460px] ring-1 ring-[#CC2936]/10 hover:ring-[#CC2936]/30 transition-all`}
-            >
-              <img
-                src={img.src}
-                alt={img.alt}
-                loading="lazy"
-                className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            </motion.div>
-          ))}
-        </motion.div>
+      {/* Cinematic marquee — auto-scrolls left to right, pause on hover */}
+      <section className="pb-24 relative">
+        {/* Soft edge fades for cinematic feel */}
+        <div className="absolute left-0 top-0 bottom-24 w-16 lg:w-32 z-10 pointer-events-none bg-gradient-to-r from-[#FDF2F2] to-transparent" />
+        <div className="absolute right-0 top-0 bottom-24 w-16 lg:w-32 z-10 pointer-events-none bg-gradient-to-l from-[#FDF2F2] to-transparent" />
+
+        <div className="overflow-hidden">
+          <div className="marquee-track flex gap-5 lg:gap-7 w-max">
+            {[...galleryImages, ...galleryImages].map((img, i) => (
+              <div
+                key={i}
+                className="relative h-[420px] sm:h-[480px] lg:h-[560px] aspect-[3/4] flex-shrink-0 rounded-2xl overflow-hidden ring-1 ring-[#CC2936]/10 shadow-lg shadow-black/5"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Hero product shot */}

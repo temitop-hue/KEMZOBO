@@ -349,6 +349,19 @@ main {
   animation: fade-up-in 0.4s ease;
 }
 
+/* ─── Horizontal marquee (gallery cinematic scroll) ──── */
+@keyframes marquee-x {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+.marquee-track {
+  animation: marquee-x 50s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
 /* ─── Production Hardening ─────────────────────────────── */
 
 /* Tokenize hero gradient so future edits can't flatten it */
