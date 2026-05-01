@@ -1,12 +1,13 @@
 import { connect } from "@tidbcloud/serverless";
 import { drizzle } from "drizzle-orm/tidb-serverless";
-import { and, desc, eq } from "drizzle-orm";
+import { and, between, desc, eq, gte, lte } from "drizzle-orm";
 import {
   users,
   products,
   productVariants,
   inventory,
   inventoryMovements,
+  expenses,
   orders,
   orderItems,
   wholesaleRequests,
@@ -17,6 +18,7 @@ import {
   type NewProductVariant,
   type NewInventory,
   type NewInventoryMovement,
+  type NewExpense,
   type NewOrder,
   type NewOrderItem,
   type NewWholesaleRequest,
@@ -274,6 +276,46 @@ export async function getOrdersByUserId(userId: number) {
 export async function getAllOrders() {
   const db = getDb();
   return db.select().from(orders);
+}
+
+// ─── Finance ──────────────────────────────────────────────
+/**
+ * Sum revenue for a date range. Counts only orders that were paid AND not
+ * subsequently refunded — paymentStatus already flips to 'refunded' when
+ * we issue a refund, so a single equality check is sufficient.
+ */
+export async function getRevenueBetween(from: Date, to: Date): Promise<number> {
+  const db = getDb();
+  const rows = await db
+    .select()
+    .from(orders)
+    .where(
+      and(
+        eq(orders.paymentStatus, "paid"),
+        between(orders.createdAt, from, to)
+      )
+    );
+  return rows.reduce((sum, o) => sum + (o.total ?? 0), 0);
+}
+
+export async function listExpenses(from: Date, to: Date) {
+  const db = getDb();
+  return db
+    .select()
+    .from(expenses)
+    .where(between(expenses.occurredAt, from, to))
+    .orderBy(desc(expenses.occurredAt));
+}
+
+export async function createExpense(data: Omit<NewExpense, "id" | "createdAt">): Promise<number> {
+  const db = getDb();
+  const result = await db.insert(expenses).values(data);
+  return Number((result as any).insertId);
+}
+
+export async function deleteExpense(id: number) {
+  const db = getDb();
+  await db.delete(expenses).where(eq(expenses.id, id));
 }
 
 export async function updateOrder(id: number, data: Partial<NewOrder>) {

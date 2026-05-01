@@ -95,6 +95,28 @@ export const inventoryMovements = mysqlTable("inventory_movements", {
 export type InventoryMovement = typeof inventoryMovements.$inferSelect;
 export type NewInventoryMovement = typeof inventoryMovements.$inferInsert;
 
+// ─── Expenses (manual ledger entries) ───────────────────
+export const expenses = mysqlTable("expenses", {
+  id: int().autoincrement().primaryKey(),
+  amount: int().notNull(), // cents (always positive — subtraction is implicit)
+  category: mysqlEnum([
+    "ingredients",
+    "packaging",
+    "shipping",
+    "marketing",
+    "equipment",
+    "fees",
+    "other",
+  ]).notNull(),
+  description: varchar({ length: 500 }).notNull(),
+  occurredAt: timestamp().notNull(), // when the spend actually happened
+  createdByUserId: int(),
+  createdAt: timestamp().defaultNow(),
+});
+
+export type Expense = typeof expenses.$inferSelect;
+export type NewExpense = typeof expenses.$inferInsert;
+
 // ─── Orders ──────────────────────────────────────────────
 export const orders = mysqlTable("orders", {
   id: int().autoincrement().primaryKey(),

@@ -418,6 +418,84 @@ export const appRouter = router({
         }),
     }),
 
+    // Admin Finance — revenue, expenses, profit
+    finance: router({
+      summary: adminProcedure
+        .input(
+          z.object({
+            from: z.string(), // ISO date
+            to: z.string(),
+          })
+        )
+        .query(async ({ input }) => {
+          const from = new Date(input.from);
+          const to = new Date(input.to);
+          const revenueCents = await db.getRevenueBetween(from, to);
+          const expenseRows = await db.listExpenses(from, to);
+          const expensesCents = expenseRows.reduce((sum, e) => sum + e.amount, 0);
+          const profitCents = revenueCents - expensesCents;
+          const margin = revenueCents > 0 ? profitCents / revenueCents : 0;
+
+          // Group expenses by category for the breakdown card
+          const byCategory: Record<string, number> = {};
+          for (const e of expenseRows) {
+            byCategory[e.category] = (byCategory[e.category] ?? 0) + e.amount;
+          }
+
+          return {
+            from: input.from,
+            to: input.to,
+            revenueCents,
+            expensesCents,
+            profitCents,
+            margin,
+            expenseCount: expenseRows.length,
+            byCategory,
+          };
+        }),
+
+      expenses: router({
+        list: adminProcedure
+          .input(z.object({ from: z.string(), to: z.string() }))
+          .query(async ({ input }) => {
+            return db.listExpenses(new Date(input.from), new Date(input.to));
+          }),
+        create: adminProcedure
+          .input(
+            z.object({
+              amount: z.number().int().positive(), // cents
+              category: z.enum([
+                "ingredients",
+                "packaging",
+                "shipping",
+                "marketing",
+                "equipment",
+                "fees",
+                "other",
+              ]),
+              description: z.string().min(1).max(500),
+              occurredAt: z.string(), // ISO date
+            })
+          )
+          .mutation(async ({ input, ctx }) => {
+            const id = await db.createExpense({
+              amount: input.amount,
+              category: input.category,
+              description: input.description,
+              occurredAt: new Date(input.occurredAt),
+              createdByUserId: ctx.user?.id ?? null,
+            });
+            return { id };
+          }),
+        delete: adminProcedure
+          .input(z.object({ id: z.number() }))
+          .mutation(async ({ input }) => {
+            await db.deleteExpense(input.id);
+            return { success: true };
+          }),
+      }),
+    }),
+
     // Admin Inventory — stock levels + adjustment history
     inventory: router({
       list: adminProcedure.query(async () => {
