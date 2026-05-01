@@ -97,9 +97,9 @@ export default function Checkout() {
   };
 
   const copyZelle = () => {
-    navigator.clipboard.writeText("temitop@gmail.com");
+    navigator.clipboard.writeText("2404092814");
     setZelleCopied(true);
-    toast.success("Zelle email copied!");
+    toast.success("Zelle number copied!");
     setTimeout(() => setZelleCopied(false), 3000);
   };
 
@@ -181,7 +181,7 @@ export default function Checkout() {
               <div className="bg-hibiscus-bg rounded-xl p-4 mb-4">
                 <p className="text-sm text-muted-foreground mb-1">Send payment to:</p>
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-foreground text-lg">temitop@gmail.com</span>
+                  <span className="font-bold text-foreground text-lg">2404092814</span>
                   <button onClick={copyZelle} className="flex items-center gap-1.5 text-sm text-[#CC2936] font-medium hover:underline">
                     {zelleCopied ? <><Check className="h-4 w-4" /> Copied</> : <><Copy className="h-4 w-4" /> Copy</>}
                   </button>
@@ -207,7 +207,7 @@ export default function Checkout() {
                   </li>
                   <li className="flex gap-3">
                     <span className="w-6 h-6 rounded-full bg-[#CC2936] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">2</span>
-                    <span>Send <strong className="text-foreground">${formatPrice(orderData.total)}</strong> to <strong className="text-foreground">temitop@gmail.com</strong></span>
+                    <span>Send <strong className="text-foreground">${formatPrice(orderData.total)}</strong> to <strong className="text-foreground">2404092814</strong></span>
                   </li>
                   <li className="flex gap-3">
                     <span className="w-6 h-6 rounded-full bg-[#CC2936] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">3</span>
