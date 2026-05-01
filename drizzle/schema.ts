@@ -71,6 +71,30 @@ export const inventory = mysqlTable("inventory", {
 export type Inventory = typeof inventory.$inferSelect;
 export type NewInventory = typeof inventory.$inferInsert;
 
+// ─── Inventory Movements (audit log of every stock change) ───
+export const inventoryMovements = mysqlTable("inventory_movements", {
+  id: int().autoincrement().primaryKey(),
+  productId: int().notNull(),
+  variantId: int().notNull(),
+  quantityDelta: int().notNull(), // negative for sale/loss, positive for restock/refund-restock
+  balanceAfter: int().notNull(), // resulting quantityAvailable for fast running totals
+  reason: mysqlEnum([
+    "sale",
+    "refund_restock",
+    "restock",
+    "manual_adjustment",
+    "loss",
+    "correction",
+  ]).notNull(),
+  reference: varchar({ length: 100 }), // e.g. order number "KZ-10042"
+  note: text(),
+  createdByUserId: int(), // null for system-driven (sales)
+  createdAt: timestamp().defaultNow(),
+});
+
+export type InventoryMovement = typeof inventoryMovements.$inferSelect;
+export type NewInventoryMovement = typeof inventoryMovements.$inferInsert;
+
 // ─── Orders ──────────────────────────────────────────────
 export const orders = mysqlTable("orders", {
   id: int().autoincrement().primaryKey(),

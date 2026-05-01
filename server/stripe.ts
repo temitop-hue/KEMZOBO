@@ -71,10 +71,11 @@ export async function handleStripeWebhook(req: Request, res: Response) {
       if (order) {
         await db.updateOrder(order.id, { paymentStatus: "paid", status: "processing" });
 
-        // Reduce inventory for each order item
+        // Reduce inventory for each order item — logs an inventory_movement
+        // with reason=sale and reference=<order#> for the audit trail
         const items = await db.getOrderItemsByOrderId(order.id);
         for (const item of items) {
-          await db.reduceInventory(item.variantId, item.quantity);
+          await db.reduceInventory(item.variantId, item.quantity, order.orderNumber);
         }
 
         // Send styled confirmation email

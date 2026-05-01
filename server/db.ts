@@ -1,11 +1,12 @@
 import { connect } from "@tidbcloud/serverless";
 import { drizzle } from "drizzle-orm/tidb-serverless";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import {
   users,
   products,
   productVariants,
   inventory,
+  inventoryMovements,
   orders,
   orderItems,
   wholesaleRequests,
@@ -15,6 +16,7 @@ import {
   type NewProduct,
   type NewProductVariant,
   type NewInventory,
+  type NewInventoryMovement,
   type NewOrder,
   type NewOrderItem,
   type NewWholesaleRequest,
@@ -147,12 +149,83 @@ export async function upsertInventory(data: Omit<NewInventory, "id" | "updatedAt
   return Number((result as any).insertId);
 }
 
-export async function reduceInventory(variantId: number, quantity: number) {
+/**
+ * Apply a stock change AND log a movement in one logical operation.
+ * `delta` is a signed integer: negative = stock leaves, positive = stock arrives.
+ * The movement row gives us a permanent audit trail.
+ */
+export async function adjustInventory(args: {
+  productId: number;
+  variantId: number;
+  delta: number;
+  reason: NewInventoryMovement["reason"];
+  reference?: string | null;
+  note?: string | null;
+  createdByUserId?: number | null;
+}): Promise<{ balanceAfter: number }> {
   const db = getDb();
+  const inv = await getInventoryByVariantId(args.variantId);
+  const currentQty = inv?.quantityAvailable ?? 0;
+  // Reductions can't push stock below zero — clamp instead
+  const newQty = Math.max(0, currentQty + args.delta);
+  const actualDelta = newQty - currentQty;
+
+  if (inv) {
+    await db
+      .update(inventory)
+      .set({ quantityAvailable: newQty })
+      .where(eq(inventory.variantId, args.variantId));
+  } else {
+    await db.insert(inventory).values({
+      productId: args.productId,
+      variantId: args.variantId,
+      quantityAvailable: newQty,
+    });
+  }
+
+  await db.insert(inventoryMovements).values({
+    productId: args.productId,
+    variantId: args.variantId,
+    quantityDelta: actualDelta,
+    balanceAfter: newQty,
+    reason: args.reason,
+    reference: args.reference ?? null,
+    note: args.note ?? null,
+    createdByUserId: args.createdByUserId ?? null,
+  });
+
+  return { balanceAfter: newQty };
+}
+
+/**
+ * Legacy helper kept for the Stripe webhook path. Always reduces and logs as a sale.
+ * New code should call adjustInventory directly with an explicit reason.
+ */
+export async function reduceInventory(variantId: number, quantity: number, reference?: string) {
   const inv = await getInventoryByVariantId(variantId);
   if (!inv) return;
-  const newQty = Math.max(0, (inv.quantityAvailable ?? 0) - quantity);
-  await db.update(inventory).set({ quantityAvailable: newQty }).where(eq(inventory.variantId, variantId));
+  await adjustInventory({
+    productId: inv.productId,
+    variantId,
+    delta: -Math.abs(quantity),
+    reason: "sale",
+    reference: reference ?? null,
+  });
+}
+
+export async function getInventoryMovements(opts: { variantId?: number; limit?: number } = {}) {
+  const db = getDb();
+  let q = db.select().from(inventoryMovements).$dynamic();
+  if (opts.variantId !== undefined) {
+    q = q.where(eq(inventoryMovements.variantId, opts.variantId));
+  }
+  const rows = await q.orderBy(desc(inventoryMovements.id)).limit(opts.limit ?? 100);
+  return rows;
+}
+
+export async function getAllInventory() {
+  const db = getDb();
+  return db.select().from(inventory);
 }
 
 export async function getLowStockItems() {

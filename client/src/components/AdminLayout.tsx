@@ -3,6 +3,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import {
   LayoutDashboard,
   Package,
+  Boxes,
   ShoppingCart,
   Truck,
   Users,
@@ -19,6 +20,7 @@ import { useState } from "react";
 const adminLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Package },
+  { href: "/admin/inventory", label: "Inventory", icon: Boxes },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/fulfillment", label: "Fulfillment", icon: Truck },
   { href: "/admin/wholesale", label: "Wholesale", icon: Building2 },

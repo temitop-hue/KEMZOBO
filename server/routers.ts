@@ -418,6 +418,87 @@ export const appRouter = router({
         }),
     }),
 
+    // Admin Inventory — stock levels + adjustment history
+    inventory: router({
+      list: adminProcedure.query(async () => {
+        const inv = await db.getAllInventory();
+        // Decorate each row with product/variant names so the UI is self-contained
+        return Promise.all(
+          inv.map(async (i) => {
+            const product = await db.getProductById(i.productId);
+            const variant = await db.getVariantById(i.variantId);
+            return {
+              ...i,
+              productName: product?.name ?? "Unknown",
+              productSlug: product?.slug ?? "",
+              variantName: variant?.name ?? "Unknown",
+              variantWeight: variant?.weight ?? null,
+              isLow:
+                (i.quantityAvailable ?? 0) <= (i.lowStockThreshold ?? 10),
+            };
+          })
+        );
+      }),
+
+      movements: adminProcedure
+        .input(
+          z
+            .object({
+              variantId: z.number().optional(),
+              limit: z.number().min(1).max(500).optional(),
+            })
+            .optional()
+        )
+        .query(async ({ input }) => {
+          const movements = await db.getInventoryMovements({
+            variantId: input?.variantId,
+            limit: input?.limit ?? 100,
+          });
+          // Decorate with product/variant labels
+          return Promise.all(
+            movements.map(async (m) => {
+              const product = await db.getProductById(m.productId);
+              const variant = await db.getVariantById(m.variantId);
+              return {
+                ...m,
+                productName: product?.name ?? "Unknown",
+                variantName: variant?.name ?? "Unknown",
+              };
+            })
+          );
+        }),
+
+      adjust: adminProcedure
+        .input(
+          z.object({
+            variantId: z.number(),
+            delta: z.number().int(),
+            reason: z.enum([
+              "restock",
+              "manual_adjustment",
+              "loss",
+              "correction",
+              "refund_restock",
+            ]),
+            note: z.string().max(500).optional(),
+          })
+        )
+        .mutation(async ({ input, ctx }) => {
+          if (input.delta === 0) throw new Error("Delta cannot be zero");
+          const variant = await db.getVariantById(input.variantId);
+          if (!variant) throw new Error("Variant not found");
+          const result = await db.adjustInventory({
+            productId: variant.productId,
+            variantId: input.variantId,
+            delta: input.delta,
+            reason: input.reason,
+            note: input.note ?? null,
+            createdByUserId: ctx.user?.id ?? null,
+          });
+          return { success: true, balanceAfter: result.balanceAfter };
+        }),
+    }),
+
     // Admin Fulfillment Queue — paid orders that aren't yet shipped/delivered
     fulfillment: router({
       queue: adminProcedure.query(async () => {
