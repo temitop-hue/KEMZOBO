@@ -36,6 +36,17 @@ async function startServer() {
   app.set("trust proxy", 1);
   const server = createServer(app);
 
+  // Canonical redirect: www.kemzobo.com -> kemzobo.com (GET/HEAD only — never break webhooks)
+  app.use((req, res, next) => {
+    if (
+      (req.method === "GET" || req.method === "HEAD") &&
+      req.hostname === "www.kemzobo.com"
+    ) {
+      return res.redirect(301, `https://kemzobo.com${req.originalUrl}`);
+    }
+    next();
+  });
+
   // Stripe webhook MUST use raw body — register BEFORE json parser
   app.post(
     "/api/webhooks/stripe",
