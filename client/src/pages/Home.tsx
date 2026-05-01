@@ -46,7 +46,7 @@ function LifestyleHero({ heroRef, heroScale, heroOpacity }: {
             loading="eager"
             fetchPriority="high"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover object-[55%_38%] lg:object-[55%_center]"
+            className="absolute inset-0 w-full h-full object-cover object-[55%_28%] lg:object-[58%_22%]"
             style={{
               filter: "saturate(1.08) contrast(1.06)",
             }}
