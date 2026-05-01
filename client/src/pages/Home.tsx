@@ -311,7 +311,7 @@ export default function Home() {
               </motion.p>
               <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold leading-tight mb-6">
                 It started with a{" "}
-                <span className="italic text-[#E63946]">flower</span>
+                <span className="italic" style={{ color: "#ffffff" }}>flower</span>
               </motion.h2>
               <motion.p variants={fadeUp} className="text-white/70 text-lg leading-relaxed mb-6">
                 For generations, hibiscus flowers have been at the center of West African
@@ -324,7 +324,7 @@ export default function Home() {
                 something real.
               </motion.p>
               <motion.div variants={fadeUp}>
-                <Link href="/about" className="btn-primary inline-flex items-center gap-2 text-[#E63946] font-semibold text-lg hover:text-white transition-colors">
+                <Link href="/about" className="btn-primary inline-flex items-center gap-2 font-semibold text-lg hover:opacity-80 transition-opacity" style={{ color: "#ffffff" }}>
                   Read the full story <ArrowRight className="h-4 w-4" />
                 </Link>
               </motion.div>
@@ -397,10 +397,10 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-24">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
               <motion.p variants={fadeUp} className="text-white/40 text-sm uppercase tracking-[0.3em] mb-4">The Experience</motion.p>
-              <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-7xl font-bold text-white leading-[1] max-w-2xl">
+              <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-7xl font-bold leading-[1] max-w-2xl" style={{ color: "#ffffff" }}>
                 Pour it.
                 <br />
-                <span className="text-[#E63946]">Taste it.</span>
+                <span style={{ color: "#E63946" }}>Taste it.</span>
                 <br />
                 Share it.
               </motion.h2>
@@ -674,7 +674,7 @@ export default function Home() {
             <motion.p variants={fadeUp} className="text-white/40 text-sm uppercase tracking-[0.3em] mb-6">Your Turn</motion.p>
             <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-6xl font-bold leading-tight mb-8">
               Ready to taste the{" "}
-              <span className="italic text-[#E63946]">heritage</span>?
+              <span className="italic" style={{ color: "#ffffff" }}>heritage</span>?
             </motion.h2>
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center gap-4">
               <Link href="/products" className="btn-primary group inline-flex items-center gap-3 rounded-full bg-white text-[#CC2936] px-10 py-4 font-bold text-lg uppercase tracking-wider hover:bg-gray-100 transition-colors">
