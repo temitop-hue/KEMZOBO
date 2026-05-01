@@ -11,31 +11,13 @@ const stagger: Variants = {
   visible: { transition: { staggerChildren: 0.12 } },
 };
 
-const useCases = [
-  {
-    title: "Cookouts & BBQs",
-    description: "The bold flavor that stands out next to everything on the grill.",
-    image: "/images/lifestyle-friends.jpg",
-    span: "lg:col-span-2",
-  },
-  {
-    title: "Parties & Celebrations",
-    description: "The drink guests keep asking about.",
-    image: "/images/bar-glass.jpg",
-    span: "lg:col-span-1",
-  },
-  {
-    title: "Everyday Moments",
-    description: "Straight from the can or over ice — anytime refreshment.",
-    image: "/images/tropical-glass.jpg",
-    span: "lg:col-span-1",
-  },
-  {
-    title: "Cultural Gatherings",
-    description: "Rooted in tradition, ready for the table.",
-    image: "/images/heritage-glass.jpg",
-    span: "lg:col-span-2",
-  },
+const galleryImages = [
+  { src: "/images/gallery%201.jpeg", alt: "KEMZOBO lifestyle moment", span: "lg:col-span-2" },
+  { src: "/images/Pineapple.jpeg", alt: "KEMZOBO Original Zobo with pineapple, lime and hibiscus", span: "lg:col-span-1" },
+  { src: "/images/gallery%202.jpeg", alt: "KEMZOBO can in hand", span: "lg:col-span-1" },
+  { src: "/images/gallery%203.jpeg", alt: "Six KEMZOBO cans on grass", span: "lg:col-span-1" },
+  { src: "/images/gallery%204.jpeg", alt: "Friends laughing with KEMZOBO cans", span: "lg:col-span-1" },
+  { src: "/images/gallery%205.jpeg", alt: "Pouring KEMZOBO over ice", span: "lg:col-span-2" },
 ];
 
 export default function Gallery() {
@@ -60,30 +42,29 @@ export default function Gallery() {
         </div>
       </section>
 
-      {/* Use-case grid */}
+      {/* Photo grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {useCases.map((uc, i) => (
+        <motion.div
+          initial="hidden" whileInView="visible" viewport={{ once: true }}
+          variants={stagger}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5"
+        >
+          {galleryImages.map((img, i) => (
             <motion.div
               key={i}
-              initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={fadeUp}
-              className={`${uc.span} relative rounded-2xl overflow-hidden group cursor-pointer h-[350px] lg:h-[450px] ring-1 ring-hibiscus/10 hover:ring-hibiscus/30 transition-all`}
+              className={`${img.span} relative rounded-2xl overflow-hidden group h-[360px] lg:h-[460px] ring-1 ring-[#CC2936]/10 hover:ring-[#CC2936]/30 transition-all`}
             >
               <img
-                src={uc.image}
-                alt={uc.title}
+                src={img.src}
+                alt={img.alt}
                 loading="lazy"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-8">
-                <h3 className="font-display text-2xl font-bold text-white mb-2">{uc.title}</h3>
-                <p className="text-white/70">{uc.description}</p>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* Hero product shot */}
