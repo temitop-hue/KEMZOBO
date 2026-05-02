@@ -8,6 +8,8 @@ import { CartProvider } from "./contexts/CartContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import TawkChat from "./components/TawkChat";
+import NewsletterPopup from "./components/NewsletterPopup";
+import Analytics from "./components/Analytics";
 
 // Eager load: Home (first paint) + critical shell
 import Home from "./pages/Home";
@@ -30,6 +32,10 @@ const OrderDetail = lazy(() => import("./pages/OrderDetail"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Gallery = lazy(() => import("./pages/Gallery"));
 const Recipes = lazy(() => import("./pages/Recipes"));
+const FindUs = lazy(() => import("./pages/FindUs"));
+const Press = lazy(() => import("./pages/Press"));
+const TrackOrder = lazy(() => import("./pages/TrackOrder"));
+const AdminPackList = lazy(() => import("./pages/AdminPackList"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -74,6 +80,9 @@ function PublicRouter() {
             <Route path="/faq" component={FAQ} />
             <Route path="/gallery" component={Gallery} />
             <Route path="/recipes" component={Recipes} />
+            <Route path="/find-us" component={FindUs} />
+            <Route path="/press" component={Press} />
+            <Route path="/track" component={TrackOrder} />
             <Route path="/privacy" component={Privacy} />
             <Route path="/cart" component={Cart} />
             <Route path="/checkout" component={Checkout} />
@@ -89,6 +98,7 @@ function PublicRouter() {
       </main>
       <Footer />
       <TawkChat />
+      <NewsletterPopup />
     </div>
   );
 }
@@ -102,6 +112,7 @@ function AdminRouter() {
           <Route path="/admin/products" component={AdminProducts} />
           <Route path="/admin/orders" component={AdminOrders} />
           <Route path="/admin/fulfillment" component={AdminFulfillment} />
+          <Route path="/admin/fulfillment/print" component={AdminPackList} />
           <Route path="/admin/inventory" component={AdminInventory} />
           <Route path="/admin/finance" component={AdminFinance} />
           <Route path="/admin/invoices" component={AdminInvoices} />
@@ -130,6 +141,7 @@ function App() {
         <CartProvider>
           <TooltipProvider>
             <Toaster />
+            <Analytics />
             <AppRouter />
           </TooltipProvider>
         </CartProvider>

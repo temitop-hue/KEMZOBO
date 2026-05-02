@@ -313,6 +313,49 @@ export const appRouter = router({
         return { ...order, items };
       }),
 
+    /**
+     * Public order tracking — requires both the order number and a matching
+     * customer email (case-insensitive) to defend against enumeration.
+     * Returns a sanitized subset of fields safe for a public page.
+     */
+    track: publicProcedure
+      .input(
+        z.object({
+          orderNumber: z.string().min(1),
+          email: z.string().email(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const order = await db.getOrderByNumber(input.orderNumber.trim().toUpperCase());
+        if (!order) return { ok: false as const, reason: "We couldn't find that order." };
+        if (order.customerEmail.toLowerCase() !== input.email.trim().toLowerCase()) {
+          return { ok: false as const, reason: "Email doesn't match our records." };
+        }
+        const items = await db.getOrderItemsByOrderId(order.id);
+        return {
+          ok: true as const,
+          order: {
+            orderNumber: order.orderNumber,
+            status: order.status,
+            paymentStatus: order.paymentStatus,
+            createdAt: order.createdAt,
+            packedAt: order.packedAt,
+            shippedAt: order.shippedAt,
+            deliveredAt: order.deliveredAt,
+            trackingNumber: order.trackingNumber,
+            trackingCarrier: order.trackingCarrier,
+            total: order.total,
+            shippingAddress: order.shippingAddress,
+            items: items.map((it) => ({
+              productName: it.productName,
+              variantName: it.variantName,
+              quantity: it.quantity,
+              unitPrice: it.unitPrice,
+            })),
+          },
+        };
+      }),
+
     myOrders: protectedProcedure.query(async ({ ctx }) => {
       return db.getOrdersByUserId(ctx.user.id);
     }),

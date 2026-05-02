@@ -314,6 +314,23 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Trust badges row — quick credibility before the long-form story */}
+      <section className="bg-white border-y border-[#CC2936]/10 py-8 lg:py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+          {[
+            { title: "Real Hibiscus", body: "No artificial flavors or colors" },
+            { title: "Caffeine-Free", body: "Safe for kids and any time of day" },
+            { title: "Vegan & Gluten-Free", body: "Plant-based, no animal products" },
+            { title: "Family-Founded", body: "Made by people who love it" },
+          ].map((b) => (
+            <div key={b.title} className="text-center">
+              <p className="font-display font-bold text-foreground text-sm lg:text-base">{b.title}</p>
+              <p className="text-xs lg:text-sm text-muted-foreground mt-1">{b.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ═══════════════════════════════════════════════════
           CHAPTER 2: THE STORY — Where it started
           ═══════════════════════════════════════════════════ */}

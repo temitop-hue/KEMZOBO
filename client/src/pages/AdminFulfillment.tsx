@@ -3,7 +3,8 @@ import { formatPrice } from "@shared/const";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Package, Truck, MapPin, ChevronDown, ChevronUp } from "lucide-react";
+import { Link } from "wouter";
+import { Package, Truck, MapPin, ChevronDown, ChevronUp, Printer } from "lucide-react";
 
 export default function AdminFulfillment() {
   const utils = trpc.useUtils();
@@ -43,14 +44,22 @@ export default function AdminFulfillment() {
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="mb-8 flex items-end justify-between">
+      <div className="mb-8 flex items-end justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <div className="w-1 h-8 rounded-full bg-[#CC2936]" />
           <h1 className="font-display text-2xl font-bold">Fulfillment Queue</h1>
         </div>
-        {queue && (
-          <p className="text-sm text-muted-foreground">{queue.length} awaiting fulfillment</p>
-        )}
+        <div className="flex items-center gap-3">
+          {queue && (
+            <p className="text-sm text-muted-foreground">{queue.length} awaiting fulfillment</p>
+          )}
+          <Link
+            href="/admin/fulfillment/print"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[#CC2936]/30 text-[#CC2936] hover:bg-[#CC2936] hover:text-white text-xs font-semibold px-3 py-1.5 transition-colors"
+          >
+            <Printer className="h-3.5 w-3.5" /> Print pack lists
+          </Link>
+        </div>
       </div>
 
       {isLoading ? (
