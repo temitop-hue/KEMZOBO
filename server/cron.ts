@@ -1,5 +1,6 @@
 import * as db from "./db";
 import { cancelPaymentIntent } from "./stripe";
+import { sendDailyDigest } from "./notifications";
 
 const ABANDONED_THRESHOLD_HOURS = 48;
 const CRON_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
@@ -50,6 +51,16 @@ export function startCron() {
       }
     } catch (err) {
       console.error("[Cron] Invoice overdue sweep failed:", err);
+    }
+
+    // Daily owner digest — fires once at the digest hour (8 UTC), no-op otherwise
+    try {
+      const result = await sendDailyDigest();
+      if (result.sent) {
+        console.log(`[Cron] Daily digest sent`);
+      }
+    } catch (err) {
+      console.error("[Cron] Daily digest failed:", err);
     }
   };
 

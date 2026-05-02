@@ -159,6 +159,9 @@ export async function upsertInventory(data: Omit<NewInventory, "id" | "updatedAt
  * Apply a stock change AND log a movement in one logical operation.
  * `delta` is a signed integer: negative = stock leaves, positive = stock arrives.
  * The movement row gives us a permanent audit trail.
+ *
+ * Side-effect: if this change causes the balance to cross from above-threshold
+ * to at-or-below threshold, fires a low-stock alert email to the owner.
  */
 export async function adjustInventory(args: {
   productId: number;
@@ -175,6 +178,7 @@ export async function adjustInventory(args: {
   // Reductions can't push stock below zero — clamp instead
   const newQty = Math.max(0, currentQty + args.delta);
   const actualDelta = newQty - currentQty;
+  const threshold = inv?.lowStockThreshold ?? 10;
 
   if (inv) {
     await db
@@ -199,6 +203,18 @@ export async function adjustInventory(args: {
     note: args.note ?? null,
     createdByUserId: args.createdByUserId ?? null,
   });
+
+  // Fire-and-forget low-stock alert on threshold crossing only (not every sale below)
+  if (currentQty > threshold && newQty <= threshold) {
+    // Lazy import to avoid circular module load
+    const { sendLowStockAlert } = await import("./notifications");
+    sendLowStockAlert({
+      productId: args.productId,
+      variantId: args.variantId,
+      qty: newQty,
+      threshold,
+    }).catch((err) => console.error("[Low stock alert] dispatch failed:", err));
+  }
 
   return { balanceAfter: newQty };
 }
