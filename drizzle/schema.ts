@@ -175,6 +175,23 @@ export const discountCodes = mysqlTable("discount_codes", {
 export type DiscountCode = typeof discountCodes.$inferSelect;
 export type NewDiscountCode = typeof discountCodes.$inferInsert;
 
+// ─── Customer reviews ────────────────────────────────────
+export const reviews = mysqlTable("reviews", {
+  id: int().autoincrement().primaryKey(),
+  productId: int().notNull(),
+  orderId: int(), // null = unverified review (e.g. seeded), present = verified purchase
+  customerEmail: varchar({ length: 320 }).notNull(),
+  customerName: varchar({ length: 120 }).notNull(),
+  rating: int().notNull(), // 1-5
+  title: varchar({ length: 200 }),
+  body: text().notNull(),
+  status: mysqlEnum(["pending", "approved", "rejected"]).default("approved"),
+  createdAt: timestamp().defaultNow(),
+});
+
+export type Review = typeof reviews.$inferSelect;
+export type NewReview = typeof reviews.$inferInsert;
+
 // ─── Orders ──────────────────────────────────────────────
 export const orders = mysqlTable("orders", {
   id: int().autoincrement().primaryKey(),

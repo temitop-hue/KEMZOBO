@@ -69,6 +69,71 @@ export const appRouter = router({
       }),
   }),
 
+  // ─── Reviews (public) ───────────────────────────────────
+  reviews: router({
+    byProduct: publicProcedure
+      .input(z.object({ productId: z.number() }))
+      .query(async ({ input }) => {
+        const list = await db.getApprovedReviewsByProduct(input.productId);
+        const summary = await db.getReviewSummaryByProduct(input.productId);
+        return {
+          summary,
+          reviews: list.map((r) => ({
+            id: r.id,
+            customerName: r.customerName,
+            rating: r.rating,
+            title: r.title,
+            body: r.body,
+            verified: r.orderId != null, // verified-purchase badge
+            createdAt: r.createdAt,
+          })),
+        };
+      }),
+
+    submit: publicProcedure
+      .input(
+        z.object({
+          productId: z.number(),
+          orderNumber: z.string().optional(), // optional — without it review is unverified
+          customerEmail: z.string().email(),
+          customerName: z.string().min(1).max(120),
+          rating: z.number().int().min(1).max(5),
+          title: z.string().max(200).optional(),
+          body: z.string().min(10).max(2000),
+        })
+      )
+      .mutation(async ({ input }) => {
+        // Verified-purchase check — match order by number + email + delivered status
+        let orderId: number | null = null;
+        if (input.orderNumber) {
+          const order = await db.getOrderByNumber(input.orderNumber);
+          if (
+            order &&
+            order.customerEmail.toLowerCase() === input.customerEmail.toLowerCase() &&
+            order.status === "delivered"
+          ) {
+            // Confirm the product is in this order
+            const items = await db.getOrderItemsByOrderId(order.id);
+            if (items.some((it) => it.productId === input.productId)) {
+              orderId = order.id;
+            }
+          }
+        }
+
+        const id = await db.createReview({
+          productId: input.productId,
+          orderId,
+          customerEmail: input.customerEmail,
+          customerName: input.customerName,
+          rating: input.rating,
+          title: input.title ?? null,
+          body: input.body,
+          status: "approved", // auto-approve; admin can hide later
+        });
+        return { id, verified: orderId != null };
+      }),
+  }),
+
   // ─── Discounts (public — validate at checkout) ─────────
   discounts: router({
     validate: publicProcedure
@@ -538,6 +603,31 @@ export const appRouter = router({
             success: true,
             method: order.stripePaymentIntentId ? "stripe" : "manual",
           };
+        }),
+    }),
+
+    // Admin Reviews — moderation
+    reviews: router({
+      list: adminProcedure.query(async () => {
+        const all = await db.getAllReviews();
+        return Promise.all(
+          all.map(async (r) => {
+            const product = await db.getProductById(r.productId);
+            return { ...r, productName: product?.name ?? "Unknown" };
+          })
+        );
+      }),
+      setStatus: adminProcedure
+        .input(z.object({ id: z.number(), status: z.enum(["approved", "rejected", "pending"]) }))
+        .mutation(async ({ input }) => {
+          await db.updateReviewStatus(input.id, input.status);
+          return { success: true };
+        }),
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.deleteReview(input.id);
+          return { success: true };
         }),
     }),
 

@@ -7,10 +7,15 @@ import { formatPrice, getBulkPrice } from "@shared/const";
 import { useState } from "react";
 import { ShoppingCart, Minus, Plus, Truck, Check, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import ProductReviews from "@/components/ProductReviews";
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { data, isLoading } = trpc.products.getBySlug.useQuery({ slug: slug ?? "" });
+  const { data: reviewData } = trpc.reviews.byProduct.useQuery(
+    { productId: data?.id ?? 0 },
+    { enabled: !!data?.id }
+  );
   const { addItem } = useCart();
   const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -89,6 +94,16 @@ export default function ProductDetail() {
                 offerCount: data.variants.length,
                 availability: "https://schema.org/InStock",
                 url: `https://kemzobo.com/products/${slug ?? ""}`,
+              }
+            : undefined,
+          // Aggregate rating — only present once at least one review exists
+          aggregateRating: reviewData && reviewData.summary.count > 0
+            ? {
+                "@type": "AggregateRating",
+                ratingValue: reviewData.summary.average.toFixed(1),
+                reviewCount: reviewData.summary.count,
+                bestRating: 5,
+                worstRating: 1,
               }
             : undefined,
         } : undefined}
@@ -279,6 +294,9 @@ export default function ProductDetail() {
           </div>
         </div>
       </section>
+
+      {/* Reviews */}
+      {data && <ProductReviews productId={data.id} />}
     </div>
   );
 }

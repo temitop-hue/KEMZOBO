@@ -11,6 +11,7 @@ import {
   invoices,
   invoiceItems,
   discountCodes,
+  reviews,
   orders,
   orderItems,
   wholesaleRequests,
@@ -26,6 +27,7 @@ import {
   type NewInvoiceItem,
   type NewDiscountCode,
   type DiscountCode,
+  type NewReview,
   type NewOrder,
   type NewOrderItem,
   type NewWholesaleRequest,
@@ -460,6 +462,44 @@ export function evaluateDiscount(
     : Math.min(code.value, subtotalCents); // fixed_amount can't exceed subtotal
 
   return { ok: true, discountCents: discount };
+}
+
+// ─── Reviews ──────────────────────────────────────────────
+export async function getApprovedReviewsByProduct(productId: number) {
+  const db = getDb();
+  return db
+    .select()
+    .from(reviews)
+    .where(and(eq(reviews.productId, productId), eq(reviews.status, "approved")))
+    .orderBy(desc(reviews.createdAt));
+}
+
+export async function getReviewSummaryByProduct(productId: number): Promise<{ count: number; average: number }> {
+  const rows = await getApprovedReviewsByProduct(productId);
+  if (rows.length === 0) return { count: 0, average: 0 };
+  const sum = rows.reduce((s, r) => s + r.rating, 0);
+  return { count: rows.length, average: sum / rows.length };
+}
+
+export async function getAllReviews() {
+  const db = getDb();
+  return db.select().from(reviews).orderBy(desc(reviews.createdAt));
+}
+
+export async function createReview(data: Omit<NewReview, "id" | "createdAt">): Promise<number> {
+  const db = getDb();
+  const result = await db.insert(reviews).values(data);
+  return Number((result as any).insertId);
+}
+
+export async function updateReviewStatus(id: number, status: "approved" | "rejected" | "pending") {
+  const db = getDb();
+  await db.update(reviews).set({ status }).where(eq(reviews.id, id));
+}
+
+export async function deleteReview(id: number) {
+  const db = getDb();
+  await db.delete(reviews).where(eq(reviews.id, id));
 }
 
 /**
