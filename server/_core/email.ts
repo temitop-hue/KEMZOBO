@@ -1,7 +1,7 @@
 import { ENV } from "./env";
 
 export type SendEmailOptions = {
-  to: string;
+  to: string | string[];
   subject: string;
   content: string;
   html?: string;
@@ -14,6 +14,17 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
     return false;
   }
 
+  const recipients = (Array.isArray(options.to) ? options.to : [options.to])
+    .flatMap((s) => s.split(","))
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((email) => ({ email }));
+
+  if (recipients.length === 0) {
+    console.warn("[Email] No recipients, skipping");
+    return false;
+  }
+
   try {
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
@@ -23,7 +34,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
       },
       body: JSON.stringify({
         sender: { name: "KEMZOBO", email: ENV.senderEmail },
-        to: [{ email: options.to }],
+        to: recipients,
         subject: options.subject,
         ...(options.replyTo ? { replyTo: options.replyTo } : {}),
         ...(options.html
@@ -38,7 +49,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
       return false;
     }
 
-    console.log(`[Email] Email sent to ${options.to}`);
+    console.log(`[Email] Email sent to ${recipients.map((r) => r.email).join(", ")}`);
     return true;
   } catch (error) {
     console.warn("[Email] Error sending email:", error);
