@@ -104,13 +104,13 @@ export default function About() {
             <motion.div
               initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={fadeUp}
-              className="rounded-xl overflow-hidden"
+              className="rounded-xl overflow-hidden bg-[#FBE8C8] max-w-md mx-auto lg:mx-0"
             >
               <img
                 src="/images/Pineapple.jpeg"
                 alt="KEMZOBO Original Zobo with pineapple, lime and hibiscus"
                 loading="lazy"
-                className="w-full h-[400px] object-cover"
+                className="w-full aspect-[3/4] object-contain"
               />
             </motion.div>
           </div>
