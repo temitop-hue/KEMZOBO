@@ -62,18 +62,32 @@ export default function Cart() {
                 )}
               </div>
 
-              {/* Quantity */}
+              {/* Quantity — typeable input flanked by +/- adjusters */}
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
                   className="rounded border border-border p-1 hover:bg-muted"
+                  aria-label="Decrease quantity"
                 >
                   <Minus className="h-3 w-3" />
                 </button>
-                <span className="font-medium w-8 text-center">{item.quantity}</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={9999}
+                  value={item.quantity}
+                  onChange={(e) => {
+                    const n = parseInt(e.target.value, 10);
+                    if (!Number.isNaN(n) && n > 0) updateQuantity(item.variantId, n);
+                  }}
+                  onFocus={(e) => e.currentTarget.select()}
+                  className="font-medium w-14 text-center border border-border rounded py-1 focus:outline-none focus:ring-2 focus:ring-[#CC2936] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  aria-label="Quantity"
+                />
                 <button
                   onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                   className="rounded border border-border p-1 hover:bg-muted"
+                  aria-label="Increase quantity"
                 >
                   <Plus className="h-3 w-3" />
                 </button>

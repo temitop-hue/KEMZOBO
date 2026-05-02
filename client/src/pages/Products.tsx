@@ -151,7 +151,7 @@ export default function Products() {
                     )}
                   </div>
 
-                  {/* Quantity controls */}
+                  {/* Quantity controls — input is editable, +/- stay as quick adjusters */}
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => updateQuantity(item.variantId, item.quantity - 1)}
@@ -160,7 +160,19 @@ export default function Products() {
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="font-mono text-sm w-8 text-center">{item.quantity}</span>
+                    <input
+                      type="number"
+                      min={1}
+                      max={9999}
+                      value={item.quantity}
+                      onChange={(e) => {
+                        const n = parseInt(e.target.value, 10);
+                        if (!Number.isNaN(n) && n > 0) updateQuantity(item.variantId, n);
+                      }}
+                      onFocus={(e) => e.currentTarget.select()}
+                      className="font-mono text-sm w-14 text-center border border-border rounded-md py-1 focus:outline-none focus:ring-2 focus:ring-[#CC2936] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      aria-label="Quantity"
+                    />
                     <button
                       onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
                       className="w-8 h-8 rounded-md border border-border hover:bg-muted flex items-center justify-center"
