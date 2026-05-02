@@ -10,13 +10,15 @@ interface PageMetaProps {
   jsonLd?: Record<string, unknown>;
 }
 
-const DEFAULT_OG_IMAGE = "https://kemzobo.com/images/Hero%20picture.jpeg";
+const DEFAULT_OG_IMAGE = "https://kemzobo.com/images/og-cover.jpg";
+const DEFAULT_DESCRIPTION =
+  "KEMZOBO is the original ready-to-drink Zobo — bold hibiscus, rooted in West African tradition, crafted for cookouts, gatherings, and the everyday moments worth sharing.";
 
 export default function PageMeta({ title, description, path, image, jsonLd }: PageMetaProps) {
   useEffect(() => {
     const fullTitle = title === "Home"
-      ? "KEMZOBO — The Original Zobo Drink"
-      : `${title} | KEMZOBO`;
+      ? "KEMZOBO — The Original Zobo Drink. Bold Hibiscus, Ready to Sip"
+      : `${title} | KEMZOBO — The Original Zobo Drink`;
     document.title = fullTitle;
 
     const setMeta = (key: string, content: string, isProperty = false) => {
@@ -30,7 +32,7 @@ export default function PageMeta({ title, description, path, image, jsonLd }: Pa
       el.setAttribute("content", content);
     };
 
-    const desc = description || "KEMZOBO, THE ORIGINAL ZOBO DRINK — BOLD hibiscus. Timeless tradition. Ready to drink.";
+    const desc = description || DEFAULT_DESCRIPTION;
     const url = `https://kemzobo.com${path || ""}`;
     const ogImage = image || DEFAULT_OG_IMAGE;
 
