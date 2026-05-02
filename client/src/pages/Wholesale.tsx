@@ -1,9 +1,11 @@
 import PageMeta from "@/components/PageMeta";
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
 export default function Wholesale() {
+  const [, setLocation] = useLocation();
   const [form, setForm] = useState({
     businessName: "",
     contactName: "",
@@ -16,8 +18,7 @@ export default function Wholesale() {
 
   const submitMutation = trpc.wholesale.submit.useMutation({
     onSuccess: () => {
-      toast.success("Inquiry submitted! We'll reach out shortly.");
-      setForm({ businessName: "", contactName: "", email: "", phone: "", businessType: "other", estimatedVolume: "", message: "" });
+      setLocation("/contact/thanks");
     },
     onError: (err) => toast.error(err.message),
   });

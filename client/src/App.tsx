@@ -17,6 +17,7 @@ const Products = lazy(() => import("./pages/Products"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
+const ContactThanks = lazy(() => import("./pages/ContactThanks"));
 const Wholesale = lazy(() => import("./pages/Wholesale"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Checkout = lazy(() => import("./pages/Checkout"));
@@ -65,6 +66,7 @@ function PublicRouter() {
             <Route path="/products/:slug" component={ProductDetail} />
             <Route path="/about" component={About} />
             <Route path="/contact" component={Contact} />
+            <Route path="/contact/thanks" component={ContactThanks} />
             <Route path="/wholesale" component={Wholesale} />
             <Route path="/faq" component={FAQ} />
             <Route path="/gallery" component={Gallery} />

@@ -1,14 +1,17 @@
 import PageMeta from "@/components/PageMeta";
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
 export default function Contact() {
+  const [, setLocation] = useLocation();
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const submitMutation = trpc.contact.submit.useMutation({
     onSuccess: () => {
-      toast.success("Message sent! A member of the KEMZOBO team will get back to you.");
-      setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+      // Send the user to the dedicated thank-you page so the confirmation
+      // sticks around (toasts vanish too quickly for a real submission).
+      setLocation("/contact/thanks");
     },
     onError: (err) => toast.error(err.message),
   });

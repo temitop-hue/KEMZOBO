@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure, adminProcedure } from "./_core/trpc";
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME, getBulkPrice } from "@shared/const";
 import * as db from "./db";
 import { createPaymentIntent, refundPaymentIntent } from "./stripe";
 import { sendEmail } from "./_core/email";
@@ -109,16 +109,19 @@ export const appRouter = router({
           const product = await db.getProductById(item.productId);
           if (!variant || !product) continue;
 
+          // Apply bulk pricing per line: 24+=5%, 100+=9%, 500+=14% off the unit price
+          const discountedUnit = getBulkPrice(variant.price, item.quantity);
+
           resolvedItems.push({
             productId: product.id,
             variantId: variant.id,
             productName: product.name,
             variantName: variant.name,
             quantity: item.quantity,
-            unitPrice: variant.price,
+            unitPrice: discountedUnit,
           });
 
-          subtotal += variant.price * item.quantity;
+          subtotal += discountedUnit * item.quantity;
         }
 
         const deliveryFee = subtotal >= 25000 ? 0 : 599; // Free delivery over $250
