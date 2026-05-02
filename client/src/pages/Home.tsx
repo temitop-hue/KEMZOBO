@@ -391,7 +391,7 @@ export default function Home() {
           CHAPTER 4: THE EXPERIENCE — Pouring the drink
           ═══════════════════════════════════════════════════ */}
       <section className="relative h-[80vh] min-h-[600px]">
-        <img src="/images/tropical-glass.jpg" alt="KEMZOBO poured over ice" loading="lazy" className="w-full h-full object-cover" />
+        <img src="/images/gallery%204.jpeg" alt="Friends sharing KEMZOBO together" loading="lazy" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806] via-[#0f0806]/30 to-transparent" />
         <div className="absolute inset-0 z-10 flex flex-col justify-end">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-24">
