@@ -67,7 +67,32 @@ export default function ProductDetail() {
 
   return (
     <div>
-      <PageMeta title={data?.name ?? "Product"} description="KEMZOBO brings the bold flavor of traditional zobo into a modern, convenient can." path={"/products/" + (slug ?? "")} />
+      <PageMeta
+        title={data?.name ?? "Product"}
+        description={data?.description ?? "KEMZOBO brings the bold flavor of traditional zobo into a modern, convenient can."}
+        path={"/products/" + (slug ?? "")}
+        image={data?.imageUrl ? `https://kemzobo.com${data.imageUrl}` : undefined}
+        jsonLd={data ? {
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          name: data.name,
+          description: data.description,
+          image: data.imageUrl ? `https://kemzobo.com${data.imageUrl}` : undefined,
+          brand: { "@type": "Brand", name: "KEMZOBO" },
+          // Surface the cheapest variant in offers — Google rich-result eligible
+          offers: data.variants && data.variants.length > 0
+            ? {
+                "@type": "AggregateOffer",
+                priceCurrency: "USD",
+                lowPrice: (Math.min(...data.variants.map((v) => v.price)) / 100).toFixed(2),
+                highPrice: (Math.max(...data.variants.map((v) => v.price)) / 100).toFixed(2),
+                offerCount: data.variants.length,
+                availability: "https://schema.org/InStock",
+                url: `https://kemzobo.com/products/${slug ?? ""}`,
+              }
+            : undefined,
+        } : undefined}
+      />
       {/* Main product section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">

@@ -202,7 +202,25 @@ export default function Home() {
 
   return (
     <div>
-      <PageMeta title="Home" path="/" />
+      <PageMeta
+        title="Home"
+        path="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "KEMZOBO",
+          alternateName: "KEMZOBO Original Zobo Drink",
+          description:
+            "KEMZOBO is the original ready-to-drink Zobo — a bold hibiscus beverage rooted in West African tradition, crafted for modern moments.",
+          url: "https://kemzobo.com",
+          logo: "https://kemzobo.com/images/New_Logo.jpeg",
+          email: "info@kemzobo.com",
+          sameAs: [
+            "https://www.instagram.com/kemzobo",
+            "https://www.facebook.com/share/18FDehPRau/",
+          ],
+        }}
+      />
 
       {/* ═══════════════════════════════════════════════════
           CHAPTER 1: THE PRODUCT — Hero slideshow

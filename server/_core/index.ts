@@ -12,6 +12,7 @@ import { ENV } from "./env";
 import { handleStripeWebhook } from "../stripe";
 import { startCron } from "../cron";
 import { exportOrders, exportRevenue, exportInventory } from "../exports";
+import { serveSitemap, serveRobots } from "../seo";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -70,6 +71,10 @@ async function startServer() {
   app.get("/api/admin/exports/orders.csv", exportOrders);
   app.get("/api/admin/exports/revenue.csv", exportRevenue);
   app.get("/api/admin/exports/inventory.csv", exportInventory);
+
+  // SEO — must be served before the SPA catch-all
+  app.get("/sitemap.xml", serveSitemap);
+  app.get("/robots.txt", serveRobots);
 
   // tRPC API
   app.use(
