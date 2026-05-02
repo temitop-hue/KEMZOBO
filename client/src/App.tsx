@@ -29,6 +29,7 @@ const MyAccount = lazy(() => import("./pages/MyAccount"));
 const OrderDetail = lazy(() => import("./pages/OrderDetail"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Gallery = lazy(() => import("./pages/Gallery"));
+const Recipes = lazy(() => import("./pages/Recipes"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -72,6 +73,7 @@ function PublicRouter() {
             <Route path="/wholesale" component={Wholesale} />
             <Route path="/faq" component={FAQ} />
             <Route path="/gallery" component={Gallery} />
+            <Route path="/recipes" component={Recipes} />
             <Route path="/privacy" component={Privacy} />
             <Route path="/cart" component={Cart} />
             <Route path="/checkout" component={Checkout} />

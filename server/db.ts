@@ -12,6 +12,7 @@ import {
   invoiceItems,
   discountCodes,
   reviews,
+  backInStockSubs,
   orders,
   orderItems,
   wholesaleRequests,
@@ -28,6 +29,7 @@ import {
   type NewDiscountCode,
   type DiscountCode,
   type NewReview,
+  type NewBackInStockSub,
   type NewOrder,
   type NewOrderItem,
   type NewWholesaleRequest,
@@ -219,6 +221,15 @@ export async function adjustInventory(args: {
       qty: newQty,
       threshold,
     }).catch((err) => console.error("[Low stock alert] dispatch failed:", err));
+  }
+
+  // Back-in-stock: stock just crossed 0 -> positive, notify everyone waiting
+  if (currentQty === 0 && newQty > 0) {
+    const { sendBackInStockEmails } = await import("./notifications");
+    sendBackInStockEmails({
+      productId: args.productId,
+      variantId: args.variantId,
+    }).catch((err) => console.error("[Back-in-stock] dispatch failed:", err));
   }
 
   return { balanceAfter: newQty };
@@ -500,6 +511,48 @@ export async function updateReviewStatus(id: number, status: "approved" | "rejec
 export async function deleteReview(id: number) {
   const db = getDb();
   await db.delete(reviews).where(eq(reviews.id, id));
+}
+
+// ─── Back-in-stock subscriptions ─────────────────────────
+export async function subscribeBackInStock(variantId: number, email: string): Promise<{ created: boolean }> {
+  const db = getDb();
+  // Skip duplicates: same email + variant + still pending
+  const existing = await db
+    .select()
+    .from(backInStockSubs)
+    .where(
+      and(
+        eq(backInStockSubs.variantId, variantId),
+        eq(backInStockSubs.email, email.toLowerCase())
+      )
+    );
+  const pending = existing.find((e) => e.notifiedAt == null);
+  if (pending) return { created: false };
+  await db.insert(backInStockSubs).values({
+    variantId,
+    email: email.toLowerCase(),
+  } as NewBackInStockSub);
+  return { created: true };
+}
+
+export async function getPendingBackInStockSubs(variantId: number) {
+  const db = getDb();
+  const rows = await db
+    .select()
+    .from(backInStockSubs)
+    .where(eq(backInStockSubs.variantId, variantId));
+  return rows.filter((r) => r.notifiedAt == null);
+}
+
+export async function markBackInStockNotified(ids: number[]) {
+  if (ids.length === 0) return;
+  const db = getDb();
+  for (const id of ids) {
+    await db
+      .update(backInStockSubs)
+      .set({ notifiedAt: new Date() })
+      .where(eq(backInStockSubs.id, id));
+  }
 }
 
 /**

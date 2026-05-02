@@ -10,6 +10,7 @@ const BASE = "https://kemzobo.com";
 const STATIC_PATHS: Array<{ path: string; changefreq: string; priority: string }> = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/products", changefreq: "weekly", priority: "0.9" },
+  { path: "/recipes", changefreq: "monthly", priority: "0.8" },
   { path: "/about", changefreq: "monthly", priority: "0.7" },
   { path: "/wholesale", changefreq: "monthly", priority: "0.7" },
   { path: "/gallery", changefreq: "monthly", priority: "0.6" },

@@ -223,6 +223,54 @@ export async function sendAbandonedCartReminders(): Promise<{ sent: number }> {
   return { sent };
 }
 
+// ─── Back-in-stock notifications ─────────────────────────
+/**
+ * Stock just crossed 0 -> positive. Email everyone who subscribed for this
+ * variant, then mark each subscription as notified so they don't get spammed
+ * if it goes out and back in again.
+ */
+export async function sendBackInStockEmails(args: { productId: number; variantId: number }) {
+  const subs = await db.getPendingBackInStockSubs(args.variantId);
+  if (subs.length === 0) return;
+
+  const product = await db.getProductById(args.productId);
+  const variant = await db.getVariantById(args.variantId);
+  if (!product || !variant) return;
+
+  const link = `https://kemzobo.com/products/${product.slug}`;
+  const html = `
+    <div style="font-family:sans-serif;max-width:520px;margin:0 auto">
+      <h1 style="font-family:Georgia,serif;color:#CC2936;margin:0 0 8px 0">It's back.</h1>
+      <p style="font-size:15px;color:#333">
+        <strong>${product.name}</strong> (${variant.name}) is back in stock.
+        Stock moves fast — grab yours before it sells out again.
+      </p>
+      <p style="margin:24px 0">
+        <a href="${link}"
+           style="display:inline-block;background:#CC2936;color:#fff;text-decoration:none;padding:14px 28px;border-radius:9999px;font-weight:bold;letter-spacing:1.5px;font-size:14px">
+          SHOP NOW
+        </a>
+      </p>
+      <p style="font-size:12px;color:#888">You're receiving this because you signed up for back-in-stock alerts on kemzobo.com. We won't email you again about this item.</p>
+    </div>
+  `;
+
+  const notified: number[] = [];
+  for (const sub of subs) {
+    const ok = await sendEmail({
+      to: sub.email,
+      subject: `Back in stock — ${product.name} (${variant.name})`,
+      content: `${product.name} (${variant.name}) is back in stock. Shop now: ${link}`,
+      html,
+    }).catch((err) => {
+      console.error("[Back-in-stock email] failed for", sub.email, err);
+      return false;
+    });
+    if (ok) notified.push(sub.id);
+  }
+  await db.markBackInStockNotified(notified);
+}
+
 // ─── Low-stock crossing alerts ───────────────────────────
 /**
  * Called from db.adjustInventory whenever a stock change brings a variant

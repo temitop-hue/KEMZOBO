@@ -192,6 +192,18 @@ export const reviews = mysqlTable("reviews", {
 export type Review = typeof reviews.$inferSelect;
 export type NewReview = typeof reviews.$inferInsert;
 
+// ─── Back-in-stock subscriptions ─────────────────────────
+export const backInStockSubs = mysqlTable("back_in_stock_subs", {
+  id: int().autoincrement().primaryKey(),
+  variantId: int().notNull(),
+  email: varchar({ length: 320 }).notNull(),
+  createdAt: timestamp().defaultNow(),
+  notifiedAt: timestamp(), // null until the email fires
+});
+
+export type BackInStockSub = typeof backInStockSubs.$inferSelect;
+export type NewBackInStockSub = typeof backInStockSubs.$inferInsert;
+
 // ─── Orders ──────────────────────────────────────────────
 export const orders = mysqlTable("orders", {
   id: int().autoincrement().primaryKey(),

@@ -49,7 +49,15 @@ export const appRouter = router({
         const product = await db.getProductBySlug(input.slug);
         if (!product) return null;
         const variants = await db.getVariantsByProductId(product.id);
-        return { ...product, variants };
+        // Decorate each variant with its stock state so the UI can show
+        // "Out of stock" + the back-in-stock signup form
+        const variantsWithStock = await Promise.all(
+          variants.map(async (v) => {
+            const inv = await db.getInventoryByVariantId(v.id);
+            return { ...v, inStock: (inv?.quantityAvailable ?? 0) > 0 };
+          })
+        );
+        return { ...product, variants: variantsWithStock };
       }),
 
     featured: publicProcedure.query(async () => {
@@ -66,6 +74,20 @@ export const appRouter = router({
       .input(z.object({ productId: z.number() }))
       .query(async ({ input }) => {
         return db.getVariantsByProductId(input.productId);
+      }),
+  }),
+
+  // ─── Back-in-stock subscriptions (public) ──────────────
+  backInStock: router({
+    subscribe: publicProcedure
+      .input(
+        z.object({
+          variantId: z.number(),
+          email: z.string().email(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        return db.subscribeBackInStock(input.variantId, input.email);
       }),
   }),
 

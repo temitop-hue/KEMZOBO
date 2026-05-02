@@ -240,21 +240,25 @@ export default function ProductDetail() {
                   )}
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <button
-                    onClick={handleAddToCart}
-                    className="btn-primary flex-1 flex items-center justify-center gap-2 rounded-full bg-[#CC2936] text-white px-6 py-4 font-bold text-lg hover:bg-[#E63946] transition-all"
-                  >
-                    <ShoppingCart className="h-5 w-5" /> Add to Cart
-                  </button>
-                  <Link
-                    href="/cart"
-                    onClick={handleAddToCart}
-                    className="btn-primary flex-1 flex items-center justify-center gap-2 rounded-full border-2 border-foreground text-foreground px-6 py-4 font-bold text-lg hover:bg-foreground hover:text-white transition-all"
-                  >
-                    Buy Now <ArrowRight className="h-5 w-5" />
-                  </Link>
-                </div>
+                {selectedVariant && selectedVariant.inStock !== false ? (
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                      onClick={handleAddToCart}
+                      className="btn-primary flex-1 flex items-center justify-center gap-2 rounded-full bg-[#CC2936] text-white px-6 py-4 font-bold text-lg hover:bg-[#E63946] transition-all"
+                    >
+                      <ShoppingCart className="h-5 w-5" /> Add to Cart
+                    </button>
+                    <Link
+                      href="/cart"
+                      onClick={handleAddToCart}
+                      className="btn-primary flex-1 flex items-center justify-center gap-2 rounded-full border-2 border-foreground text-foreground px-6 py-4 font-bold text-lg hover:bg-foreground hover:text-white transition-all"
+                    >
+                      Buy Now <ArrowRight className="h-5 w-5" />
+                    </Link>
+                  </div>
+                ) : (
+                  <BackInStockForm variantId={selectedVariant?.id ?? 0} />
+                )}
               </div>
             )}
 
@@ -297,6 +301,59 @@ export default function ProductDetail() {
 
       {/* Reviews */}
       {data && <ProductReviews productId={data.id} />}
+    </div>
+  );
+}
+
+function BackInStockForm({ variantId }: { variantId: number }) {
+  const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false);
+  const subscribe = trpc.backInStock.subscribe.useMutation({
+    onSuccess: (r) => {
+      setDone(true);
+      toast.success(r.created ? "We'll email you when it's back." : "You're already on the list.");
+    },
+    onError: (err) => toast.error(err.message),
+  });
+
+  if (done) {
+    return (
+      <div className="rounded-xl bg-green-50 border border-green-200 p-4 text-sm text-green-800">
+        ✓ You're on the list. We'll email you the moment this is back in stock.
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-[#CC2936]/15 bg-white p-4">
+      <p className="font-display font-bold text-foreground mb-1">Out of stock</p>
+      <p className="text-sm text-muted-foreground mb-3">
+        Drop your email and we'll let you know the moment this is back.
+      </p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!email.trim()) return;
+          subscribe.mutate({ variantId, email: email.trim() });
+        }}
+        className="flex gap-2"
+      >
+        <input
+          type="email"
+          required
+          placeholder="your@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="flex-1 rounded-full border border-[#CC2936]/20 bg-hibiscus-bg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors"
+        />
+        <button
+          type="submit"
+          disabled={subscribe.isPending}
+          className="rounded-full bg-[#CC2936] text-white px-5 py-2.5 text-sm font-bold uppercase tracking-wider hover:bg-[#E63946] transition-colors disabled:opacity-50"
+        >
+          {subscribe.isPending ? "..." : "Notify Me"}
+        </button>
+      </form>
     </div>
   );
 }
