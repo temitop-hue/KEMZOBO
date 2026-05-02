@@ -69,6 +69,17 @@ export const appRouter = router({
       }),
   }),
 
+  // ─── Discounts (public — validate at checkout) ─────────
+  discounts: router({
+    validate: publicProcedure
+      .input(z.object({ code: z.string().min(1), subtotal: z.number().int().min(0) }))
+      .mutation(async ({ input }) => {
+        const found = await db.getDiscountByCode(input.code);
+        if (!found) return { ok: false as const, reason: "Code not found" };
+        return db.evaluateDiscount(found, input.subtotal);
+      }),
+  }),
+
   // ─── Orders ─────────────────────────────────────────────
   orders: router({
     create: publicProcedure
@@ -90,6 +101,7 @@ export const appRouter = router({
             zip: z.string(),
             phone: z.string(),
           }),
+          discountCode: z.string().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
@@ -124,9 +136,26 @@ export const appRouter = router({
           subtotal += discountedUnit * item.quantity;
         }
 
-        const deliveryFee = subtotal >= 25000 ? 0 : 599; // Free delivery over $250
-        const tax = Math.round(subtotal * 0.06); // 6% tax estimate
-        const total = subtotal + deliveryFee + tax;
+        // Apply discount code if provided + valid. Server is the source of truth —
+        // re-validate even if the client already showed the discount in the cart.
+        let discountAmount = 0;
+        let appliedDiscountCode: { id: number; code: string } | null = null;
+        if (input.discountCode) {
+          const code = await db.getDiscountByCode(input.discountCode);
+          if (code) {
+            const result = db.evaluateDiscount(code, subtotal);
+            if (result.ok) {
+              discountAmount = result.discountCents;
+              appliedDiscountCode = { id: code.id, code: code.code };
+            }
+            // If invalid, silently drop — order still goes through at full price
+          }
+        }
+
+        const subtotalAfterDiscount = subtotal - discountAmount;
+        const deliveryFee = subtotalAfterDiscount >= 25000 ? 0 : 599; // Free over $250
+        const tax = Math.round(subtotalAfterDiscount * 0.06); // 6% tax estimate
+        const total = subtotalAfterDiscount + deliveryFee + tax;
 
         // Generate order number
         const orderCount = (await db.getAllOrders()).length;
@@ -158,10 +187,19 @@ export const appRouter = router({
           deliveryFee,
           tax,
           total,
+          discountCode: appliedDiscountCode?.code ?? null,
+          discountAmount,
           shippingAddress: input.shippingAddress,
           customerEmail: input.customerEmail,
           stripePaymentIntentId,
         });
+
+        // Bump usage counter on the discount code (best-effort)
+        if (appliedDiscountCode) {
+          db.incrementDiscountUsage(appliedDiscountCode.id).catch((err) =>
+            console.error("[Discount] usage increment failed:", err)
+          );
+        }
 
         // Create order items
         for (const item of resolvedItems) {
@@ -500,6 +538,71 @@ export const appRouter = router({
             success: true,
             method: order.stripePaymentIntentId ? "stripe" : "manual",
           };
+        }),
+    }),
+
+    // Admin Discount codes
+    discounts: router({
+      list: adminProcedure.query(async () => {
+        return db.getAllDiscountCodes();
+      }),
+      create: adminProcedure
+        .input(
+          z.object({
+            code: z.string().min(2).max(50),
+            description: z.string().max(200).optional(),
+            type: z.enum(["percent", "fixed_amount"]),
+            value: z.number().int().positive(),
+            minOrderTotal: z.number().int().min(0).default(0),
+            usageLimit: z.number().int().positive().optional(),
+            validFrom: z.string().optional(), // ISO
+            validUntil: z.string().optional(), // ISO
+          })
+        )
+        .mutation(async ({ input, ctx }) => {
+          if (input.type === "percent" && input.value > 100) {
+            throw new Error("Percent discount cannot exceed 100");
+          }
+          const id = await db.createDiscountCode({
+            code: input.code,
+            description: input.description ?? null,
+            type: input.type,
+            value: input.value,
+            minOrderTotal: input.minOrderTotal,
+            usageLimit: input.usageLimit ?? null,
+            validFrom: input.validFrom ? new Date(input.validFrom) : new Date(),
+            validUntil: input.validUntil ? new Date(input.validUntil) : null,
+            isActive: 1,
+            createdByUserId: ctx.user?.id ?? null,
+          });
+          return { id };
+        }),
+      update: adminProcedure
+        .input(
+          z.object({
+            id: z.number(),
+            data: z.object({
+              description: z.string().max(200).optional(),
+              minOrderTotal: z.number().int().min(0).optional(),
+              usageLimit: z.number().int().positive().nullable().optional(),
+              validUntil: z.string().nullable().optional(),
+              isActive: z.number().optional(),
+            }),
+          })
+        )
+        .mutation(async ({ input }) => {
+          const patch: any = { ...input.data };
+          if (patch.validUntil !== undefined) {
+            patch.validUntil = patch.validUntil ? new Date(patch.validUntil) : null;
+          }
+          await db.updateDiscountCode(input.id, patch);
+          return { success: true };
+        }),
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.deleteDiscountCode(input.id);
+          return { success: true };
         }),
     }),
 

@@ -154,6 +154,27 @@ export type NewInvoice = typeof invoices.$inferInsert;
 export type InvoiceItem = typeof invoiceItems.$inferSelect;
 export type NewInvoiceItem = typeof invoiceItems.$inferInsert;
 
+// ─── Discount codes ──────────────────────────────────────
+export const discountCodes = mysqlTable("discount_codes", {
+  id: int().autoincrement().primaryKey(),
+  code: varchar({ length: 50 }).unique().notNull(), // uppercase
+  description: varchar({ length: 200 }),
+  type: mysqlEnum(["percent", "fixed_amount"]).notNull(),
+  value: int().notNull(), // percent (0-100) or cents
+  minOrderTotal: int().default(0), // cents — discount only applies above this subtotal
+  usageLimit: int(), // null = unlimited
+  usageCount: int().default(0),
+  validFrom: timestamp().defaultNow(),
+  validUntil: timestamp(), // null = no expiry
+  isActive: int().default(1), // 0/1
+  createdByUserId: int(),
+  createdAt: timestamp().defaultNow(),
+  updatedAt: timestamp().defaultNow().onUpdateNow(),
+});
+
+export type DiscountCode = typeof discountCodes.$inferSelect;
+export type NewDiscountCode = typeof discountCodes.$inferInsert;
+
 // ─── Orders ──────────────────────────────────────────────
 export const orders = mysqlTable("orders", {
   id: int().autoincrement().primaryKey(),
@@ -189,6 +210,8 @@ export const orders = mysqlTable("orders", {
   trackingCarrier: varchar({ length: 100 }),
   deliveryMethod: mysqlEnum(["self", "third_party"]).default("third_party"),
   customerEmail: varchar({ length: 320 }).notNull(),
+  discountCode: varchar({ length: 50 }), // code applied at checkout, if any
+  discountAmount: int().default(0), // cents — already subtracted from total
   notes: text(),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().defaultNow().onUpdateNow(),

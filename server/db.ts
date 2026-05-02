@@ -10,6 +10,7 @@ import {
   expenses,
   invoices,
   invoiceItems,
+  discountCodes,
   orders,
   orderItems,
   wholesaleRequests,
@@ -23,6 +24,8 @@ import {
   type NewExpense,
   type NewInvoice,
   type NewInvoiceItem,
+  type NewDiscountCode,
+  type DiscountCode,
   type NewOrder,
   type NewOrderItem,
   type NewWholesaleRequest,
@@ -382,6 +385,81 @@ export async function deleteInvoice(id: number) {
   const db = getDb();
   await db.delete(invoiceItems).where(eq(invoiceItems.invoiceId, id));
   await db.delete(invoices).where(eq(invoices.id, id));
+}
+
+// ─── Discount codes ──────────────────────────────────────
+export async function getAllDiscountCodes() {
+  const db = getDb();
+  return db.select().from(discountCodes).orderBy(desc(discountCodes.createdAt));
+}
+
+export async function getDiscountByCode(code: string): Promise<DiscountCode | null> {
+  const db = getDb();
+  const [d] = await db
+    .select()
+    .from(discountCodes)
+    .where(eq(discountCodes.code, code.toUpperCase()));
+  return d ?? null;
+}
+
+export async function createDiscountCode(data: Omit<NewDiscountCode, "id" | "createdAt" | "updatedAt" | "usageCount">): Promise<number> {
+  const db = getDb();
+  const result = await db.insert(discountCodes).values({ ...data, code: data.code.toUpperCase() });
+  return Number((result as any).insertId);
+}
+
+export async function updateDiscountCode(id: number, data: Partial<NewDiscountCode>) {
+  const db = getDb();
+  const patch = data.code ? { ...data, code: data.code.toUpperCase() } : data;
+  await db.update(discountCodes).set(patch).where(eq(discountCodes.id, id));
+}
+
+export async function deleteDiscountCode(id: number) {
+  const db = getDb();
+  await db.delete(discountCodes).where(eq(discountCodes.id, id));
+}
+
+export async function incrementDiscountUsage(id: number) {
+  const db = getDb();
+  const [current] = await db.select().from(discountCodes).where(eq(discountCodes.id, id));
+  if (!current) return;
+  await db
+    .update(discountCodes)
+    .set({ usageCount: (current.usageCount ?? 0) + 1 })
+    .where(eq(discountCodes.id, id));
+}
+
+/**
+ * Validate a discount code against a subtotal. Returns either a successful
+ * result with the applied discount in cents, or a reason it was rejected.
+ * Pure function over a fetched DiscountCode + subtotal — no side effects.
+ */
+export function evaluateDiscount(
+  code: DiscountCode,
+  subtotalCents: number
+): { ok: true; discountCents: number } | { ok: false; reason: string } {
+  if (!code.isActive) return { ok: false, reason: "This code is no longer active" };
+
+  const now = new Date();
+  if (code.validFrom && new Date(code.validFrom) > now) {
+    return { ok: false, reason: "This code is not active yet" };
+  }
+  if (code.validUntil && new Date(code.validUntil) < now) {
+    return { ok: false, reason: "This code has expired" };
+  }
+  if (code.usageLimit != null && (code.usageCount ?? 0) >= code.usageLimit) {
+    return { ok: false, reason: "This code has been fully redeemed" };
+  }
+  if (code.minOrderTotal && subtotalCents < code.minOrderTotal) {
+    const needed = ((code.minOrderTotal - subtotalCents) / 100).toFixed(2);
+    return { ok: false, reason: `Add $${needed} more to use this code` };
+  }
+
+  const discount = code.type === "percent"
+    ? Math.round(subtotalCents * (code.value / 100))
+    : Math.min(code.value, subtotalCents); // fixed_amount can't exceed subtotal
+
+  return { ok: true, discountCents: discount };
 }
 
 /**

@@ -59,6 +59,9 @@ export default function Checkout() {
   const [email, setEmail] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"card" | "zelle">("card");
   const [zelleCopied, setZelleCopied] = useState(false);
+  const [discountInput, setDiscountInput] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; cents: number } | null>(null);
+  const [discountError, setDiscountError] = useState<string | null>(null);
   const [orderData, setOrderData] = useState<{
     clientSecret: string | null; orderNumber: string; total: number;
   } | null>(null);
@@ -74,6 +77,23 @@ export default function Checkout() {
     onError: (err) => toast.error(err.message),
   });
 
+  const validateDiscount = trpc.discounts.validate.useMutation({
+    onSuccess: (result) => {
+      if (result.ok) {
+        setAppliedDiscount({ code: discountInput.trim().toUpperCase(), cents: result.discountCents });
+        setDiscountError(null);
+        toast.success(`Code applied — $${(result.discountCents / 100).toFixed(2)} off`);
+      } else {
+        setAppliedDiscount(null);
+        setDiscountError(result.reason);
+      }
+    },
+    onError: (err) => {
+      setAppliedDiscount(null);
+      setDiscountError(err.message);
+    },
+  });
+
   if (items.length === 0 && !orderData) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
@@ -83,9 +103,23 @@ export default function Checkout() {
     );
   }
 
-  const deliveryFee = subtotal >= 25000 ? 0 : 599;
-  const tax = Math.round(subtotal * 0.06);
-  const total = subtotal + deliveryFee + tax;
+  const discountCents = appliedDiscount?.cents ?? 0;
+  const subtotalAfterDiscount = subtotal - discountCents;
+  const deliveryFee = subtotalAfterDiscount >= 25000 ? 0 : 599;
+  const tax = Math.round(subtotalAfterDiscount * 0.06);
+  const total = subtotalAfterDiscount + deliveryFee + tax;
+
+  const handleApplyDiscount = () => {
+    const code = discountInput.trim();
+    if (!code) return;
+    validateDiscount.mutate({ code, subtotal });
+  };
+
+  const handleClearDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountError(null);
+    setDiscountInput("");
+  };
 
   const handleCreateOrder = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,6 +127,7 @@ export default function Checkout() {
       customerEmail: email,
       items: items.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
       shippingAddress: shipping,
+      discountCode: appliedDiscount?.code,
     });
   };
 
@@ -304,6 +339,14 @@ export default function Checkout() {
                   <span className="text-muted-foreground">Subtotal</span>
                   <span>${formatPrice(subtotal)}</span>
                 </div>
+                {appliedDiscount && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-green-700 font-medium flex items-center gap-1.5">
+                      Discount <span className="font-mono text-xs bg-green-50 rounded px-1.5 py-0.5">{appliedDiscount.code}</span>
+                    </span>
+                    <span className="text-green-700 font-medium">−${formatPrice(appliedDiscount.cents)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Delivery</span>
                   <span>{deliveryFee === 0 ? <span className="text-green-600 font-medium">Free</span> : `$${formatPrice(deliveryFee)}`}</span>
@@ -317,6 +360,54 @@ export default function Checkout() {
                   <span className="text-[#CC2936]">${formatPrice(total)}</span>
                 </div>
               </div>
+            </div>
+
+            {/* Discount code input */}
+            <div className="mt-4 rounded-xl bg-white border border-[#CC2936]/10 p-4">
+              {appliedDiscount ? (
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Code applied</p>
+                    <p className="font-mono font-bold text-foreground">{appliedDiscount.code}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleClearDiscount}
+                    className="text-xs font-medium text-muted-foreground hover:text-red-500 underline"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <label className="text-xs uppercase tracking-wider font-bold text-muted-foreground mb-2 block">
+                    Discount code
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={discountInput}
+                      onChange={(e) => {
+                        setDiscountInput(e.target.value.toUpperCase());
+                        setDiscountError(null);
+                      }}
+                      placeholder="LAUNCH10"
+                      className="flex-1 font-mono uppercase rounded-lg border border-[#CC2936]/15 bg-hibiscus-bg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyDiscount}
+                      disabled={validateDiscount.isPending || !discountInput.trim()}
+                      className="rounded-lg bg-[#CC2936] text-white px-4 py-2 text-sm font-semibold hover:bg-[#E63946] transition-colors disabled:opacity-50"
+                    >
+                      {validateDiscount.isPending ? "..." : "Apply"}
+                    </button>
+                  </div>
+                  {discountError && (
+                    <p className="mt-2 text-xs text-red-600">{discountError}</p>
+                  )}
+                </>
+              )}
             </div>
 
             {/* Payment method preview */}
