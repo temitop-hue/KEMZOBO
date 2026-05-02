@@ -390,8 +390,8 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           CHAPTER 4: THE EXPERIENCE — Pouring the drink
           ═══════════════════════════════════════════════════ */}
-      <section className="relative h-[360px] lg:h-[440px]">
-        <img src="/images/gallery%204.jpeg" alt="Friends sharing KEMZOBO together" loading="lazy" className="w-full h-full object-cover object-[50%_30%]" />
+      <section className="relative h-[420px] lg:h-[560px] bg-[#0f0806]">
+        <img src="/images/gallery%204.jpeg" alt="Friends sharing KEMZOBO together" loading="lazy" className="w-full h-full object-contain" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806] via-[#0f0806]/30 to-transparent" />
         <div className="absolute inset-0 z-10 flex flex-col justify-end">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-10 lg:pb-14">
@@ -480,8 +480,8 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           CHAPTER 7: THE MOMENT — Lifestyle full-bleed
           ═══════════════════════════════════════════════════ */}
-      <section className="relative h-[360px] lg:h-[440px]">
-        <img src="/images/gallery%203.jpeg" alt="Six KEMZOBO cans laid out on grass" loading="lazy" className="w-full h-full object-cover object-center" />
+      <section className="relative h-[420px] lg:h-[560px] bg-[#0f0806]">
+        <img src="/images/gallery%203.jpeg" alt="Six KEMZOBO cans laid out on grass" loading="lazy" className="w-full h-full object-contain" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806]/80 via-[#0f0806]/20 to-transparent flex items-end">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-10 lg:pb-14">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
