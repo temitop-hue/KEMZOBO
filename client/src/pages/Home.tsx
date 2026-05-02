@@ -390,18 +390,16 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           CHAPTER 4: THE EXPERIENCE — Pouring the drink
           ═══════════════════════════════════════════════════ */}
-      <section className="relative h-[55vh] min-h-[440px] lg:h-[60vh] lg:min-h-[500px]">
+      <section className="relative h-[360px] lg:h-[440px]">
         <img src="/images/gallery%204.jpeg" alt="Friends sharing KEMZOBO together" loading="lazy" className="w-full h-full object-cover object-[50%_30%]" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806] via-[#0f0806]/30 to-transparent" />
         <div className="absolute inset-0 z-10 flex flex-col justify-end">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-10 lg:pb-14">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
-              <motion.p variants={fadeUp} className="text-white/40 text-sm uppercase tracking-[0.3em] mb-4">The Experience</motion.p>
-              <motion.h2 variants={fadeUp} className="font-display text-5xl lg:text-7xl font-bold leading-[1] max-w-2xl" style={{ color: "#ffffff" }}>
-                Pour it.
-                <br />
-                <span style={{ color: "#E63946" }}>Taste it.</span>
-                <br />
+              <motion.p variants={fadeUp} className="text-white/40 text-xs uppercase tracking-[0.3em] mb-3">The Experience</motion.p>
+              <motion.h2 variants={fadeUp} className="font-display text-3xl lg:text-5xl font-bold leading-[1.05] max-w-2xl" style={{ color: "#ffffff" }}>
+                Pour it.{" "}
+                <span style={{ color: "#E63946" }}>Taste it.</span>{" "}
                 Share it.
               </motion.h2>
             </motion.div>
@@ -482,17 +480,17 @@ export default function Home() {
       {/* ═══════════════════════════════════════════════════
           CHAPTER 7: THE MOMENT — Lifestyle full-bleed
           ═══════════════════════════════════════════════════ */}
-      <section className="relative h-[55vh] min-h-[440px] lg:h-[60vh] lg:min-h-[500px]">
+      <section className="relative h-[360px] lg:h-[440px]">
         <img src="/images/gallery%203.jpeg" alt="Six KEMZOBO cans laid out on grass" loading="lazy" className="w-full h-full object-cover object-center" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806]/80 via-[#0f0806]/20 to-transparent flex items-end">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-10 lg:pb-14">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
-              <motion.p variants={fadeUp} className="text-white/40 text-sm uppercase tracking-[0.3em] mb-4">The Moment</motion.p>
-              <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-6xl font-bold max-w-2xl leading-tight" style={{ color: "#ffffff", textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>
+              <motion.p variants={fadeUp} className="text-white/40 text-xs uppercase tracking-[0.3em] mb-3">The Moment</motion.p>
+              <motion.h2 variants={fadeUp} className="font-display text-2xl lg:text-4xl font-bold max-w-xl leading-tight" style={{ color: "#ffffff", textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>
                 It belongs wherever people{" "}
                 <span className="italic" style={{ color: "#E63946" }}>come together</span>
               </motion.h2>
-              <motion.p variants={fadeUp} className="mt-4 text-white/60 text-lg max-w-xl">
+              <motion.p variants={fadeUp} className="mt-3 text-white/70 text-sm lg:text-base max-w-md">
                 Cookouts. Brunches. Parties. Family dinners. The drink you bring when you
                 want something bold, different, and memorable.
               </motion.p>

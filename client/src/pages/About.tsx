@@ -104,7 +104,7 @@ export default function About() {
             <motion.div
               initial="hidden" whileInView="visible" viewport={{ once: true }}
               variants={fadeUp}
-              className="rounded-xl overflow-hidden bg-[#FBE8C8] max-w-md mx-auto lg:mx-0"
+              className="rounded-xl overflow-hidden bg-[#FBE8C8] max-w-[280px] sm:max-w-xs mx-auto lg:mx-0"
             >
               <img
                 src="/images/Pineapple.jpeg"
