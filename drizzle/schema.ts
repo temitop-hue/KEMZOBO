@@ -117,6 +117,43 @@ export const expenses = mysqlTable("expenses", {
 export type Expense = typeof expenses.$inferSelect;
 export type NewExpense = typeof expenses.$inferInsert;
 
+// ─── B2B Invoices ────────────────────────────────────────
+export const invoices = mysqlTable("invoices", {
+  id: int().autoincrement().primaryKey(),
+  invoiceNumber: varchar({ length: 50 }).unique().notNull(),
+  status: mysqlEnum(["draft", "sent", "paid", "overdue", "cancelled"]).default("draft"),
+  clientName: varchar({ length: 255 }).notNull(),
+  clientEmail: varchar({ length: 320 }),
+  clientPhone: varchar({ length: 50 }),
+  clientAddress: text(),
+  subtotal: int().notNull(), // cents
+  tax: int().default(0),
+  total: int().notNull(), // cents
+  notes: text(),
+  issuedAt: timestamp().defaultNow(),
+  dueAt: timestamp().notNull(),
+  sentAt: timestamp(),
+  paidAt: timestamp(),
+  wholesaleRequestId: int(),
+  createdByUserId: int(),
+  createdAt: timestamp().defaultNow(),
+  updatedAt: timestamp().defaultNow().onUpdateNow(),
+});
+
+export const invoiceItems = mysqlTable("invoice_items", {
+  id: int().autoincrement().primaryKey(),
+  invoiceId: int().notNull(),
+  description: varchar({ length: 500 }).notNull(),
+  quantity: int().notNull(),
+  unitPrice: int().notNull(), // cents
+  lineTotal: int().notNull(), // cents
+});
+
+export type Invoice = typeof invoices.$inferSelect;
+export type NewInvoice = typeof invoices.$inferInsert;
+export type InvoiceItem = typeof invoiceItems.$inferSelect;
+export type NewInvoiceItem = typeof invoiceItems.$inferInsert;
+
 // ─── Orders ──────────────────────────────────────────────
 export const orders = mysqlTable("orders", {
   id: int().autoincrement().primaryKey(),

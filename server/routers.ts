@@ -496,6 +496,116 @@ export const appRouter = router({
       }),
     }),
 
+    // Admin B2B Invoicing
+    invoices: router({
+      list: adminProcedure.query(async () => {
+        return db.getAllInvoices();
+      }),
+
+      getById: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .query(async ({ input }) => {
+          const invoice = await db.getInvoiceById(input.id);
+          if (!invoice) return null;
+          const items = await db.getInvoiceItems(invoice.id);
+          return { ...invoice, items };
+        }),
+
+      create: adminProcedure
+        .input(
+          z.object({
+            clientName: z.string().min(1),
+            clientEmail: z.string().email().optional(),
+            clientPhone: z.string().optional(),
+            clientAddress: z.string().optional(),
+            dueAt: z.string(), // ISO date
+            tax: z.number().int().min(0).default(0),
+            notes: z.string().optional(),
+            wholesaleRequestId: z.number().optional(),
+            items: z
+              .array(
+                z.object({
+                  description: z.string().min(1).max(500),
+                  quantity: z.number().int().positive(),
+                  unitPrice: z.number().int().positive(), // cents
+                })
+              )
+              .min(1, "At least one line item required"),
+          })
+        )
+        .mutation(async ({ input, ctx }) => {
+          // Compute totals from items so the client can't drift them
+          const subtotal = input.items.reduce(
+            (sum, it) => sum + it.unitPrice * it.quantity,
+            0
+          );
+          const total = subtotal + (input.tax ?? 0);
+
+          const invoiceNumber = await db.nextInvoiceNumber();
+          const id = await db.createInvoice({
+            invoiceNumber,
+            status: "draft",
+            clientName: input.clientName,
+            clientEmail: input.clientEmail ?? null,
+            clientPhone: input.clientPhone ?? null,
+            clientAddress: input.clientAddress ?? null,
+            subtotal,
+            tax: input.tax ?? 0,
+            total,
+            notes: input.notes ?? null,
+            dueAt: new Date(input.dueAt),
+            wholesaleRequestId: input.wholesaleRequestId ?? null,
+            createdByUserId: ctx.user?.id ?? null,
+          });
+
+          for (const it of input.items) {
+            await db.createInvoiceItem({
+              invoiceId: id,
+              description: it.description,
+              quantity: it.quantity,
+              unitPrice: it.unitPrice,
+              lineTotal: it.unitPrice * it.quantity,
+            });
+          }
+
+          return { id, invoiceNumber };
+        }),
+
+      markSent: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.updateInvoice(input.id, {
+            status: "sent",
+            sentAt: new Date(),
+          } as any);
+          return { success: true };
+        }),
+
+      markPaid: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.updateInvoice(input.id, {
+            status: "paid",
+            paidAt: new Date(),
+          } as any);
+          return { success: true };
+        }),
+
+      cancel: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.updateInvoice(input.id, { status: "cancelled" });
+          return { success: true };
+        }),
+
+      delete: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          await db.deleteInvoice(input.id);
+          return { success: true };
+        }),
+    }),
+
     // Admin Inventory — stock levels + adjustment history
     inventory: router({
       list: adminProcedure.query(async () => {

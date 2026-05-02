@@ -8,6 +8,8 @@ import {
   inventory,
   inventoryMovements,
   expenses,
+  invoices,
+  invoiceItems,
   orders,
   orderItems,
   wholesaleRequests,
@@ -19,6 +21,8 @@ import {
   type NewInventory,
   type NewInventoryMovement,
   type NewExpense,
+  type NewInvoice,
+  type NewInvoiceItem,
   type NewOrder,
   type NewOrderItem,
   type NewWholesaleRequest,
@@ -316,6 +320,70 @@ export async function createExpense(data: Omit<NewExpense, "id" | "createdAt">):
 export async function deleteExpense(id: number) {
   const db = getDb();
   await db.delete(expenses).where(eq(expenses.id, id));
+}
+
+// ─── Invoices ─────────────────────────────────────────────
+export async function getAllInvoices() {
+  const db = getDb();
+  return db.select().from(invoices).orderBy(desc(invoices.createdAt));
+}
+
+export async function getInvoiceById(id: number) {
+  const db = getDb();
+  const [inv] = await db.select().from(invoices).where(eq(invoices.id, id));
+  return inv ?? null;
+}
+
+export async function getInvoiceItems(invoiceId: number) {
+  const db = getDb();
+  return db.select().from(invoiceItems).where(eq(invoiceItems.invoiceId, invoiceId));
+}
+
+export async function nextInvoiceNumber(): Promise<string> {
+  const db = getDb();
+  const all = await db.select().from(invoices);
+  const seq = 1000 + all.length + 1;
+  return `INV-${seq}`;
+}
+
+export async function createInvoice(data: Omit<NewInvoice, "id" | "createdAt" | "updatedAt">): Promise<number> {
+  const db = getDb();
+  const result = await db.insert(invoices).values(data);
+  return Number((result as any).insertId);
+}
+
+export async function createInvoiceItem(data: Omit<NewInvoiceItem, "id">): Promise<void> {
+  const db = getDb();
+  await db.insert(invoiceItems).values(data);
+}
+
+export async function updateInvoice(id: number, data: Partial<NewInvoice>) {
+  const db = getDb();
+  await db.update(invoices).set(data).where(eq(invoices.id, id));
+}
+
+export async function deleteInvoice(id: number) {
+  const db = getDb();
+  await db.delete(invoiceItems).where(eq(invoiceItems.invoiceId, id));
+  await db.delete(invoices).where(eq(invoices.id, id));
+}
+
+/**
+ * Mark sent invoices as overdue if their due date has passed. Idempotent.
+ * Called by the hourly cron alongside abandoned-order cleanup.
+ */
+export async function markOverdueInvoices(): Promise<{ marked: number }> {
+  const db = getDb();
+  const all = await db.select().from(invoices).where(eq(invoices.status, "sent"));
+  const now = new Date();
+  let marked = 0;
+  for (const inv of all) {
+    if (inv.dueAt && new Date(inv.dueAt) < now) {
+      await db.update(invoices).set({ status: "overdue" }).where(eq(invoices.id, inv.id));
+      marked++;
+    }
+  }
+  return { marked };
 }
 
 export async function updateOrder(id: number, data: Partial<NewOrder>) {

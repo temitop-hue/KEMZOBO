@@ -42,10 +42,19 @@ export function startCron() {
     } catch (err) {
       console.error("[Cron] Abandoned-order sweep failed:", err);
     }
+
+    try {
+      const result = await db.markOverdueInvoices();
+      if (result.marked > 0) {
+        console.log(`[Cron] Invoice overdue sweep: ${result.marked} marked overdue`);
+      }
+    } catch (err) {
+      console.error("[Cron] Invoice overdue sweep failed:", err);
+    }
   };
 
   setTimeout(runOnce, 30_000);
   setInterval(runOnce, CRON_INTERVAL_MS);
 
-  console.log(`[Cron] Abandoned-order cleanup scheduled (every ${CRON_INTERVAL_MS / 60000}min, threshold ${ABANDONED_THRESHOLD_HOURS}h)`);
+  console.log(`[Cron] Hourly sweeps scheduled (abandoned orders ${ABANDONED_THRESHOLD_HOURS}h, overdue invoices)`);
 }
