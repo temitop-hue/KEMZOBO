@@ -135,6 +135,94 @@ export async function sendDailyDigest(force = false): Promise<{ sent: boolean; r
   return { sent: true };
 }
 
+// ─── Abandoned cart recovery ─────────────────────────────
+const ABANDONED_REMINDER_HOURS = 24; // send reminder 24h after order creation
+const ABANDONED_CANCEL_HOURS = 48; // cron cancels at 48h, so we have a 24h window
+
+/**
+ * Sweep orders that are pending+unpaid, between 24h and 48h old, with no
+ * reminder sent yet. For each, send the customer a "you left this in your
+ * cart" email with their items and a CTA to come back and finish.
+ */
+export async function sendAbandonedCartReminders(): Promise<{ sent: number }> {
+  const now = Date.now();
+  const reminderCutoff = new Date(now - ABANDONED_REMINDER_HOURS * 60 * 60 * 1000);
+  const cancelCutoff = new Date(now - ABANDONED_CANCEL_HOURS * 60 * 60 * 1000);
+
+  const all = await db.getAllOrders();
+  const candidates = all.filter(
+    (o) =>
+      o.status === "pending" &&
+      o.paymentStatus === "unpaid" &&
+      o.abandonedReminderSentAt == null &&
+      o.createdAt != null &&
+      new Date(o.createdAt) < reminderCutoff &&
+      new Date(o.createdAt) > cancelCutoff &&
+      !!o.customerEmail
+  );
+
+  let sent = 0;
+  for (const order of candidates) {
+    try {
+      const items = await db.getOrderItemsByOrderId(order.id);
+      const itemsHtml = items
+        .map(
+          (it) => `<tr>
+            <td style="padding:6px 0">${it.productName} <span style="color:#888">(${it.variantName})</span></td>
+            <td style="padding:6px 0;text-align:right;color:#888">×${it.quantity}</td>
+            <td style="padding:6px 0;text-align:right">$${dollars(it.unitPrice * it.quantity)}</td>
+          </tr>`
+        )
+        .join("");
+
+      const html = `
+        <div style="font-family:sans-serif;max-width:560px;margin:0 auto">
+          <h1 style="font-family:Georgia,serif;color:#CC2936;margin:0 0 4px 0">You left some KEMZOBO behind.</h1>
+          <p style="color:#666;margin:0 0 24px 0">
+            We're holding your order — but only for a short while. Finish checking out and we'll get it shipped.
+          </p>
+
+          <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px">
+            ${itemsHtml}
+            <tr style="border-top:1px solid #eee">
+              <td colspan="2" style="padding:8px 0;text-align:right;color:#888">Total</td>
+              <td style="padding:8px 0;text-align:right;font-weight:bold;color:#CC2936">$${dollars(order.total)}</td>
+            </tr>
+          </table>
+
+          <p style="margin:24px 0">
+            <a href="https://kemzobo.com/products"
+               style="display:inline-block;background:#CC2936;color:#fff;text-decoration:none;padding:14px 28px;border-radius:9999px;font-weight:bold;letter-spacing:1.5px;font-size:14px">
+              FINISH YOUR ORDER
+            </a>
+          </p>
+
+          <p style="font-size:13px;color:#666">
+            If you've changed your mind that's totally fine — your order will expire on its own in 24 hours.
+            Questions? Just reply to this email.
+          </p>
+        </div>
+      `;
+
+      const ok = await sendEmail({
+        to: order.customerEmail,
+        bcc: ENV.ownerEmail || undefined,
+        subject: `Don't forget your KEMZOBO — order ${order.orderNumber}`,
+        content: `Your order ${order.orderNumber} is waiting at $${dollars(order.total)}. Finish checking out at https://kemzobo.com/products`,
+        html,
+      });
+
+      if (ok) {
+        await db.updateOrder(order.id, { abandonedReminderSentAt: new Date() } as any);
+        sent++;
+      }
+    } catch (err) {
+      console.error(`[Abandoned-cart] Failed for order ${order.orderNumber}:`, err);
+    }
+  }
+  return { sent };
+}
+
 // ─── Low-stock crossing alerts ───────────────────────────
 /**
  * Called from db.adjustInventory whenever a stock change brings a variant

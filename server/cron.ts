@@ -1,6 +1,6 @@
 import * as db from "./db";
 import { cancelPaymentIntent } from "./stripe";
-import { sendDailyDigest } from "./notifications";
+import { sendDailyDigest, sendAbandonedCartReminders } from "./notifications";
 
 const ABANDONED_THRESHOLD_HOURS = 48;
 const CRON_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
@@ -61,6 +61,16 @@ export function startCron() {
       }
     } catch (err) {
       console.error("[Cron] Daily digest failed:", err);
+    }
+
+    // Abandoned-cart recovery — sweep orders 24-48h old without a reminder yet
+    try {
+      const result = await sendAbandonedCartReminders();
+      if (result.sent > 0) {
+        console.log(`[Cron] Abandoned-cart reminders: ${result.sent} sent`);
+      }
+    } catch (err) {
+      console.error("[Cron] Abandoned-cart reminder sweep failed:", err);
     }
   };
 

@@ -212,6 +212,7 @@ export const orders = mysqlTable("orders", {
   customerEmail: varchar({ length: 320 }).notNull(),
   discountCode: varchar({ length: 50 }), // code applied at checkout, if any
   discountAmount: int().default(0), // cents — already subtracted from total
+  abandonedReminderSentAt: timestamp(), // null until the recovery email fires
   notes: text(),
   createdAt: timestamp().defaultNow(),
   updatedAt: timestamp().defaultNow().onUpdateNow(),
