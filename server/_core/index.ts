@@ -11,6 +11,7 @@ import { serveStatic, setupVite } from "./vite";
 import { ENV } from "./env";
 import { handleStripeWebhook } from "../stripe";
 import { startCron } from "../cron";
+import { exportOrders, exportRevenue, exportInventory } from "../exports";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise((resolve) => {
@@ -64,6 +65,11 @@ async function startServer() {
   // Serve uploaded files
   const uploadDir = path.resolve(ENV.uploadDir || "uploads");
   app.use("/uploads", express.static(uploadDir));
+
+  // Admin CSV exports — plain HTTP so the browser triggers a file download
+  app.get("/api/admin/exports/orders.csv", exportOrders);
+  app.get("/api/admin/exports/revenue.csv", exportRevenue);
+  app.get("/api/admin/exports/inventory.csv", exportInventory);
 
   // tRPC API
   app.use(
