@@ -4,7 +4,7 @@ export const ENV = {
   ownerEmail: process.env.OWNER_EMAIL ?? "",
   isProduction: process.env.NODE_ENV === "production",
   brevoApiKey: process.env.BREVO_API_KEY ?? "",
-  senderEmail: process.env.SENDER_EMAIL ?? "hello@kemzobo.com",
+  senderEmail: process.env.SENDER_EMAIL ?? "info@kemzobo.com",
   stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
   uploadDir: process.env.UPLOAD_DIR ?? "uploads",

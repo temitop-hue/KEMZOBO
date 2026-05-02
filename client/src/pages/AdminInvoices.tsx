@@ -212,7 +212,7 @@ function InvoiceDetailModal({ id, onClose }: { id: number; onClose: () => void }
             <div>
               <h1 className="font-display text-3xl font-bold text-[#CC2936] mb-1">KEMZOBO</h1>
               <p className="text-xs text-muted-foreground">The Original Zobo Drink</p>
-              <p className="text-xs text-muted-foreground mt-1">hello@kemzobo.com</p>
+              <p className="text-xs text-muted-foreground mt-1">info@kemzobo.com</p>
             </div>
             <div className="text-right">
               <h2 className="font-display text-2xl font-bold mb-1">INVOICE</h2>

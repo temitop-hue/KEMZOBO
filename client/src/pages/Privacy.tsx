@@ -49,7 +49,7 @@ export default function Privacy() {
 
         <h2 className="font-display text-xl font-bold text-[#CC2936] mt-8 mb-3">Contact</h2>
         <p>
-          For privacy-related questions, contact us at hello@kemzobo.com.
+          For privacy-related questions, contact us at info@kemzobo.com.
         </p>
       </div>
     </div>
