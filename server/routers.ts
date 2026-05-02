@@ -469,6 +469,30 @@ export const appRouter = router({
             status: "cancelled",
           });
 
+          // Notify the customer + BCC owner so there's a paper trail
+          const totalDollars = (order.total / 100).toFixed(2);
+          const refundHtml = `
+            <h2 style="font-family:Georgia,serif;color:#CC2936">Refund issued</h2>
+            <p style="font-family:sans-serif;font-size:14px">
+              Your order <strong>${order.orderNumber}</strong> has been refunded for <strong>$${totalDollars}</strong>.
+            </p>
+            <p style="font-family:sans-serif;font-size:14px">
+              ${order.stripePaymentIntentId
+                ? "The refund was issued to your card and should appear on your statement within 5-10 business days."
+                : "We will reverse the Zelle/Venmo payment manually within 24 hours."}
+            </p>
+            <p style="font-family:sans-serif;font-size:14px;margin-top:24px">
+              Thank you for trying KEMZOBO. If you have any questions, just reply to this email.
+            </p>
+          `;
+          sendEmail({
+            to: order.customerEmail,
+            bcc: ENV.ownerEmail || undefined,
+            subject: `Refund issued — ${order.orderNumber}`,
+            content: `Your order ${order.orderNumber} has been refunded for $${totalDollars}.`,
+            html: refundHtml,
+          }).catch((err) => console.error("[Refund email] failed:", err));
+
           return {
             success: true,
             method: order.stripePaymentIntentId ? "stripe" : "manual",

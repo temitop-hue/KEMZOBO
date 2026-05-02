@@ -2,11 +2,21 @@ import { ENV } from "./env";
 
 export type SendEmailOptions = {
   to: string | string[];
+  bcc?: string | string[];
   subject: string;
   content: string;
   html?: string;
   replyTo?: { email: string; name?: string };
 };
+
+function parseAddresses(input: string | string[] | undefined): { email: string }[] {
+  if (!input) return [];
+  return (Array.isArray(input) ? input : [input])
+    .flatMap((s) => s.split(","))
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((email) => ({ email }));
+}
 
 export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
   if (!ENV.brevoApiKey) {
@@ -14,11 +24,8 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
     return false;
   }
 
-  const recipients = (Array.isArray(options.to) ? options.to : [options.to])
-    .flatMap((s) => s.split(","))
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .map((email) => ({ email }));
+  const recipients = parseAddresses(options.to);
+  const bcc = parseAddresses(options.bcc);
 
   if (recipients.length === 0) {
     console.warn("[Email] No recipients, skipping");
@@ -35,6 +42,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
       body: JSON.stringify({
         sender: { name: "KEMZOBO", email: ENV.senderEmail },
         to: recipients,
+        ...(bcc.length > 0 ? { bcc } : {}),
         subject: options.subject,
         ...(options.replyTo ? { replyTo: options.replyTo } : {}),
         ...(options.html

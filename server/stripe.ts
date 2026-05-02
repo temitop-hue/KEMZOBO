@@ -87,6 +87,8 @@ export async function handleStripeWebhook(req: Request, res: Response) {
         });
         await sendEmail({
           to: order.customerEmail,
+          // BCC the owner on every order confirmation so they have a record
+          bcc: ENV.ownerEmail || undefined,
           subject: emailData.subject,
           content: `Your order ${order.orderNumber} has been confirmed! Total: $${formatPrice(order.total)}.`,
           html: emailData.html,
