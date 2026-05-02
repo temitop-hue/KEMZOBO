@@ -12,13 +12,13 @@ interface PageMetaProps {
 
 const DEFAULT_OG_IMAGE = "https://kemzobo.com/images/og-cover.jpg";
 const DEFAULT_DESCRIPTION =
-  "KEMZOBO is the original ready-to-drink Zobo — bold hibiscus, rooted in West African tradition, crafted for cookouts, gatherings, and the everyday moments worth sharing.";
+  "KEMZOBO is the original ready-to-drink Zobo — bold hibiscus, West African tradition, made for cookouts and gatherings worth sharing.";
 
 export default function PageMeta({ title, description, path, image, jsonLd }: PageMetaProps) {
   useEffect(() => {
     const fullTitle = title === "Home"
-      ? "KEMZOBO — The Original Zobo Drink. Bold Hibiscus, Ready to Sip"
-      : `${title} | KEMZOBO — The Original Zobo Drink`;
+      ? "KEMZOBO — Original Zobo Drink. Bold Hibiscus, Ready to Sip"
+      : `${title} | KEMZOBO — Original Zobo Drink`;
     document.title = fullTitle;
 
     const setMeta = (key: string, content: string, isProperty = false) => {
