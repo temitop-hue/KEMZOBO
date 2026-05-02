@@ -483,7 +483,7 @@ export default function Home() {
           CHAPTER 7: THE MOMENT — Lifestyle full-bleed
           ═══════════════════════════════════════════════════ */}
       <section className="relative h-[75vh] min-h-[550px]">
-        <img src="/images/lifestyle-friends.jpg" alt="Friends sharing KEMZOBO" loading="lazy" className="w-full h-full object-cover" />
+        <img src="/images/gallery%203.jpeg" alt="Six KEMZOBO cans laid out on grass" loading="lazy" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f0806]/80 via-[#0f0806]/20 to-transparent flex items-end">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-16 lg:pb-24">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>

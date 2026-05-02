@@ -107,8 +107,8 @@ export default function About() {
               className="rounded-xl overflow-hidden"
             >
               <img
-                src="/images/lifestyle-friends.jpg"
-                alt="Friends sharing KEMZOBO"
+                src="/images/Pineapple.jpeg"
+                alt="KEMZOBO Original Zobo with pineapple, lime and hibiscus"
                 loading="lazy"
                 className="w-full h-[400px] object-cover"
               />
