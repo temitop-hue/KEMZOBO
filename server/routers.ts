@@ -3,6 +3,16 @@ import { router, publicProcedure, protectedProcedure, adminProcedure } from "./_
 import { COOKIE_NAME } from "@shared/const";
 import * as db from "./db";
 import { createPaymentIntent, refundPaymentIntent } from "./stripe";
+import { sendEmail } from "./_core/email";
+import { ENV } from "./_core/env";
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 export const appRouter = router({
   // ─── Auth ────────────────────────────────────────────────
@@ -205,6 +215,31 @@ export const appRouter = router({
       )
       .mutation(async ({ input }) => {
         const id = await db.createWholesaleRequest(input);
+
+        // Notify the owner — fire-and-forget, never block form submission
+        if (ENV.ownerEmail) {
+          const html = `
+            <h2 style="font-family:Georgia,serif;color:#CC2936">New wholesale inquiry</h2>
+            <table style="font-family:sans-serif;font-size:14px;border-collapse:collapse">
+              <tr><td><strong>Business:</strong></td><td>${escapeHtml(input.businessName)}</td></tr>
+              <tr><td><strong>Contact:</strong></td><td>${escapeHtml(input.contactName)}</td></tr>
+              <tr><td><strong>Email:</strong></td><td><a href="mailto:${escapeHtml(input.email)}">${escapeHtml(input.email)}</a></td></tr>
+              ${input.phone ? `<tr><td><strong>Phone:</strong></td><td>${escapeHtml(input.phone)}</td></tr>` : ""}
+              ${input.businessType ? `<tr><td><strong>Type:</strong></td><td>${escapeHtml(input.businessType)}</td></tr>` : ""}
+              ${input.estimatedVolume ? `<tr><td><strong>Volume:</strong></td><td>${escapeHtml(input.estimatedVolume)}</td></tr>` : ""}
+            </table>
+            ${input.message ? `<p style="font-family:sans-serif;font-size:14px;margin-top:16px"><strong>Message:</strong><br>${escapeHtml(input.message).replace(/\n/g, "<br>")}</p>` : ""}
+            <p style="font-family:sans-serif;font-size:12px;color:#888;margin-top:24px">Reply to this email to respond directly. Full record in admin: https://kemzobo.com/admin/wholesale</p>
+          `;
+          sendEmail({
+            to: ENV.ownerEmail,
+            subject: `Wholesale inquiry — ${input.businessName}`,
+            content: `New wholesale inquiry from ${input.businessName} (${input.contactName} <${input.email}>)`,
+            html,
+            replyTo: { email: input.email, name: input.contactName },
+          }).catch((err) => console.error("[Wholesale notify] failed:", err));
+        }
+
         return { success: true, id };
       }),
   }),
@@ -233,6 +268,29 @@ export const appRouter = router({
       )
       .mutation(async ({ input }) => {
         const id = await db.createContactMessage(input);
+
+        // Notify owner — fire-and-forget so a Brevo blip never breaks the form
+        if (ENV.ownerEmail) {
+          const html = `
+            <h2 style="font-family:Georgia,serif;color:#CC2936">New contact message</h2>
+            <table style="font-family:sans-serif;font-size:14px;border-collapse:collapse">
+              <tr><td><strong>From:</strong></td><td>${escapeHtml(input.name)}</td></tr>
+              <tr><td><strong>Email:</strong></td><td><a href="mailto:${escapeHtml(input.email)}">${escapeHtml(input.email)}</a></td></tr>
+              ${input.phone ? `<tr><td><strong>Phone:</strong></td><td>${escapeHtml(input.phone)}</td></tr>` : ""}
+              ${input.subject ? `<tr><td><strong>Subject:</strong></td><td>${escapeHtml(input.subject)}</td></tr>` : ""}
+            </table>
+            <p style="font-family:sans-serif;font-size:14px;margin-top:16px"><strong>Message:</strong><br>${escapeHtml(input.message).replace(/\n/g, "<br>")}</p>
+            <p style="font-family:sans-serif;font-size:12px;color:#888;margin-top:24px">Reply to this email to respond directly. Full record in admin: https://kemzobo.com/admin/messages</p>
+          `;
+          sendEmail({
+            to: ENV.ownerEmail,
+            subject: input.subject ? `Contact: ${input.subject}` : `Contact from ${input.name}`,
+            content: `New message from ${input.name} <${input.email}>:\n\n${input.message}`,
+            html,
+            replyTo: { email: input.email, name: input.name },
+          }).catch((err) => console.error("[Contact notify] failed:", err));
+        }
+
         return { success: true, id };
       }),
   }),

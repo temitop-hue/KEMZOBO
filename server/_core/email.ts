@@ -5,6 +5,7 @@ export type SendEmailOptions = {
   subject: string;
   content: string;
   html?: string;
+  replyTo?: { email: string; name?: string };
 };
 
 export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
@@ -24,6 +25,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<boolean> {
         sender: { name: "KEMZOBO", email: ENV.senderEmail },
         to: [{ email: options.to }],
         subject: options.subject,
+        ...(options.replyTo ? { replyTo: options.replyTo } : {}),
         ...(options.html
           ? { htmlContent: options.html }
           : { textContent: options.content }),
