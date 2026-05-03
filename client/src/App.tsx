@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import TawkChat from "./components/TawkChat";
 import NewsletterPopup from "./components/NewsletterPopup";
 import Analytics from "./components/Analytics";
+import PWAUpdate from "./components/PWAUpdate";
 
 // Eager load: Home (first paint) + critical shell
 import Home from "./pages/Home";
@@ -143,6 +144,7 @@ function App() {
             <Toaster />
             <Analytics />
             <AppRouter />
+            <PWAUpdate />
           </TooltipProvider>
         </CartProvider>
       </ThemeProvider>
