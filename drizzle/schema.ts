@@ -121,6 +121,7 @@ export type NewExpense = typeof expenses.$inferInsert;
 export const invoices = mysqlTable("invoices", {
   id: int().autoincrement().primaryKey(),
   invoiceNumber: varchar({ length: 50 }).unique().notNull(),
+  publicToken: varchar({ length: 64 }).unique(), // shareable URL token
   status: mysqlEnum(["draft", "sent", "paid", "overdue", "cancelled"]).default("draft"),
   clientName: varchar({ length: 255 }).notNull(),
   clientEmail: varchar({ length: 320 }),

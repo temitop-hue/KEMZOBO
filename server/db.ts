@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { connect } from "@tidbcloud/serverless";
 import { drizzle } from "drizzle-orm/tidb-serverless";
 import { and, between, desc, eq, gte, lte } from "drizzle-orm";
@@ -386,7 +387,10 @@ export async function nextInvoiceNumber(): Promise<string> {
 
 export async function createInvoice(data: Omit<NewInvoice, "id" | "createdAt" | "updatedAt">): Promise<number> {
   const db = getDb();
-  await db.insert(invoices).values(data);
+  // Generate a shareable public token (used in /invoice/:token URLs sent
+  // via email or WhatsApp). UUID without dashes — 32 chars, unguessable.
+  const publicToken = (data.publicToken ?? crypto.randomUUID().replace(/-/g, ""));
+  await db.insert(invoices).values({ ...data, publicToken });
   // TiDB serverless doesn't return insertId reliably — query back by the
   // unique invoiceNumber we generated server-side just before insert.
   if (data.invoiceNumber) {
@@ -394,6 +398,18 @@ export async function createInvoice(data: Omit<NewInvoice, "id" | "createdAt" | 
     if (inv) return inv.id;
   }
   throw new Error("Invoice was inserted but could not be re-fetched");
+}
+
+export async function getInvoiceByPublicToken(token: string) {
+  const db = getDb();
+  const [inv] = await db.select().from(invoices).where(eq(invoices.publicToken, token));
+  return inv ?? null;
+}
+
+/** Delete every line item for an invoice — used when editing items in bulk */
+export async function deleteInvoiceItems(invoiceId: number) {
+  const db = getDb();
+  await db.delete(invoiceItems).where(eq(invoiceItems.invoiceId, invoiceId));
 }
 
 export async function createInvoiceItem(data: Omit<NewInvoiceItem, "id">): Promise<void> {

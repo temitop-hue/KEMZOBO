@@ -36,6 +36,7 @@ const Recipes = lazy(() => import("./pages/Recipes"));
 const FindUs = lazy(() => import("./pages/FindUs"));
 const Press = lazy(() => import("./pages/Press"));
 const TrackOrder = lazy(() => import("./pages/TrackOrder"));
+const PublicInvoice = lazy(() => import("./pages/PublicInvoice"));
 const AdminPackList = lazy(() => import("./pages/AdminPackList"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -84,6 +85,7 @@ function PublicRouter() {
             <Route path="/find-us" component={FindUs} />
             <Route path="/press" component={Press} />
             <Route path="/track" component={TrackOrder} />
+            <Route path="/invoice/:token" component={PublicInvoice} />
             <Route path="/privacy" component={Privacy} />
             <Route path="/cart" component={Cart} />
             <Route path="/checkout" component={Checkout} />

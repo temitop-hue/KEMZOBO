@@ -77,6 +77,39 @@ export const appRouter = router({
       }),
   }),
 
+  // ─── Public invoice view (no auth — token-based) ───────
+  publicInvoices: router({
+    getByToken: publicProcedure
+      .input(z.object({ token: z.string().min(8) }))
+      .query(async ({ input }) => {
+        const invoice = await db.getInvoiceByPublicToken(input.token);
+        if (!invoice) return null;
+        const items = await db.getInvoiceItems(invoice.id);
+        // Return only public-safe fields — no internal IDs or createdByUserId
+        return {
+          invoiceNumber: invoice.invoiceNumber,
+          status: invoice.status,
+          clientName: invoice.clientName,
+          clientEmail: invoice.clientEmail,
+          clientPhone: invoice.clientPhone,
+          clientAddress: invoice.clientAddress,
+          subtotal: invoice.subtotal,
+          tax: invoice.tax,
+          total: invoice.total,
+          notes: invoice.notes,
+          issuedAt: invoice.issuedAt,
+          dueAt: invoice.dueAt,
+          paidAt: invoice.paidAt,
+          items: items.map((it) => ({
+            description: it.description,
+            quantity: it.quantity,
+            unitPrice: it.unitPrice,
+            lineTotal: it.lineTotal,
+          })),
+        };
+      }),
+  }),
+
   // ─── Back-in-stock subscriptions (public) ──────────────
   backInStock: router({
     subscribe: publicProcedure
@@ -914,6 +947,68 @@ export const appRouter = router({
           return { id, invoiceNumber };
         }),
 
+      /**
+       * Edit an existing invoice — supports changing client info, line items,
+       * tax, notes, and due date. Server recomputes totals from the items so
+       * they can't drift. Items are nuked and recreated to keep the diff
+       * simple (low volume — no need for surgical updates).
+       */
+      update: adminProcedure
+        .input(
+          z.object({
+            id: z.number(),
+            data: z.object({
+              clientName: z.string().min(1),
+              clientEmail: z.string().email().optional().nullable(),
+              clientPhone: z.string().optional().nullable(),
+              clientAddress: z.string().optional().nullable(),
+              dueAt: z.string(),
+              tax: z.number().int().min(0).default(0),
+              notes: z.string().optional().nullable(),
+              items: z
+                .array(
+                  z.object({
+                    description: z.string().min(1).max(500),
+                    quantity: z.number().int().positive(),
+                    unitPrice: z.number().int().positive(),
+                  })
+                )
+                .min(1),
+            }),
+          })
+        )
+        .mutation(async ({ input }) => {
+          const subtotal = input.data.items.reduce(
+            (sum, it) => sum + it.unitPrice * it.quantity,
+            0
+          );
+          const total = subtotal + (input.data.tax ?? 0);
+
+          await db.updateInvoice(input.id, {
+            clientName: input.data.clientName,
+            clientEmail: input.data.clientEmail ?? null,
+            clientPhone: input.data.clientPhone ?? null,
+            clientAddress: input.data.clientAddress ?? null,
+            subtotal,
+            tax: input.data.tax ?? 0,
+            total,
+            notes: input.data.notes ?? null,
+            dueAt: new Date(input.data.dueAt),
+          } as any);
+
+          await db.deleteInvoiceItems(input.id);
+          for (const it of input.data.items) {
+            await db.createInvoiceItem({
+              invoiceId: input.id,
+              description: it.description,
+              quantity: it.quantity,
+              unitPrice: it.unitPrice,
+              lineTotal: it.unitPrice * it.quantity,
+            });
+          }
+          return { success: true };
+        }),
+
       markSent: adminProcedure
         .input(z.object({ id: z.number() }))
         .mutation(async ({ input }) => {
@@ -922,6 +1017,113 @@ export const appRouter = router({
             sentAt: new Date(),
           } as any);
           return { success: true };
+        }),
+
+      /**
+       * Email the invoice to the client. Renders a clean HTML invoice in
+       * the email body with a public-view link, BCCs the owner, and marks
+       * the invoice as sent.
+       */
+      sendEmail: adminProcedure
+        .input(z.object({ id: z.number() }))
+        .mutation(async ({ input }) => {
+          const invoice = await db.getInvoiceById(input.id);
+          if (!invoice) throw new Error("Invoice not found");
+          if (!invoice.clientEmail) throw new Error("This invoice has no client email");
+          const items = await db.getInvoiceItems(invoice.id);
+
+          const publicUrl = `https://kemzobo.com/invoice/${invoice.publicToken}`;
+          const dollars = (c: number) => (c / 100).toFixed(2);
+
+          const itemsHtml = items
+            .map(
+              (it) => `<tr>
+                <td style="padding:8px 0;border-bottom:1px solid #eee">${escapeHtml(it.description)}</td>
+                <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:center;color:#888">×${it.quantity}</td>
+                <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right">$${dollars(it.unitPrice)}</td>
+                <td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;font-weight:bold">$${dollars(it.lineTotal)}</td>
+              </tr>`
+            )
+            .join("");
+
+          const dueDate = invoice.dueAt
+            ? new Date(invoice.dueAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+            : "";
+
+          const html = `
+            <div style="font-family:sans-serif;max-width:640px;margin:0 auto;padding:20px">
+              <table style="width:100%;margin-bottom:32px">
+                <tr>
+                  <td>
+                    <h1 style="font-family:Georgia,serif;color:#CC2936;margin:0">KEMZOBO</h1>
+                    <p style="color:#888;font-size:12px;margin:0">The Original Zobo Drink</p>
+                  </td>
+                  <td style="text-align:right">
+                    <p style="font-size:20px;font-weight:bold;margin:0">INVOICE</p>
+                    <p style="font-family:monospace;color:#333;margin:4px 0 0 0">${escapeHtml(invoice.invoiceNumber)}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="font-size:15px;color:#333">Hi ${escapeHtml(invoice.clientName)},</p>
+              <p style="font-size:15px;color:#333">
+                Please find your invoice below. Total due:
+                <strong style="color:#CC2936">$${dollars(invoice.total)}</strong> by <strong>${dueDate}</strong>.
+              </p>
+
+              <table style="width:100%;border-collapse:collapse;margin:24px 0;font-size:14px">
+                <thead>
+                  <tr style="border-bottom:2px solid #CC2936">
+                    <th style="text-align:left;padding:8px 0;color:#888;text-transform:uppercase;font-size:11px;letter-spacing:1px">Description</th>
+                    <th style="text-align:center;padding:8px 0;color:#888;text-transform:uppercase;font-size:11px;letter-spacing:1px">Qty</th>
+                    <th style="text-align:right;padding:8px 0;color:#888;text-transform:uppercase;font-size:11px;letter-spacing:1px">Unit</th>
+                    <th style="text-align:right;padding:8px 0;color:#888;text-transform:uppercase;font-size:11px;letter-spacing:1px">Total</th>
+                  </tr>
+                </thead>
+                <tbody>${itemsHtml}</tbody>
+              </table>
+
+              <table style="width:100%;font-size:14px">
+                <tr><td style="text-align:right;padding:4px 0;color:#888">Subtotal</td><td style="text-align:right;padding:4px 0;width:120px">$${dollars(invoice.subtotal)}</td></tr>
+                ${(invoice.tax ?? 0) > 0 ? `<tr><td style="text-align:right;padding:4px 0;color:#888">Tax</td><td style="text-align:right;padding:4px 0">$${dollars(invoice.tax ?? 0)}</td></tr>` : ""}
+                <tr style="border-top:1px solid #ddd"><td style="text-align:right;padding:8px 0;font-family:Georgia,serif;font-weight:bold;font-size:18px">Total</td><td style="text-align:right;padding:8px 0;font-family:Georgia,serif;font-weight:bold;font-size:18px;color:#CC2936">$${dollars(invoice.total)}</td></tr>
+              </table>
+
+              <p style="margin:32px 0">
+                <a href="${publicUrl}" style="display:inline-block;background:#CC2936;color:#fff;text-decoration:none;padding:14px 28px;border-radius:9999px;font-weight:bold;letter-spacing:1.5px;font-size:14px">
+                  VIEW INVOICE ONLINE
+                </a>
+              </p>
+
+              ${invoice.notes ? `<div style="background:#FAFAFA;padding:16px;border-radius:8px;font-size:13px;color:#333;margin:24px 0"><strong>Notes:</strong><br>${escapeHtml(invoice.notes).replace(/\n/g, "<br>")}</div>` : ""}
+
+              <p style="font-size:13px;color:#666;margin-top:32px">
+                Questions? Reply to this email and we'll get back to you.
+              </p>
+              <p style="font-size:12px;color:#aaa;margin-top:16px">
+                KEMZOBO &middot; info@kemzobo.com &middot; <a href="https://kemzobo.com" style="color:#CC2936">kemzobo.com</a>
+              </p>
+            </div>
+          `;
+
+          await sendEmail({
+            to: invoice.clientEmail,
+            bcc: ENV.ownerEmail || undefined,
+            subject: `Invoice ${invoice.invoiceNumber} from KEMZOBO — $${dollars(invoice.total)}`,
+            content: `Invoice ${invoice.invoiceNumber} for $${dollars(invoice.total)}. View online: ${publicUrl}`,
+            html,
+            replyTo: { email: "info@kemzobo.com", name: "KEMZOBO" },
+          });
+
+          // Mark as sent (only if currently a draft)
+          if (invoice.status === "draft") {
+            await db.updateInvoice(invoice.id, {
+              status: "sent",
+              sentAt: new Date(),
+            } as any);
+          }
+
+          return { success: true, publicUrl };
         }),
 
       markPaid: adminProcedure
