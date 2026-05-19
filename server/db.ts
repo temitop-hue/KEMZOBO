@@ -366,6 +366,12 @@ export async function getInvoiceById(id: number) {
   return inv ?? null;
 }
 
+export async function getInvoiceByNumber(invoiceNumber: string) {
+  const db = getDb();
+  const [inv] = await db.select().from(invoices).where(eq(invoices.invoiceNumber, invoiceNumber));
+  return inv ?? null;
+}
+
 export async function getInvoiceItems(invoiceId: number) {
   const db = getDb();
   return db.select().from(invoiceItems).where(eq(invoiceItems.invoiceId, invoiceId));
@@ -380,8 +386,14 @@ export async function nextInvoiceNumber(): Promise<string> {
 
 export async function createInvoice(data: Omit<NewInvoice, "id" | "createdAt" | "updatedAt">): Promise<number> {
   const db = getDb();
-  const result = await db.insert(invoices).values(data);
-  return Number((result as any).insertId);
+  await db.insert(invoices).values(data);
+  // TiDB serverless doesn't return insertId reliably — query back by the
+  // unique invoiceNumber we generated server-side just before insert.
+  if (data.invoiceNumber) {
+    const inv = await getInvoiceByNumber(data.invoiceNumber);
+    if (inv) return inv.id;
+  }
+  throw new Error("Invoice was inserted but could not be re-fetched");
 }
 
 export async function createInvoiceItem(data: Omit<NewInvoiceItem, "id">): Promise<void> {
