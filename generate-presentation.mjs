@@ -30,12 +30,13 @@ function imgData(filename) {
   return `data:${mime};base64,${buf.toString("base64")}`;
 }
 
-// Preload images
-const heroImg = imgData("hero-can.png");
-const heritageImg = imgData("heritage-glass.jpg");
-const lifestyleImg = imgData("lifestyle-friends.jpg");
-const tropicalImg = imgData("tropical-glass.jpg");
-const barImg = imgData("bar-glass.jpg");
+// Preload images (approved brand assets only — heritage/lifestyle/enjoy set
+// was removed for image-rights reasons; swap in replacements when ready)
+const heroImg = imgData("Pineapple.jpeg");
+const heritageImg = imgData("gallery 1.jpeg");
+const lifestyleImg = imgData("gallery 4.jpeg");
+const tropicalImg = imgData("gallery 5.jpeg");
+const barImg = imgData("gallery 2.jpeg");
 const logoImg = imgData("logo.png");
 
 pptx.defineLayout({ name: "WIDE", width: 13.33, height: 7.5 });

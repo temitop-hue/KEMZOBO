@@ -73,7 +73,7 @@ export default function Gallery() {
           className="rounded-2xl overflow-hidden relative h-[500px]"
         >
           <img
-            src="/images/hero-can.png"
+            src="/images/Pineapple.jpeg"
             alt="KEMZOBO product"
             loading="lazy"
             className="w-full h-full object-cover"

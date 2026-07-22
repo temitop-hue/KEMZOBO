@@ -366,7 +366,7 @@ export default function Home() {
             </motion.div>
 
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="rounded-2xl overflow-hidden shadow-2xl shadow-black/30">
-              <img src="/images/heritage-glass.jpg" alt="Zobo heritage" loading="lazy" className="w-full h-[500px] object-cover" />
+              <img src="/images/gallery%201.jpeg" alt="Zobo heritage" loading="lazy" className="w-full h-[500px] object-cover" />
             </motion.div>
           </div>
         </div>
@@ -456,10 +456,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { img: "/images/enjoy-can.jpg", title: "Straight from the Can", text: "Cold. Bold. Grab and go." },
-              { img: "/images/enjoy-ice.jpg", title: "Poured Over Ice", text: "The classic serve. Watch that deep red pour." },
-              { img: "/images/enjoy-gathering.jpg", title: "Shared at Gatherings", text: "Cookouts, parties, celebrations. KEMZOBO belongs." },
-              { img: "/images/enjoy-anytime.jpg", title: "Anytime Refreshment", text: "Tuesday afternoon. Sunday brunch. Any moment." },
+              { img: "/images/gallery%202.jpeg", title: "Straight from the Can", text: "Cold. Bold. Grab and go." },
+              { img: "/images/gallery%205.jpeg", title: "Poured Over Ice", text: "The classic serve. Watch that deep red pour." },
+              { img: "/images/gallery%204.jpeg", title: "Shared at Gatherings", text: "Cookouts, parties, celebrations. KEMZOBO belongs." },
+              { img: "/images/gallery%203.jpeg", title: "Anytime Refreshment", text: "Tuesday afternoon. Sunday brunch. Any moment." },
             ].map((item) => (
               <motion.div key={item.title} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
                 className="bg-white rounded-2xl overflow-hidden card-hover border border-[#CC2936]/10"

@@ -47,7 +47,7 @@ export default function About() {
           className="rounded-xl overflow-hidden"
         >
           <img
-            src="/images/heritage-glass.jpg"
+            src="/images/gallery%201.jpeg"
             alt="KEMZOBO heritage"
             loading="lazy"
             className="w-full h-[400px] lg:h-[500px] object-cover"

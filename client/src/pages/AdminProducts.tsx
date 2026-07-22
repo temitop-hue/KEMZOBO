@@ -242,7 +242,7 @@ export default function AdminProducts() {
                   type="text" value={form.imageUrl}
                   onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
                   className="w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-hibiscus"
-                  placeholder="/images/hero-can.png"
+                  placeholder="/images/Pineapple.jpeg"
                 />
               </div>
 
