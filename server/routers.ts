@@ -1312,8 +1312,88 @@ export const appRouter = router({
     // Admin Customers
     customers: router({
       list: adminProcedure.query(async () => {
-        return db.getAllUsers();
+        const all = await db.getAllUsers();
+        // Never ship password hashes to the browser
+        return all.map(({ passwordHash, ...u }) => ({ ...u, hasPassword: !!passwordHash }));
       }),
+      update: adminProcedure
+        .input(
+          z.object({
+            id: z.number(),
+            name: z.string().trim().max(255).nullable().optional(),
+            phone: z.string().trim().max(50).nullable().optional(),
+            role: z.enum(["user", "admin"]).optional(),
+          })
+        )
+        .mutation(async ({ ctx, input }) => {
+          const { id, ...data } = input;
+          const target = await db.getUserById(id);
+          if (!target) throw new Error("User not found");
+
+          if (data.role === "user" && target.role === "admin") {
+            if (id === ctx.user.id) throw new Error("You can't remove your own admin access");
+            const admins = (await db.getAllUsers()).filter((u) => u.role === "admin");
+            if (admins.length <= 1) throw new Error("There must be at least one admin");
+          }
+
+          await db.updateUser(id, data);
+          return { success: true };
+        }),
+      // Add a user (or promote an existing one) and email them a set-password link
+      invite: adminProcedure
+        .input(
+          z.object({
+            email: z.string().trim().toLowerCase().email(),
+            name: z.string().trim().max(255).optional(),
+            role: z.enum(["user", "admin"]),
+          })
+        )
+        .mutation(async ({ input }) => {
+          const existing = await db.getUserByEmail(input.email);
+          let userId: number;
+          if (existing) {
+            userId = existing.id;
+            await db.updateUser(userId, {
+              role: input.role === "admin" ? "admin" : existing.role,
+              ...(input.name && !existing.name ? { name: input.name } : {}),
+            });
+          } else {
+            userId = await db.createUser({
+              email: input.email,
+              name: input.name || null,
+              passwordHash: null,
+              role: input.role,
+            });
+            if (!userId) {
+              const created = await db.getUserByEmail(input.email);
+              if (!created) throw new Error("Failed to create user");
+              userId = created.id;
+            }
+          }
+
+          // Existing users with a password already can just log in — only send a link to set one when needed
+          const needsPassword = !existing?.passwordHash;
+          let emailed = false;
+          if (needsPassword) {
+            const { SignJWT } = await import("jose");
+            const secret = new TextEncoder().encode(ENV.cookieSecret);
+            const token = await new SignJWT({ userId, email: input.email, purpose: "password-reset" })
+              .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+              .setExpirationTime("7d")
+              .sign(secret);
+            const link = `${ENV.baseUrl}/reset-password?token=${token}`;
+            const { accountInviteEmail } = await import("./emailTemplates");
+            const tpl = accountInviteEmail(input.name || existing?.name || "", link, input.role === "admin");
+            emailed = await sendEmail({
+              to: input.email,
+              subject: tpl.subject,
+              content: `Set your KEMZOBO password: ${link} (expires in 7 days)`,
+              html: tpl.html,
+            });
+          }
+
+          return { success: true, created: !existing, emailed, needsPassword };
+        }),
     }),
 
     // Admin Messages

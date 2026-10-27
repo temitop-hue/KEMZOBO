@@ -82,6 +82,14 @@ export async function getAllUsers() {
   return db.select().from(users);
 }
 
+export async function updateUser(
+  userId: number,
+  data: Partial<Pick<NewUser, "name" | "phone" | "role">>
+) {
+  const db = getDb();
+  await db.update(users).set(data).where(eq(users.id, userId));
+}
+
 // ─── Products ────────────────────────────────────────────
 export async function getAllProducts(activeOnly = true) {
   const db = getDb();

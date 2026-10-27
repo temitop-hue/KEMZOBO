@@ -121,6 +121,32 @@ export function passwordResetEmail(resetLink: string): { subject: string; html: 
   };
 }
 
+export function accountInviteEmail(
+  name: string,
+  setPasswordLink: string,
+  isAdmin: boolean
+): { subject: string; html: string } {
+  return {
+    subject: isAdmin ? "You've been added as a KEMZOBO admin" : "Your KEMZOBO account is ready",
+    html: layout(`
+      <div style="text-align:center;margin-bottom:24px;">
+        <h1 style="margin:16px 0 4px;font-size:24px;color:#111;font-weight:700;">Welcome, ${name || "there"}!</h1>
+        <p style="margin:0;font-size:14px;color:#777;">
+          ${isAdmin ? "You've been given admin access to the KEMZOBO dashboard." : "An account has been created for you on KEMZOBO."}
+        </p>
+      </div>
+
+      <div style="text-align:center;margin:32px 0;">
+        <a href="${setPasswordLink}" style="display:inline-block;background:${BRAND_RED};color:#FFF;padding:14px 40px;border-radius:50px;text-decoration:none;font-weight:600;font-size:16px;">Set Your Password</a>
+      </div>
+
+      <p style="font-size:13px;color:#999;text-align:center;line-height:1.6;">
+        This link expires in 7 days. After that, use "Forgot password" on the login page.
+      </p>
+    `),
+  };
+}
+
 export function welcomeEmail(name: string): { subject: string; html: string } {
   return {
     subject: "Welcome to KEMZOBO!",
