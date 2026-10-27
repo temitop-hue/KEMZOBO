@@ -33,7 +33,9 @@ export function registerOAuthRoutes(app: Express) {
       const { hashPassword } = await import("./password");
       const passwordHash = await hashPassword(password);
 
-      const isAdmin = email === ENV.ownerEmail;
+      // OWNER_EMAIL may be a comma-separated list
+      const ownerEmails = ENV.ownerEmail.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
+      const isAdmin = ownerEmails.includes(String(email).trim().toLowerCase());
       const userId = await db.createUser({
         email,
         name: name || null,
