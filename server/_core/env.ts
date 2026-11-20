@@ -9,4 +9,5 @@ export const ENV = {
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
   uploadDir: process.env.UPLOAD_DIR ?? "uploads",
   baseUrl: process.env.BASE_URL ?? "http://localhost:3000",
+  shippoApiToken: process.env.SHIPPO_API_TOKEN ?? "",
 };

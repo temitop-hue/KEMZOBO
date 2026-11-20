@@ -136,8 +136,14 @@ export async function deleteProduct(id: number) {
 }
 
 // ─── Product Variants ────────────────────────────────────
-export async function getVariantsByProductId(productId: number) {
+export async function getVariantsByProductId(productId: number, activeOnly = false) {
   const db = getDb();
+  if (activeOnly) {
+    return db
+      .select()
+      .from(productVariants)
+      .where(and(eq(productVariants.productId, productId), eq(productVariants.isActive, 1)));
+  }
   return db.select().from(productVariants).where(eq(productVariants.productId, productId));
 }
 

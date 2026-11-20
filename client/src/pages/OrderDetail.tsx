@@ -69,7 +69,7 @@ export default function OrderDetail() {
         ))}
         <div className="mt-3 pt-3 border-t border-border space-y-1 text-sm">
           <div className="flex justify-between"><span>Subtotal</span><span>${formatPrice(order.subtotal)}</span></div>
-          <div className="flex justify-between"><span>Delivery</span><span>{order.deliveryFee ? `$${formatPrice(order.deliveryFee)}` : "Free"}</span></div>
+          <div className="flex justify-between"><span>Shipping{order.shippingCarrier ? ` (${order.shippingCarrier} ${order.shippingService ?? ""})` : ""}</span><span>{order.deliveryFee ? `$${formatPrice(order.deliveryFee)}` : "Free"}</span></div>
           {order.tax ? <div className="flex justify-between"><span>Tax</span><span>${formatPrice(order.tax)}</span></div> : null}
           <div className="flex justify-between font-bold text-base pt-2"><span>Total</span><span>${formatPrice(order.total)}</span></div>
         </div>

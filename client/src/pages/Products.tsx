@@ -35,7 +35,7 @@ export default function Products() {
       <div className="flex items-center gap-3 bg-hibiscus-bg rounded-xl px-5 py-3 mb-8 text-sm border border-hibiscus/10">
         <Truck className="h-5 w-5 text-hibiscus flex-shrink-0" />
         <span className="text-muted-foreground">
-          <span className="font-semibold text-foreground">Free delivery</span> on orders over $250. Ships nationwide.
+          <span className="font-semibold text-foreground">Ships nationwide</span> with live USPS, UPS &amp; FedEx rates at checkout.
         </span>
       </div>
 

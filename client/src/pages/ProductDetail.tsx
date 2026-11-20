@@ -265,7 +265,7 @@ export default function ProductDetail() {
             {/* Delivery info */}
             <div className="mt-6 flex items-center gap-3 text-sm text-muted-foreground">
               <Truck className="h-4 w-4 text-hibiscus" />
-              <span>Free delivery on orders over $250. Ships nationwide.</span>
+              <span>Ships nationwide. Shipping calculated at checkout.</span>
             </div>
           </div>
         </div>

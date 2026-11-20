@@ -287,7 +287,9 @@ function OrderDetailModal({ id, onClose }: { id: number; onClose: () => void }) 
                     <td className="px-4 py-2 text-right">${formatPrice(order.subtotal)}</td>
                   </tr>
                   <tr>
-                    <td colSpan={2} className="px-4 py-2 text-right text-muted-foreground text-xs">Delivery</td>
+                    <td colSpan={2} className="px-4 py-2 text-right text-muted-foreground text-xs">
+                      Shipping{order.shippingCarrier ? ` (${order.shippingCarrier} ${order.shippingService ?? ""}${order.shippingBoxes ? `, ${order.shippingBoxes} box${order.shippingBoxes === 1 ? "" : "es"}` : ""})` : ""}
+                    </td>
                     <td className="px-4 py-2 text-right">${formatPrice(order.deliveryFee ?? 0)}</td>
                   </tr>
                   <tr>

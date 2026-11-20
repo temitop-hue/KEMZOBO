@@ -5,6 +5,56 @@ import * as db from "./db";
 import { createPaymentIntent, refundPaymentIntent } from "./stripe";
 import { sendEmail } from "./_core/email";
 import { ENV } from "./_core/env";
+import { getShippingOptions, verifyQuote } from "./shipping";
+import { HANDLING_FEE_CENTS, TAX_RATE } from "@shared/shipping";
+
+const cartItemsInput = z
+  .array(
+    z.object({
+      productId: z.number(),
+      variantId: z.number(),
+      quantity: z.number().int().min(1),
+    })
+  )
+  .min(1);
+
+/** Only active products/variants count; each 12-can case ships in its own box. */
+async function resolveCart(items: z.infer<typeof cartItemsInput>) {
+  const resolved: Array<{
+    productId: number;
+    variantId: number;
+    productName: string;
+    variantName: string;
+    quantity: number;
+    unitPrice: number;
+  }> = [];
+  let subtotal = 0;
+
+  for (const item of items) {
+    const variant = await db.getVariantById(item.variantId);
+    const product = await db.getProductById(item.productId);
+    if (!variant || !product || variant.productId !== product.id) continue;
+    if (!variant.isActive || !product.isActive) {
+      throw new Error(`${product.name} — ${variant.name} is no longer available. Please remove it from your cart.`);
+    }
+
+    // Apply bulk pricing per line: 24+=5%, 100+=9%, 500+=14% off the unit price
+    const discountedUnit = getBulkPrice(variant.price, item.quantity);
+    resolved.push({
+      productId: product.id,
+      variantId: variant.id,
+      productName: product.name,
+      variantName: variant.name,
+      quantity: item.quantity,
+      unitPrice: discountedUnit,
+    });
+    subtotal += discountedUnit * item.quantity;
+  }
+
+  if (resolved.length === 0) throw new Error("Your cart is empty");
+  const boxes = resolved.reduce((n, i) => n + i.quantity, 0);
+  return { items: resolved, subtotal, boxes };
+}
 
 function escapeHtml(s: string): string {
   return s
@@ -38,7 +88,7 @@ export const appRouter = router({
         return Promise.all(
           filtered.map(async (p) => ({
             ...p,
-            variants: await db.getVariantsByProductId(p.id),
+            variants: await db.getVariantsByProductId(p.id, true),
           }))
         );
       }),
@@ -48,7 +98,7 @@ export const appRouter = router({
       .query(async ({ input }) => {
         const product = await db.getProductBySlug(input.slug);
         if (!product) return null;
-        const variants = await db.getVariantsByProductId(product.id);
+        const variants = await db.getVariantsByProductId(product.id, true);
         // Decorate each variant with its stock state so the UI can show
         // "Out of stock" + the back-in-stock signup form
         const variantsWithStock = await Promise.all(
@@ -65,7 +115,7 @@ export const appRouter = router({
       return Promise.all(
         featured.map(async (p) => ({
           ...p,
-          variants: await db.getVariantsByProductId(p.id),
+          variants: await db.getVariantsByProductId(p.id, true),
         }))
       );
     }),
@@ -73,7 +123,7 @@ export const appRouter = router({
     getVariants: publicProcedure
       .input(z.object({ productId: z.number() }))
       .query(async ({ input }) => {
-        return db.getVariantsByProductId(input.productId);
+        return db.getVariantsByProductId(input.productId, true);
       }),
   }),
 
@@ -200,19 +250,36 @@ export const appRouter = router({
       }),
   }),
 
+  // ─── Shipping ───────────────────────────────────────────
+  shipping: router({
+    rates: publicProcedure
+      .input(
+        z.object({
+          items: cartItemsInput,
+          address: z.object({
+            name: z.string().optional(),
+            street: z.string().min(1),
+            city: z.string().min(1),
+            state: z.string().min(2),
+            zip: z.string().regex(/^\d{5}(-\d{4})?$/, "Enter a valid ZIP code"),
+            phone: z.string().optional(),
+          }),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const cart = await resolveCart(input.items);
+        const options = await getShippingOptions(input.address, cart.boxes);
+        return { options, boxes: cart.boxes, handlingFee: HANDLING_FEE_CENTS };
+      }),
+  }),
+
   // ─── Orders ─────────────────────────────────────────────
   orders: router({
     create: publicProcedure
       .input(
         z.object({
           customerEmail: z.string().email(),
-          items: z.array(
-            z.object({
-              productId: z.number(),
-              variantId: z.number(),
-              quantity: z.number().min(1),
-            })
-          ),
+          items: cartItemsInput,
           shippingAddress: z.object({
             name: z.string(),
             street: z.string(),
@@ -222,39 +289,19 @@ export const appRouter = router({
             phone: z.string(),
           }),
           discountCode: z.string().optional(),
+          shippingQuote: z.string().min(1, "Please choose a shipping option"),
         })
       )
       .mutation(async ({ input, ctx }) => {
-        // Calculate totals from variant prices
-        let subtotal = 0;
-        const resolvedItems: Array<{
-          productId: number;
-          variantId: number;
-          productName: string;
-          variantName: string;
-          quantity: number;
-          unitPrice: number;
-        }> = [];
+        const cart = await resolveCart(input.items);
+        const resolvedItems = cart.items;
+        const subtotal = cart.subtotal;
 
-        for (const item of input.items) {
-          const variant = await db.getVariantById(item.variantId);
-          const product = await db.getProductById(item.productId);
-          if (!variant || !product) continue;
-
-          // Apply bulk pricing per line: 24+=5%, 100+=9%, 500+=14% off the unit price
-          const discountedUnit = getBulkPrice(variant.price, item.quantity);
-
-          resolvedItems.push({
-            productId: product.id,
-            variantId: variant.id,
-            productName: product.name,
-            variantName: variant.name,
-            quantity: item.quantity,
-            unitPrice: discountedUnit,
-          });
-
-          subtotal += discountedUnit * item.quantity;
-        }
+        // Server is the source of truth for shipping: the signed quote must match this cart + ZIP
+        const quote = await verifyQuote(input.shippingQuote, {
+          boxes: cart.boxes,
+          zip: input.shippingAddress.zip,
+        });
 
         // Apply discount code if provided + valid. Server is the source of truth —
         // re-validate even if the client already showed the discount in the cart.
@@ -273,8 +320,8 @@ export const appRouter = router({
         }
 
         const subtotalAfterDiscount = subtotal - discountAmount;
-        const deliveryFee = subtotalAfterDiscount >= 25000 ? 0 : 599; // Free over $250
-        const tax = Math.round(subtotalAfterDiscount * 0.06); // 6% tax estimate
+        const deliveryFee = quote.amount; // live carrier rate + handling
+        const tax = Math.round(subtotalAfterDiscount * TAX_RATE);
         const total = subtotalAfterDiscount + deliveryFee + tax;
 
         // Generate order number
@@ -310,6 +357,10 @@ export const appRouter = router({
           discountCode: appliedDiscountCode?.code ?? null,
           discountAmount,
           shippingAddress: input.shippingAddress,
+          deliveryMethod: "third_party",
+          shippingCarrier: quote.carrier,
+          shippingService: quote.service,
+          shippingBoxes: quote.boxes,
           customerEmail: input.customerEmail,
           stripePaymentIntentId,
         });

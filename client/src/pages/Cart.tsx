@@ -122,15 +122,13 @@ export default function Cart() {
           <span className="font-medium">${formatPrice(subtotal)}</span>
         </div>
         <div className="flex justify-between mb-2 text-sm">
-          <span className="text-muted-foreground">Delivery</span>
-          <span className="font-medium">
-            {subtotal >= 5000 ? "Free" : `$${formatPrice(599)}`}
-          </span>
+          <span className="text-muted-foreground">Shipping</span>
+          <span className="font-medium text-muted-foreground">Calculated at checkout</span>
         </div>
         <div className="border-t border-border mt-3 pt-3 flex justify-between">
-          <span className="font-display font-bold text-lg">Estimated Total</span>
+          <span className="font-display font-bold text-lg">Subtotal</span>
           <span className="font-display font-bold text-lg">
-            ${formatPrice(subtotal + (subtotal >= 5000 ? 0 : 599))}
+            ${formatPrice(subtotal)}
           </span>
         </div>
         <div className="mt-6 flex gap-4">

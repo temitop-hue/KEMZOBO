@@ -49,7 +49,7 @@ const CATEGORIES: Category[] = [
       },
       {
         q: "How much is shipping?",
-        a: "$5.99 flat rate on orders under $250. Free shipping on every order over $250.",
+        a: "Shipping is calculated at checkout from live USPS, UPS and FedEx ground rates for your address, plus a $2.50 packaging and handling fee. Each 12-can case ships in its own box.",
       },
       {
         q: "How fast is delivery?",

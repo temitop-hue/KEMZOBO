@@ -239,6 +239,9 @@ export const orders = mysqlTable("orders", {
   trackingNumber: varchar({ length: 255 }),
   trackingCarrier: varchar({ length: 100 }),
   deliveryMethod: mysqlEnum(["self", "third_party"]).default("third_party"),
+  shippingCarrier: varchar({ length: 50 }), // carrier the buyer picked at checkout, e.g. "USPS"
+  shippingService: varchar({ length: 100 }), // e.g. "Ground Advantage"
+  shippingBoxes: int(), // one box per 12-can case
   customerEmail: varchar({ length: 320 }).notNull(),
   discountCode: varchar({ length: 50 }), // code applied at checkout, if any
   discountAmount: int().default(0), // cents — already subtracted from total

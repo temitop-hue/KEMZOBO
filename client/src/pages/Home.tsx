@@ -277,7 +277,7 @@ export default function Home() {
               {
                 icon: Sparkles,
                 title: "Try KEMZOBO",
-                text: "First time? Start with a single can or 6-pack.",
+                text: "First time? Start with a 12-can case.",
                 cta: "Try It",
                 href: "/products",
               },
@@ -617,8 +617,8 @@ export default function Home() {
               <div className="card-hover flex items-center gap-4 bg-white rounded-xl p-5 border border-[#CC2936]/10">
                 <Truck className="h-8 w-8 text-[#CC2936] flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-foreground">Free Delivery</p>
-                  <p className="text-sm text-muted-foreground">On all orders over $250. Ships nationwide.</p>
+                  <p className="font-semibold text-foreground">Ships Nationwide</p>
+                  <p className="text-sm text-muted-foreground">Live USPS, UPS &amp; FedEx rates at checkout.</p>
                 </div>
               </div>
             </motion.div>

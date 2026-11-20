@@ -4,6 +4,7 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@shared/const";
+import { HANDLING_FEE_CENTS, TAX_RATE, type ShippingOption } from "@shared/shipping";
 import { toast } from "sonner";
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -12,7 +13,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import { CreditCard, ArrowRight, Copy, Check } from "lucide-react";
+import { CreditCard, ArrowRight, Copy, Check, Truck } from "lucide-react";
 
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
@@ -62,6 +63,9 @@ export default function Checkout() {
   const [discountInput, setDiscountInput] = useState("");
   const [appliedDiscount, setAppliedDiscount] = useState<{ code: string; cents: number } | null>(null);
   const [discountError, setDiscountError] = useState<string | null>(null);
+  const [shippingOptions, setShippingOptions] = useState<ShippingOption[] | null>(null);
+  const [ratesKey, setRatesKey] = useState<string | null>(null);
+  const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
   const [orderData, setOrderData] = useState<{
     clientSecret: string | null; orderNumber: string; total: number;
   } | null>(null);
@@ -75,6 +79,20 @@ export default function Checkout() {
       });
     },
     onError: (err) => toast.error(err.message),
+  });
+
+  const getRates = trpc.shipping.rates.useMutation({
+    onSuccess: (data, vars) => {
+      setShippingOptions(data.options);
+      setRatesKey(JSON.stringify(vars));
+      setSelectedQuote(data.options[0]?.quoteToken ?? null);
+      if (data.options.length === 0) toast.error("No shipping options found for this address. Please check it and try again.");
+    },
+    onError: (err) => {
+      setShippingOptions(null);
+      setSelectedQuote(null);
+      toast.error(err.message);
+    },
   });
 
   const validateDiscount = trpc.discounts.validate.useMutation({
@@ -105,9 +123,22 @@ export default function Checkout() {
 
   const discountCents = appliedDiscount?.cents ?? 0;
   const subtotalAfterDiscount = subtotal - discountCents;
-  const deliveryFee = subtotalAfterDiscount >= 25000 ? 0 : 599;
-  const tax = Math.round(subtotalAfterDiscount * 0.06);
+  const ratesInput = {
+    items: items.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
+    address: { name: shipping.name, street: shipping.street, city: shipping.city, state: shipping.state, zip: shipping.zip.trim(), phone: shipping.phone },
+  };
+  // Rates go stale as soon as the cart or address changes
+  const ratesFresh = ratesKey === JSON.stringify(ratesInput);
+  const selectedOption = ratesFresh ? shippingOptions?.find((o) => o.quoteToken === selectedQuote) ?? null : null;
+  const deliveryFee = selectedOption?.amount ?? 0;
+  const tax = Math.round(subtotalAfterDiscount * TAX_RATE);
   const total = subtotalAfterDiscount + deliveryFee + tax;
+  const canQuote = !!(shipping.street.trim() && shipping.city.trim() && shipping.state.trim() && /^\d{5}(-\d{4})?$/.test(shipping.zip.trim()));
+
+  const handleGetRates = () => {
+    if (!canQuote) return toast.error("Enter your street, city, state and ZIP first");
+    getRates.mutate(ratesInput);
+  };
 
   const handleApplyDiscount = () => {
     const code = discountInput.trim();
@@ -123,11 +154,13 @@ export default function Checkout() {
 
   const handleCreateOrder = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedOption) return toast.error("Please choose a shipping option");
     createOrderMutation.mutate({
       customerEmail: email,
-      items: items.map((i) => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
+      items: ratesInput.items,
       shippingAddress: shipping,
       discountCode: appliedDiscount?.code,
+      shippingQuote: selectedOption.quoteToken,
     });
   };
 
@@ -322,6 +355,58 @@ export default function Checkout() {
                   className="w-full rounded-lg border border-[#CC2936]/15 bg-hibiscus-bg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#CC2936] focus:bg-white transition-colors" />
               </div>
             </div>
+
+            {/* Shipping options */}
+            <div className="pt-4">
+              <h2 className="font-display text-xl font-semibold mb-2">Shipping Method</h2>
+              {ratesFresh && shippingOptions && shippingOptions.length > 0 ? (
+                <div className="space-y-2">
+                  {shippingOptions.map((o) => (
+                    <label
+                      key={o.quoteToken}
+                      className={`flex items-center gap-3 rounded-xl border p-4 cursor-pointer transition-colors ${
+                        selectedQuote === o.quoteToken ? "border-[#CC2936] bg-hibiscus-bg" : "border-[#CC2936]/15 bg-white hover:bg-hibiscus-bg"
+                      }`}
+                    >
+                      <input
+                        type="radio" name="shipping-option" className="accent-[#CC2936]"
+                        checked={selectedQuote === o.quoteToken}
+                        onChange={() => setSelectedQuote(o.quoteToken)}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground">{o.carrier} {o.service}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {o.estimatedDays ? `Est. ${o.estimatedDays} business day${o.estimatedDays === 1 ? "" : "s"}` : o.durationTerms || "Delivery time varies"}
+                        </p>
+                      </div>
+                      <span className="text-sm font-semibold text-foreground">${formatPrice(o.amount)}</span>
+                    </label>
+                  ))}
+                  <p className="text-xs text-muted-foreground">
+                    Prices include a ${formatPrice(HANDLING_FEE_CENTS)} packaging &amp; handling fee
+                    {shippingOptions[0].boxes > 1 ? `. Each case ships in its own box (${shippingOptions[0].boxes} boxes).` : "."}
+                  </p>
+                  <button type="button" onClick={handleGetRates} disabled={getRates.isPending}
+                    className="text-xs font-medium text-[#CC2936] hover:underline disabled:opacity-50">
+                    {getRates.isPending ? "Refreshing..." : "Refresh rates"}
+                  </button>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed border-[#CC2936]/25 bg-white p-4">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {shippingOptions && ratesFresh
+                      ? "No shipping options found for this address."
+                      : ratesKey
+                        ? "Your cart or address changed. Get updated rates."
+                        : "Enter your address to see live USPS, UPS and FedEx ground rates."}
+                  </p>
+                  <button type="button" onClick={handleGetRates} disabled={getRates.isPending || !canQuote}
+                    className="rounded-full bg-[#CC2936] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[#E63946] transition-colors disabled:opacity-50 flex items-center gap-2">
+                    <Truck className="h-4 w-4" /> {getRates.isPending ? "Getting rates..." : "Get shipping rates"}
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Order Summary */}
@@ -348,8 +433,11 @@ export default function Checkout() {
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Delivery</span>
-                  <span>{deliveryFee === 0 ? <span className="text-green-600 font-medium">Free</span> : `$${formatPrice(deliveryFee)}`}</span>
+                  <span className="text-muted-foreground">
+                    Shipping
+                    {selectedOption && <span className="block text-xs">incl. ${formatPrice(HANDLING_FEE_CENTS)} packaging &amp; handling</span>}
+                  </span>
+                  <span>{selectedOption ? `$${formatPrice(deliveryFee)}` : <span className="text-muted-foreground text-xs">Choose a shipping option</span>}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Tax (est.)</span>
@@ -419,7 +507,7 @@ export default function Checkout() {
               </div>
             </div>
 
-            <button type="submit" disabled={createOrderMutation.isPending}
+            <button type="submit" disabled={createOrderMutation.isPending || !selectedOption}
               className="btn-primary mt-6 w-full rounded-full bg-[#CC2936] text-white py-4 font-bold text-lg hover:bg-[#E63946] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
               {createOrderMutation.isPending ? "Creating Order..." : <>Continue to Payment <ArrowRight className="h-5 w-5" /></>}
             </button>
