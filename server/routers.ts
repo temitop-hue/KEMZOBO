@@ -6,7 +6,7 @@ import { createPaymentIntent, refundPaymentIntent } from "./stripe";
 import { sendEmail } from "./_core/email";
 import { ENV } from "./_core/env";
 import { getShippingOptions, verifyQuote } from "./shipping";
-import { HANDLING_FEE_CENTS, TAX_RATE } from "@shared/shipping";
+import { HANDLING_FEE_CENTS_PER_BOX, MAX_ONLINE_CASES, TAX_RATE, WHOLESALE_CASE_MESSAGE } from "@shared/shipping";
 
 const cartItemsInput = z
   .array(
@@ -53,6 +53,7 @@ async function resolveCart(items: z.infer<typeof cartItemsInput>) {
 
   if (resolved.length === 0) throw new Error("Your cart is empty");
   const boxes = resolved.reduce((n, i) => n + i.quantity, 0);
+  if (boxes > MAX_ONLINE_CASES) throw new Error(WHOLESALE_CASE_MESSAGE);
   return { items: resolved, subtotal, boxes };
 }
 
@@ -269,7 +270,7 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const cart = await resolveCart(input.items);
         const options = await getShippingOptions(input.address, cart.boxes);
-        return { options, boxes: cart.boxes, handlingFee: HANDLING_FEE_CENTS };
+        return { options, boxes: cart.boxes, packagingPerBox: HANDLING_FEE_CENTS_PER_BOX };
       }),
   }),
 
@@ -320,7 +321,7 @@ export const appRouter = router({
         }
 
         const subtotalAfterDiscount = subtotal - discountAmount;
-        const deliveryFee = quote.amount; // live carrier rate + handling
+        const deliveryFee = quote.amount; // live carrier rate + packaging, per box
         const tax = Math.round(subtotalAfterDiscount * TAX_RATE);
         const total = subtotalAfterDiscount + deliveryFee + tax;
 

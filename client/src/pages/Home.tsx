@@ -255,7 +255,7 @@ export default function Home() {
               variants={fadeUp}
               className="mt-3 text-sm font-medium text-[#CC2936]/80 uppercase tracking-wider"
             >
-              Now shipping nationwide &middot; Limited first batch available
+              Now shipping nationwide
             </motion.p>
           </motion.div>
 
@@ -410,7 +410,7 @@ export default function Home() {
               Ready to taste it?
             </p>
             <p className="text-white/80 text-sm mt-1">
-              Now shipping nationwide &middot; Limited first batch available
+              Now shipping nationwide
             </p>
           </div>
           <Link
@@ -564,14 +564,11 @@ export default function Home() {
               <motion.p variants={fadeUp} className="text-[#CC2936] text-sm uppercase tracking-[0.3em] font-bold mb-4">Available Now</motion.p>
               <motion.h2 variants={fadeUp} className="font-display text-4xl lg:text-5xl font-bold">Start with the Original</motion.h2>
               <motion.p variants={fadeUp} className="mt-4 text-muted-foreground text-lg">
-                Bold hibiscus. 12-pack cases. Single cans available.
+                Bold hibiscus. 12-can cases.
               </motion.p>
               <motion.div variants={fadeUp} className="mt-4 flex flex-wrap justify-center items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[#CC2936] text-white text-xs font-bold uppercase tracking-wider px-3 py-1.5">
                   <Truck className="h-3 w-3" /> Now Shipping Nationwide
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#CC2936]/20 text-[#CC2936] text-xs font-bold uppercase tracking-wider px-3 py-1.5">
-                  Limited First Batch
                 </span>
               </motion.div>
             </motion.div>

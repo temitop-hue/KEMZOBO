@@ -3,6 +3,8 @@ import { Link } from "wouter";
 import { Trash2, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { formatPrice, getBulkPrice } from "@shared/const";
+import { MAX_ONLINE_CASES } from "@shared/shipping";
+import WholesaleCaseNotice from "@/components/WholesaleCaseNotice";
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, subtotal, itemCount } = useCart();
@@ -122,7 +124,7 @@ export default function Cart() {
           <span className="font-medium">${formatPrice(subtotal)}</span>
         </div>
         <div className="flex justify-between mb-2 text-sm">
-          <span className="text-muted-foreground">Shipping</span>
+          <span className="text-muted-foreground">Shipping and packaging</span>
           <span className="font-medium text-muted-foreground">Calculated at checkout</span>
         </div>
         <div className="border-t border-border mt-3 pt-3 flex justify-between">
@@ -131,6 +133,9 @@ export default function Cart() {
             ${formatPrice(subtotal)}
           </span>
         </div>
+        {items.reduce((n, i) => n + i.quantity, 0) > MAX_ONLINE_CASES && (
+          <div className="mt-6"><WholesaleCaseNotice /></div>
+        )}
         <div className="mt-6 flex gap-4">
           <Link
             href="/products"
@@ -138,12 +143,12 @@ export default function Cart() {
           >
             Continue Shopping
           </Link>
-          <Link
+          {items.reduce((n, i) => n + i.quantity, 0) <= MAX_ONLINE_CASES && <Link
             href="/checkout"
             className="flex-1 rounded-lg bg-[#CC2936] hover:bg-[#E63946] text-white px-6 py-2.5 text-center font-semibold transition-colors"
           >
             Proceed to Checkout
-          </Link>
+          </Link>}
         </div>
       </div>
     </div>

@@ -49,7 +49,7 @@ const CATEGORIES: Category[] = [
       },
       {
         q: "How much is shipping?",
-        a: "Shipping is calculated at checkout from live USPS, UPS and FedEx ground rates for your address, plus a $2.50 packaging and handling fee. Each 12-can case ships in its own box.",
+        a: "Shipping is calculated at checkout from live USPS, UPS and FedEx ground rates for your address, and includes packaging. Each 12-can case ships in its own box. Online orders cover 1 to 4 cases; for 5 or more, contact us for wholesale pricing and delivery or freight options.",
       },
       {
         q: "How fast is delivery?",

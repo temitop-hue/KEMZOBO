@@ -4,7 +4,8 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@shared/const";
-import { HANDLING_FEE_CENTS, TAX_RATE, type ShippingOption } from "@shared/shipping";
+import { MAX_ONLINE_CASES, TAX_RATE, type ShippingOption } from "@shared/shipping";
+import WholesaleCaseNotice from "@/components/WholesaleCaseNotice";
 import { toast } from "sonner";
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -133,7 +134,9 @@ export default function Checkout() {
   const deliveryFee = selectedOption?.amount ?? 0;
   const tax = Math.round(subtotalAfterDiscount * TAX_RATE);
   const total = subtotalAfterDiscount + deliveryFee + tax;
-  const canQuote = !!(shipping.street.trim() && shipping.city.trim() && shipping.state.trim() && /^\d{5}(-\d{4})?$/.test(shipping.zip.trim()));
+  const caseCount = items.reduce((n, i) => n + i.quantity, 0);
+  const overOnlineLimit = caseCount > MAX_ONLINE_CASES;
+  const canQuote = !overOnlineLimit && !!(shipping.street.trim() && shipping.city.trim() && shipping.state.trim() && /^\d{5}(-\d{4})?$/.test(shipping.zip.trim()));
 
   const handleGetRates = () => {
     if (!canQuote) return toast.error("Enter your street, city, state and ZIP first");
@@ -359,7 +362,9 @@ export default function Checkout() {
             {/* Shipping options */}
             <div className="pt-4">
               <h2 className="font-display text-xl font-semibold mb-2">Shipping Method</h2>
-              {ratesFresh && shippingOptions && shippingOptions.length > 0 ? (
+              {overOnlineLimit ? (
+                <WholesaleCaseNotice />
+              ) : ratesFresh && shippingOptions && shippingOptions.length > 0 ? (
                 <div className="space-y-2">
                   {shippingOptions.map((o) => (
                     <label
@@ -383,7 +388,7 @@ export default function Checkout() {
                     </label>
                   ))}
                   <p className="text-xs text-muted-foreground">
-                    Prices include a ${formatPrice(HANDLING_FEE_CENTS)} packaging &amp; handling fee
+                    Prices include shipping and packaging
                     {shippingOptions[0].boxes > 1 ? `. Each case ships in its own box (${shippingOptions[0].boxes} boxes).` : "."}
                   </p>
                   <button type="button" onClick={handleGetRates} disabled={getRates.isPending}
@@ -433,10 +438,7 @@ export default function Checkout() {
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    Shipping
-                    {selectedOption && <span className="block text-xs">incl. ${formatPrice(HANDLING_FEE_CENTS)} packaging &amp; handling</span>}
-                  </span>
+                  <span className="text-muted-foreground">Shipping and packaging</span>
                   <span>{selectedOption ? `$${formatPrice(deliveryFee)}` : <span className="text-muted-foreground text-xs">Choose a shipping option</span>}</span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -507,7 +509,7 @@ export default function Checkout() {
               </div>
             </div>
 
-            <button type="submit" disabled={createOrderMutation.isPending || !selectedOption}
+            <button type="submit" disabled={createOrderMutation.isPending || !selectedOption || overOnlineLimit}
               className="btn-primary mt-6 w-full rounded-full bg-[#CC2936] text-white py-4 font-bold text-lg hover:bg-[#E63946] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
               {createOrderMutation.isPending ? "Creating Order..." : <>Continue to Payment <ArrowRight className="h-5 w-5" /></>}
             </button>

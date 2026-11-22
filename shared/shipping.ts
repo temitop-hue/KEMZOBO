@@ -10,8 +10,14 @@ export const CASE_PARCEL = {
   mass_unit: "lb",
 } as const;
 
-// Added once per order on top of the live carrier rate, shown inside the shipping line
-export const HANDLING_FEE_CENTS = 250;
+// Packaging added per box on top of the live carrier rate (outer box, packing, tape, label).
+// Shown to customers as part of one "Shipping and packaging" line, not as a separate fee.
+export const HANDLING_FEE_CENTS_PER_BOX = 250;
+
+// Online checkout covers 1–4 cases. 5+ cases go to the wholesale team instead.
+export const MAX_ONLINE_CASES = 4;
+export const WHOLESALE_CASE_MESSAGE =
+  "Ordering 5 or more cases? Contact us for wholesale pricing and delivery or freight options.";
 
 export const TAX_RATE = 0.06; // 6% tax estimate on the discounted subtotal
 
@@ -21,7 +27,7 @@ export type ShippingOption = {
   service: string;
   estimatedDays: number | null;
   durationTerms: string | null;
-  amount: number; // cents, carrier rate × boxes + handling
+  amount: number; // cents, (carrier rate + packaging) × boxes
   carrierAmount: number; // cents, carrier rate × boxes
   boxes: number;
 };

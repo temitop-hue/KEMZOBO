@@ -1,14 +1,13 @@
 import { SignJWT, jwtVerify } from "jose";
-import { CASE_PARCEL, HANDLING_FEE_CENTS, type ShippingOption } from "@shared/shipping";
+import { CASE_PARCEL, HANDLING_FEE_CENTS_PER_BOX, type ShippingOption } from "@shared/shipping";
 import { ENV } from "./_core/env";
 
 const SHIPPO_API = "https://api.goshippo.com";
 
-// Rates are quoted from the ZIP code, so the P.O. Box line is left off.
-// Confirm a carrier-pickup street address before label buying goes live.
 const SHIP_FROM = {
   name: "KEMZOBO",
   street1: "13520 McLearen Road",
+  street2: "Apt 710391",
   city: "Herndon",
   state: "VA",
   zip: "20171",
@@ -49,7 +48,7 @@ function normalizeZip(zip: string): string {
 
 /**
  * Live ground rates for `boxes` cases going to `to`. Each case is its own box, so
- * the per-box rate is multiplied by the box count, then the handling fee is added once.
+ * the per-box rate plus the per-box packaging fee is multiplied by the box count.
  */
 export async function getShippingOptions(to: ShipToAddress, boxes: number): Promise<ShippingOption[]> {
   if (!isShippingConfigured()) throw new Error("Shipping rates are not configured");
@@ -93,7 +92,7 @@ export async function getShippingOptions(to: ShipToAddress, boxes: number): Prom
   const options = await Promise.all(
     ground.map(async (r) => {
       const carrierAmount = Math.round(parseFloat(r.amount) * 100) * boxes;
-      const amount = carrierAmount + HANDLING_FEE_CENTS;
+      const amount = carrierAmount + HANDLING_FEE_CENTS_PER_BOX * boxes;
       const quoteToken = await signQuote({
         rateId: r.object_id,
         carrier: r.provider,
