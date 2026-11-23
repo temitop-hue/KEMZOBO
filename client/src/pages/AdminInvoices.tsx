@@ -1,9 +1,27 @@
 import { trpc } from "@/lib/trpc";
-import { formatPrice } from "@shared/const";
+import { formatPrice, getWholesaleCasePrice } from "@shared/const";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Plus, X, Trash2, Send, CheckCircle2, Printer, FileText, Pencil, MessageCircle } from "lucide-react";
+
+// Under each invoice line: the wholesale tier price for that many cases, with a one-click apply
+function WholesaleTierHint({ quantity, unitPrice, onApply }: { quantity: string; unitPrice: string; onApply: (price: string) => void }) {
+  const tier = getWholesaleCasePrice(parseInt(quantity, 10) || 0);
+  if (tier === null) return null;
+  const price = (tier / 100).toFixed(2);
+  const applied = Math.round(parseFloat(unitPrice || "0") * 100) === tier;
+  return (
+    <p className="col-span-12 -mt-1 text-xs text-muted-foreground">
+      Wholesale price for {quantity} cases: ${price}/case
+      {applied ? " ✓" : (
+        <button type="button" onClick={() => onApply(price)} className="ml-2 font-medium text-[#CC2936] hover:underline">
+          Apply
+        </button>
+      )}
+    </p>
+  );
+}
 
 const STATUS_COLORS: Record<string, string> = {
   draft: "bg-gray-100 text-gray-700",
@@ -562,6 +580,8 @@ function CreateInvoiceModal({ onClose, onSaved }: { onClose: () => void; onSaved
                   >
                     <Trash2 className="h-4 w-4 mx-auto" />
                   </button>
+                  <WholesaleTierHint quantity={it.quantity} unitPrice={it.unitPrice}
+                    onApply={(price) => { const next = [...items]; next[i] = { ...it, unitPrice: price }; setItems(next); }} />
                 </div>
               ))}
             </div>
@@ -796,6 +816,8 @@ function EditInvoiceModal({
                     className="col-span-1 text-muted-foreground hover:text-red-500 p-2 disabled:opacity-30">
                     <Trash2 className="h-4 w-4 mx-auto" />
                   </button>
+                  <WholesaleTierHint quantity={it.quantity} unitPrice={it.unitPrice}
+                    onApply={(price) => { const next = [...items]; next[i] = { ...it, unitPrice: price }; setItems(next); }} />
                 </div>
               ))}
             </div>

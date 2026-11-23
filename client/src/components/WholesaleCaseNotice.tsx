@@ -8,7 +8,8 @@ export default function WholesaleCaseNotice() {
     <div className="rounded-2xl border border-[#CC2936]/20 bg-hibiscus-bg p-6">
       <p className="font-display text-lg font-bold text-foreground">{WHOLESALE_CASE_MESSAGE}</p>
       <p className="mt-2 text-sm text-muted-foreground">
-        Online orders ship up to {MAX_ONLINE_CASES} cases. Reduce your cart to {MAX_ONLINE_CASES} or fewer to check out now.
+        Business pricing starts at $40 per case for 5&ndash;9 cases and goes down to $30 per case at 100+.
+        Online orders ship up to {MAX_ONLINE_CASES} cases; reduce your cart to {MAX_ONLINE_CASES} or fewer to check out now.
       </p>
       <div className="mt-4 flex flex-wrap gap-3">
         <Link

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { WHOLESALE_TIERS, formatPrice } from "@shared/const";
 
 export default function Wholesale() {
   const [, setLocation] = useLocation();
@@ -30,7 +31,7 @@ export default function Wholesale() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <PageMeta title="Wholesale" description="Carry KEMZOBO at your store, restaurant, or event. Bulk pricing available." path="/wholesale" />
+      <PageMeta title="Wholesale" description="Carry KEMZOBO at your store, restaurant, or event. Wholesale pricing from $30 per case." path="/wholesale" />
       <h1 className="font-display text-3xl font-bold text-foreground mb-2">
         Wholesale Inquiry
       </h1>
@@ -38,23 +39,43 @@ export default function Wholesale() {
         Carry KEMZOBO at your store, restaurant, or event.
       </p>
 
-      {/* Pricing tiers */}
+      {/* Pricing tiers: Nov 2026 wholesale price sheet */}
       <div className="rounded-xl border border-border bg-card p-6 mb-10">
-        <h3 className="font-display font-semibold text-lg mb-3">Bulk Pricing</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-          <div className="rounded-lg bg-muted p-4 text-center">
-            <div className="font-display font-bold text-xl text-[#CC2936]">~5% off</div>
-            <div className="text-muted-foreground mt-1">24+ cases</div>
-          </div>
-          <div className="rounded-lg bg-muted p-4 text-center">
-            <div className="font-display font-bold text-xl text-[#CC2936]">~9% off</div>
-            <div className="text-muted-foreground mt-1">100+ cases</div>
-          </div>
-          <div className="rounded-lg bg-muted p-4 text-center">
-            <div className="font-display font-bold text-xl text-[#CC2936]">~14% off</div>
-            <div className="text-muted-foreground mt-1">500+ cases</div>
-          </div>
+        <h3 className="font-display font-semibold text-lg">Wholesale &amp; Volume Pricing</h3>
+        <p className="text-sm text-muted-foreground mt-1 mb-4">
+          Per 12-can case. Volume pricing is based on the number of cases in a single order.
+        </p>
+        <div className="overflow-hidden rounded-lg border border-border">
+          <table className="w-full text-sm">
+            <thead className="bg-[#CC2936] text-white text-left">
+              <tr>
+                <th className="px-4 py-2.5 font-semibold">Order type</th>
+                <th className="px-4 py-2.5 font-semibold">Minimum</th>
+                <th className="px-4 py-2.5 font-semibold text-right">Price / case</th>
+              </tr>
+            </thead>
+            <tbody>
+              {WHOLESALE_TIERS.map((t, i) => (
+                <tr key={t.minCases} className={i % 2 ? "bg-hibiscus-bg" : "bg-white"}>
+                  <td className="px-4 py-3 font-medium text-foreground">{t.orderType}</td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {t.maxCases ? `${t.minCases}–${t.maxCases} cases` : `${t.minCases}+ cases`}
+                  </td>
+                  <td className="px-4 py-3 text-right font-display font-bold text-[#CC2936]">${formatPrice(t.pricePerCase)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
+        <p className="mt-4 text-sm text-muted-foreground">
+          Suggested retail: $5&ndash;$6 per can ($60&ndash;$72 per case). At the $35 tier, retailers can earn $25&ndash;$37 gross profit per case.
+        </p>
+        <ul className="mt-3 text-xs text-muted-foreground space-y-1 list-disc pl-4">
+          <li>Shipping and delivery are quoted separately.</li>
+          <li>Pricing is subject to availability and applies to a single order.</li>
+          <li>Business orders may require a valid resale certificate where applicable.</li>
+          <li>Payment arrangements must be confirmed before fulfillment.</li>
+        </ul>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
