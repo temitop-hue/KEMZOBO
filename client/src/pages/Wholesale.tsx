@@ -76,6 +76,13 @@ export default function Wholesale() {
           <li>Business orders may require a valid resale certificate where applicable.</li>
           <li>Payment arrangements must be confirmed before fulfillment.</li>
         </ul>
+        <p className="mt-4 text-sm text-muted-foreground">
+          Prefer email? Write to{" "}
+          <a href="mailto:hydrate-nation@outlook.com?subject=Wholesale order" className="font-medium text-[#CC2936] hover:underline">
+            hydrate-nation@outlook.com
+          </a>{" "}
+          or use the form below.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">

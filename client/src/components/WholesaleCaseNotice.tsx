@@ -19,10 +19,10 @@ export default function WholesaleCaseNotice() {
           Wholesale inquiry <ArrowRight className="h-4 w-4" />
         </Link>
         <a
-          href="mailto:info@kemzobo.com?subject=Wholesale order"
+          href="mailto:hydrate-nation@outlook.com?subject=Wholesale order"
           className="inline-flex items-center gap-2 rounded-full border border-[#CC2936]/30 text-[#CC2936] px-5 py-2.5 text-sm font-semibold hover:bg-white transition-colors"
         >
-          <Mail className="h-4 w-4" /> info@kemzobo.com
+          <Mail className="h-4 w-4" /> hydrate-nation@outlook.com
         </a>
       </div>
     </div>

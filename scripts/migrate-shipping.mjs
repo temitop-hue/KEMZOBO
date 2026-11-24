@@ -2,7 +2,7 @@
  * Shippo shipping rollout:
  *  1. Adds orders.shippingCarrier / shippingService / shippingBoxes
  *  2. Deactivates the Single Can and 6-Pack variants (12-can case is the only size sold)
- *  3. Labels the 12-can case with the correct can size (16.9 fl oz)
+ *  3. Labels the 12-can case with the can size (later corrected to 16 fl oz by migrate-can-size.mjs)
  * Safe to re-run.
  */
 import "dotenv/config";
